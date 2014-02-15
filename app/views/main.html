@@ -15,6 +15,29 @@
   </p>
   <p><a class="btn btn-lg btn-success" ng-href="#">Splendid!</a></p>
 </div>
+<div ng-controller="MainCtrlSample">
+<ul >
+<li ng-repeat="thing in awesomeThings">{{thing}}</li>
+</ul>
+
+</div>
+
+<div ng-controller='MainCtrl'>
+<ul>
+  <li class="dropdown">
+    <a class="dropdown-toggle">
+      Click me to see some awesome things!
+    </a>
+    <ul class="dropdown-menu">
+      <li ng-repeat="thing in awesomeThings">
+        <a>{{thing}}</a>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+</div>
+
 
 <div class="row marketing">
   <h4>HTML5 Boilerplate</h4>
