@@ -8,7 +8,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title></title>
     <meta name="description" content="">
-    <meta name="viewport" content="width=device-width">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
     <!-- build:css styles/vendor.css -->
     <!-- bower:css -->
@@ -23,6 +23,35 @@
     <!--[if lt IE 7]>
       <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
     <![endif]-->
+<div ng-controller="somecontroller">
+    <accordian>
+
+    <expander class="expander" ng-repeat='expander in expanders'  expander-title='expander.title'>
+{{expander.desc}}
+    </expander>
+        </accordian>
+    </div>
+    <table class="table table-stripes" ng-controller="tabController">
+        <thead>
+        <tr>
+            <th>#</th><th>{{myname}}</th><th>Details</th><th></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-click="change(1234)">
+            <td>1</td><td>1234</td><td>15" Samsung Laptop</td>
+            <td><a href="#showorders/1234">show details</a></td>
+        </tr>
+        <tr ng-click="change(5412)">
+            <td>2</td><td>5412</td><td>2TB Seagate Hard drive</td>
+            <td><a href="#showorders/5412">show details</a></td>
+        </tr>
+        <tr ng-click="change(9874)">
+            <td>3</td><td>9874</td><td>D-link router</td>
+            <td><a href="#showorders/9874">show details</a></td>
+        </tr>
+        </tbody>
+    </table>
 
     <!-- Add your site or application content here -->
     <div class="container" ng-view=""></div>
@@ -53,7 +82,6 @@
     <script src="bower_components/angular-sanitize/angular-sanitize.js"></script>
     <script src="bower_components/angular-route/angular-route.js"></script>
     <script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
-    <script src="bower_components/angular-bootstrap/ui-bootstrap.js"></script>
     <!-- endbower -->
     <!-- endbuild -->
 
@@ -61,6 +89,21 @@
         <script src="scripts/app.js"></script>
         <script src="scripts/controllers/main.js"></script>
           <script src="scripts/controllers/sample.js"></script>
+<script type="text/ng-template" id="views/addorder.html">
+<h1>Inline file it is add order</h1>
+    {{message}}
+</script>
+    <script type="text/ng-template" id="views/showorders.html">
+        <h1>Inline file it is show orders</h1>
+        {{message}}
+    </script>
+
+    <script type="text/javascript">
+   function doit(){
+       document.getElementById("headerElements").innerHTML="kawli";
+   }
+    </script>
+
         <!-- endbuild -->
 </body>
 </html>
