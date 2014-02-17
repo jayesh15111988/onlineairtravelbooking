@@ -12,7 +12,47 @@ sampleApp.controller('somecontroller',function($scope){
    // $scope.title='this is shrinked header';
     //$scope.message='this is shrinked content';
 $scope.expanders=[{title:'message1',desc:'mydata1'},{title:'message2',desc:'mydata2'},{title:'message3',desc:'mydata3'},{title:'message4',desc:'mydata4'}];
+});
+
+
+
+sampleApp.service('MathService', function() {
+
+    this.add = function(a, b) { return a + b };
+
+    this.subtract = function(a, b) { return a - b };
+
+    this.multiply = function(a, b) { return a * b };
+
+    this.divide = function(a, b) { return a / b };
+});
+
+sampleApp.service('CalculatorService', function(MathService){
+
+    this.square = function(a) { return MathService.multiply(a,a); };
+    this.cube = function(a) { return MathService.multiply(a, MathService.multiply(a,a)); };
+
+});
+
+
+sampleApp.service('textservice',function(){
+    this.getter=function(){
+        return "Why not working you?";
+    }
 })
+sampleApp.controller('CalculatorController', function($scope, textservice) {
+
+    $scope.doSquare = function() {
+        //$scope.answer = MathService.add($scope.number,34);
+    $scope.answer=textservice.getter();
+    }
+
+    $scope.doCube = function() {
+        $scope.answer = MathService.divide($scope.number,45);
+    }
+});
+
+
 
 sampleApp.controller('addordercontroller',function($scope,$route){
     $scope.message='this is message one for adding orderddd'+'and1 '+ $route.current.foodata;

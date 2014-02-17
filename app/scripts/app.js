@@ -7,6 +7,9 @@ var mymodule=angular.module('airtravelbookingappApp', [
   'ngRoute',
   'ui.bootstrap'
 ]);
+
+
+
 mymodule.config(['$routeProvider',function ($routeProvider) {
     $routeProvider
       .when('/addorder', {
@@ -24,6 +27,9 @@ mymodule.config(['$routeProvider',function ($routeProvider) {
       });
   }]);
 
+
+
+
 mymodule.run(function($templateCache){
     $templateCache.put('myfile.html','<div> hello</div>');
 });
@@ -35,6 +41,8 @@ restrict:'EA',
         replace:true
     }
 })
+
+
 
 
 mymodule.directive('accordian',function(){
