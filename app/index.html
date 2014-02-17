@@ -3,12 +3,13 @@
 <!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
 <!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
 <!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
-  <head>
+
+<head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title></title>
     <meta name="description" content="">
-    <meta name="viewport" content="width=device-width">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
     <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
     <!-- build:css styles/vendor.css -->
     <!-- bower:css -->
@@ -18,25 +19,19 @@
     <!-- build:css({.tmp,app}) styles/main.css -->
     <link rel="stylesheet" href="styles/main.css">
     <!-- endbuild -->
-  </head>
-  <body ng-app="airtravelbookingappApp">
-    <!--[if lt IE 7]>
-      <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
-    <![endif]-->
 
-    <!-- Add your site or application content here -->
-    <div class="container" ng-view=""></div>
 
     <!-- Google Analytics: change UA-XXXXX-X to be your site's ID -->
-     <script>
-       (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-       (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-       m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-       })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+    <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+                m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
-       ga('create', 'UA-XXXXX-X');
-       ga('send', 'pageview');
+        ga('create', 'UA-XXXXX-X');
+        ga('send', 'pageview');
     </script>
+
 
     <!--[if lt IE 9]>
     <script src="bower_components/es5-shim/es5-shim.js"></script>
@@ -48,19 +43,151 @@
     <script src="bower_components/jquery/jquery.js"></script>
     <script src="bower_components/angular/angular.js"></script>
     <script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
+    <script src="bower_components/bootstrap/js/tooltip.js"></script>
+    <script src="bower_components/bootstrap/js/popover.js"></script>
     <script src="bower_components/angular-resource/angular-resource.js"></script>
     <script src="bower_components/angular-cookies/angular-cookies.js"></script>
     <script src="bower_components/angular-sanitize/angular-sanitize.js"></script>
     <script src="bower_components/angular-route/angular-route.js"></script>
     <script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
-    <script src="bower_components/angular-bootstrap/ui-bootstrap.js"></script>
     <!-- endbower -->
     <!-- endbuild -->
 
-        <!-- build:js({.tmp,app}) scripts/scripts.js -->
-        <script src="scripts/app.js"></script>
-        <script src="scripts/controllers/main.js"></script>
-          <script src="scripts/controllers/sample.js"></script>
-        <!-- endbuild -->
+    <!-- build:js({.tmp,app}) scripts/scripts.js -->
+    <script src="scripts/app.js"></script>
+    <script src="scripts/controllers/main.js"></script>
+    <script src="scripts/controllers/sample.js"></script>
+    <!-- endbuild -->
+
+    <!--For X-Editable plugin for popover and tooltips -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/css/bootstrap-editable.css" rel="stylesheet"/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/js/bootstrap-editable.min.js"></script>
+
+    <script>
+
+        $(document).ready(function() {
+/*
+To delete no longer necessary
+            $.fn.datepicker.defaults.keyboardNavigation = 'true';
+            var nowTemp = new Date();
+            var now = new Date(nowTemp.getFullYear(), nowTemp.getMonth(), nowTemp.getDate(), 0, 0, 0, 0);
+console.log(now);
+            var checkin = $('#dpd1').datepicker({
+                keyboardNavigation:'true',
+                onRender: function(date) {
+                    return date.valueOf() < now.valueOf() ? 'disabled' : '';
+                }
+            }).on('changeDate', function(ev) {
+                        if (ev.date.valueOf() > checkout.date.valueOf()) {
+                            var newDate = new Date(ev.date)
+                            newDate.setDate(newDate.getDate() + 1);
+                            checkout.setValue(newDate);
+                        }
+                        checkin.hide();
+                        $('#dpd2')[0].focus();
+                    }).data('datepicker');
+            var checkout = $('#dpd2').datepicker({
+                onRender: function(date) {
+                    return date.valueOf() <= checkin.date.valueOf() ? 'disabled' : '';
+                }
+            }).on('changeDate', function(ev) {
+                        checkout.hide();
+                    }).data('datepicker');
+
+*/
+            $('a').tooltip({
+
+            });
+            $('.btn').popover();
+        });
+
+
+    </script>
+
+</head>
+  <body ng-app="airtravelbookingappApp">
+    <!--[if lt IE 7]>
+      <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+    <![endif]-->
+<!--
+All dates will be used on booking page
+    <input data-provide="datepicker">
+
+    <input type="text" id="dpd1" data-provide="datepicker" data-keyboardNavigation="true">
+    <input type="text" id="dpd2" data-provide="datepicker">
+
+    <div class="input-append date" id="dp3" data-date="12-02-2012" data-date-format="dd-mm-yyyy">
+        <input class="span2" size="16" type="text" value="12-02-2012">
+        <span class="add-on"><i class="icon-th"></i></span>
+    </div>-->
+    <!-- This is a Navbar for navigating website smoothly -->
+    <!-- Navbar start -->
+    <nav class="navbar navbar-default" role="navigation">
+
+        <div class="container-fluid">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#">Brand</a>
+            </div>
+
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <a href="#" id="example" class="btn btn-danger" rel="popover" data-content="It's so simple to create a tooltop for my website!" data-original-title="Twitter Bootstrap Popover">hover for popover</a>
+                <ul class="nav navbar-nav">
+                    <li class="active"><a href="#">Link</a></li>
+                    <li><a href="#" >Link</a></li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="#">Action</a></li>
+                            <li><a href="#">Another action</a></li>
+                            <li><a href="#">Something else here</a></li>
+                            <li class="divider"></li>
+                            <li><a href="#">Separated link</a></li>
+                            <li class="divider"></li>
+                            <li><a href="#">One more separated link</a></li>
+                        </ul>
+                    </li>
+                </ul>
+                <form class="navbar-form navbar-left" role="search">
+                    <div class="form-group">
+
+                        <input type="text" class="form-control" placeholder="Search">
+                    </div>
+                    <button type="submit" class="btn btn-default">Submit</button>
+                </form>
+                <button type="button" class="btn btn-default" data-container="body" data-toggle="popover" data-placement="left" data-content="Vivamus sagittis lacus vel augue laoreet rutrum faucibus.">
+                    Popover on left
+                </button>
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="#" data-html="true" class="link btn btn-danger" data-placement="bottom" data-original-title="Log into account" data-content="Please select this option to log into your account. This will allow you to fast check out">Login</a></li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="#">Action</a></li>
+                            <li><a href="#">Another action</a></li>
+                            <li><a href="#">Something else here</a></li>
+                            <li class="divider"></li>
+                            <li><a href="#">Separated link</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div><!-- /.navbar-collapse -->
+        </div><!-- /.container-fluid -->
+    </nav>
+
+
+    <!-- Navbar End -->
+
+    <!-- Add your site or application content here -->
+    <div class="container" ng-view=""></div>
+
+
 </body>
 </html>
