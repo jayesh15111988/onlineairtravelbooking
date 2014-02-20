@@ -27,6 +27,14 @@
             max-width:350px;
             width:350px;
         }
+        .iteminnercarousel{
+            margin-left: 40%;
+
+        }
+        .innerimages{
+
+            height: 100px;
+        }
     </style>
 
     <!-- Google Analytics: change UA-XXXXX-X to be your site's ID -->
@@ -51,10 +59,6 @@
     <script src="bower_components/jquery/jquery.js"></script>
     <script src="bower_components/angular/angular.js"></script>
     <script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
-    <script src="bower_components/bootstrap/js/tooltip.js"></script>
-    <script src="bower_components/bootstrap/js/popover.js"></script>
-    <script src="bower_components/bootstrap/js/modal.js"></script>
-    <script src="bower_components/bootstrap/js/bootstrap-formhelpers.js"></script>
     <script src="bower_components/angular-resource/angular-resource.js"></script>
     <script src="bower_components/angular-cookies/angular-cookies.js"></script>
     <script src="bower_components/angular-sanitize/angular-sanitize.js"></script>
@@ -105,26 +109,37 @@ console.log(now);
                     }).data('datepicker');
 
 */
+
             $('a').tooltip({
 
             });
+           $('a').on('click',function(e){
+            $("#loginbutton").popover('hide');
+           });
+
             $(".btn").tooltip({
 
+            });
+            $('body').on('click', function (e) {
+                $('[data-toggle="popover"]').each(function () {
+                    //the 'is' for buttons that trigger popups
+                    //the 'has' for icons within a button that triggers a popup
+                    if (!$(this).is(e.target) && $(this).has(e.target).length === 0 && $('.popover').has(e.target).length === 0) {
+                       console.log(this+ " read now ")
+                     //   $(this).popover('hide');
+                    }
+                });
             });
 
             $('#loginbutton').popover({
 
             });
-            $.ajax({
-                async:false,
-                url: 'countryList.txt',
-                dataType: 'text',
-                success: function(data)
-                {
-                    $('countries').append(data);
-                }
-            });
 
+            $('.carousel').carousel({
+                interval: 2000,
+                pause: "hover",
+                wrap:true
+        });
 
 
 
@@ -135,7 +150,6 @@ console.log(now);
             $('#dob').datepicker({
                 keyboardNavigation:'true',
                 format:'mm/dd/yyyy',
-                onRender: 'disabled',
                 startDate:"+d",
                 endDate:"+90d",
                 autoclose:true
@@ -199,11 +213,11 @@ All dates will be used on booking page
                     </div>
                     <button type="submit" class="btn btn-default">Submit</button>
                 </form>
-                <ul class="nav navbar-nav navbar-right" style="margin-right: 60px">
+                <ul class="nav navbar-nav navbar-right" style="margin-right: 60px" ">
                     <li><a href="#" data-html="true" data-toggle="modal" data-target="#loginview" class="btn-link" data-placement="bottom" data-original-title="Log into account" >Login</a></li>
                     <li><a href="#" data-html="true" data-toggle="modal" data-target="#registerview" class="btn-link" data-placement="bottom" data-original-title="Register for new account" >Register</a></li>
-                    <li><button class="btn" id="loginbutton" data-placement="bottom" data-html="true" data-original-title="Click to Log In" data-title="<div style='width:800px'>asdasdas</div>"
-                          data-content="<form class='form-horizontal' role='form' >
+                    <li><button class="btn" id="loginbutton" data-toggle="popover" data-placement="bottom" data-html="true" data-original-title="Click to Log In" data-title="<div style='width:800px'>asdasdas</div>"
+                          data-content="<div><form class='form-horizontal' role='form'  >
   <div class='form-group' >
     <label for='inputEmail3' class='col-sm-2 control-label'>Email</label>
     <div class='col-sm-9' style='margin-left:10px'>
@@ -227,7 +241,11 @@ All dates will be used on booking page
   </div>
   <div class='form-group'>
     <div class='col-sm-offset-2 col-sm-10'>
-      <button type='submit' class='btn btn-primary'>Sign in</button>
+
+
+      <button type='button' class='btn btn-primary'>Retrieve Reservation</button>
+
+
 
     </div>
   </div>
@@ -250,7 +268,7 @@ All dates will be used on booking page
 
     <!-- Modal -->
     <!-- For Login purpose -->
-    <div class="modal fade" id="loginview" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal fade" login-view ng-controller="loginController" id="loginview" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
@@ -262,11 +280,17 @@ All dates will be used on booking page
                     <form role="form">
                         <div class="form-group">
                             <label for="exampleInputEmail1">Email address</label>
+                            <div class="input-group input-group-lg">
+                                <span class="input-group-addon">@</span>
                             <input type="email" class="form-control" id="exampleInputEmail1" placeholder="Enter email">
+                                </div>
                         </div>
                         <div class="form-group">
                             <label for="exampleInputPassword1">Password</label>
+                            <div class="input-group input-group-lg">
+                                <span class="input-group-addon">*</span>
                             <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
+                                </div>
                         </div>
 
                         </form>
@@ -274,7 +298,7 @@ All dates will be used on booking page
 
                 </div>
                 <div class="modal-footer center-block">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="forgotPassword();">Forgot Password</button>
                     <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#loginview" >Login</button>
                 </div>
             </div>
@@ -709,6 +733,32 @@ Enter you email address
         </div>
     </div>
 
+    <div class="modal fade" forgot-password   id="fogrgotpasswordpage" tabindex="-1" role="dialog" aria-hidden="true" >
+        <div class="modal-dialog modal-lg"  >
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myModalLabel">Modal title</h4>
+                </div>
+                <div class="modal-body">
+
+                    <div class="input-group input-group-lg">
+                        <span class="input-group-addon">@</span>
+                        <input type="text" class="form-control" placeholder="Username">
+                    </div>
+
+
+                    </div>
+
+                <div class="modal-footer center-block" ng-controller="forgotpasswordcontroller">
+                    <button type="button" class="btn btn-default" data-toggle="modal" ng-click="gotobackpage();" data-target="#loginview" >Back to login page</button>
+                    <button type="button" class="btn btn-primary" data-toggle="modal"  >Send</button>
+                </div>
+        </div>
+     </div>
+  </div>
+
+
     <!-- Modal view for second page of registration -->
     <div class="modal fade" register-secondpage  id="gotoregistrationsecondpage" tabindex="-1" role="dialog" aria-labelledby="myModalLabelsecond view" aria-hidden="true" >
         <div class="modal-dialog modal-lg"  >
@@ -789,8 +839,74 @@ Enter you email address
                 </div>
             </div>
         </div>
+
+        <!-- /.row -->
+
     </div>
+
+    <div id="carousel-example-generic" class="carousel slide" data-ride="carousel" ng-show="false">
+        <!-- Indicators -->
+        <ol class="carousel-indicators">
+            <li data-target="#carousel-example-generic" data-slide-to="0" class="active"></li>
+            <li data-target="#carousel-example-generic" data-slide-to="1"></li>
+            <li data-target="#carousel-example-generic" data-slide-to="2"></li>
+        </ol>
+
+        <!-- Wrapper for slides -->
+        <div class="carousel-inner">
+            <div class="item active">
+                <img src="images/airline1.jpg" alt="..." >
+                <div class="carousel-caption">
+
+                </div>
+            </div>
+            <div class="item">
+                <img src="images/airline2.jpg" alt="...">
+                <div class="carousel-caption">
+
+                </div>
+            </div>
+            <div class="item">
+                <img src="images/airline3.jpg" alt="...">
+                <div class="carousel-caption">
+
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Controls -->
+        <a class="left carousel-control" href="#carousel-example-generic" data-slide="prev">
+            <span class="glyphicon glyphicon-chevron-left"></span>
+        </a>
+        <a class="right carousel-control" href="#carousel-example-generic" data-slide="next">
+            <span class="glyphicon glyphicon-chevron-right"></span>
+        </a>
+    </div>
+
+    <!--
+    Bottom menu bar - Maybe wont be much useful for now
+    <div class="row">
+        <div class="col-lg-4 col-md-4">
+            <h3><i class="fa fa-check-circle"></i> Bootstrap 3 Built</h3>
+            <p>The 'Modern Business' website template by <a href="http://startbootstrap.com">Start Bootstrap</a> is built with <a href="http://getbootstrap.com">Bootstrap 3</a>. Make sure you're up to date with latest Bootstrap documentation!</p>
+        </div>
+        <div class="col-lg-4 col-md-4">
+            <h3><i class="fa fa-pencil"></i> Ready to Style &amp; Edit</h3>
+            <p>You're ready to go with this pre-built page structure, now all you need to do is add your own custom stylings! You can see some free themes over at <a href="http://bootswatch.com">Bootswatch</a>, or come up with your own using <a href="http://getbootstrap.com/customize/">the Bootstrap customizer</a>!</p>
+        </div>
+        <div class="col-lg-4 col-md-4">
+            <h3><i class="fa fa-folder-open"></i> Many Page Options</h3>
+            <p>This template features many common pages that you might see on a business website. Pages include: about, contact, portfolio variations, blog, pricing, FAQ, 404, services, and general multi-purpose pages.</p>
+        </div>
+    </div>-->
+
+
+
+
+
     <!-- Add your site or application content here -->
     <div class="container" ng-view=""></div>
-</body>
+
+  </body>
 </html>

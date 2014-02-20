@@ -7,6 +7,9 @@ angular.module('airtravelbookingappApp', [
   'ngRoute',
   'ui.bootstrap'
 ])
+
+    /* Route Provider decides which page to show based on the input URL */
+
   .config(function ($routeProvider) {
     $routeProvider
       .when('/', {
