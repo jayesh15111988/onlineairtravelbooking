@@ -79,6 +79,10 @@
 
     <script>
 
+        function setRegion(selectedRegion){
+            document.getElementById("regionname").innerHTML=selectedRegion+"<b class='caret'>";
+        }
+
         $(document).ready(function() {
 /*
 To delete no longer necessary
@@ -193,17 +197,17 @@ All dates will be used on booking page
                 <ul class="nav navbar-nav">
 
                     <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Select your Region: <b class="caret"></b></a>
+                        <a href="#" class="dropdown-toggle" id="regionname" data-toggle="dropdown">Select your Region: <b class="caret"></b></a>
                         <ul class="dropdown-menu">
-                            <li><a href="#">Americas</a>
+                            <li><a href="#" onclick="setRegion('Americas')">Americas</a>
 
 
                             </li>
 
-                            <li><a href="#">Asia Pacific</a></li>
-                            <li><a href="#">Middle East</a></li>
-                            <li><a href="#">Europe</a></li>
-                            <li><a href="#">Antarctica</a></li>
+                            <li><a href="#" onclick="setRegion('Asia Pacific')">Asia Pacific</a></li>
+                            <li><a href="#" onclick="setRegion('Middle East')">Middle East</a></li>
+                            <li><a href="#" onclick="setRegion('Europe')">Europe</a></li>
+
                         </ul>
                     </li>
                 </ul>
@@ -844,7 +848,7 @@ Enter you email address
 
     </div>
 
-    <div id="carousel-example-generic" class="carousel slide" data-ride="carousel" ng-show="false">
+    <div id="carousel-example-generic" class="carousel slide" data-ride="carousel" ng-show="true">
         <!-- Indicators -->
         <ol class="carousel-indicators">
             <li data-target="#carousel-example-generic" data-slide-to="0" class="active"></li>
