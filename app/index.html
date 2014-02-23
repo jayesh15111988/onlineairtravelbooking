@@ -19,6 +19,7 @@
     <!-- build:css({.tmp,app}) styles/main.css -->
     <link rel="stylesheet" href="styles/main.css">
     <link rel="stylesheet" href="styles/bootstrap-formhelpers.min.css">
+    <link rel="shortcut icon" href="favicon.ico">
     <!-- endbuild -->
 
     <style type="text/css">
@@ -34,6 +35,9 @@
         .innerimages{
 
             height: 100px;
+        }
+        .container .frontpage{
+            margin-left: -40px;
         }
     </style>
 
@@ -56,8 +60,8 @@
 
     <!-- build:js scripts/vendor.js -->
     <!-- bower:js -->
-    <script src="bower_components/jquery/jquery.js"></script>
     <script src="bower_components/angular/angular.js"></script>
+    <script src="bower_components/jquery/jquery.js"></script>
     <script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
     <script src="bower_components/angular-resource/angular-resource.js"></script>
     <script src="bower_components/angular-cookies/angular-cookies.js"></script>
@@ -83,7 +87,16 @@
             document.getElementById("regionname").innerHTML=selectedRegion+"<b class='caret'>";
         }
 
+        function hideCarousel(){
+            document.getElementById('frontPageCarousel').style.display='none';
+        }
+
+        function showCarousel(){
+            //alert(document.URL);
+            document.getElementById('frontPageCarousel').style.display='inline';
+        }
         $(document).ready(function() {
+
 /*
 To delete no longer necessary
             $.fn.datepicker.defaults.keyboardNavigation = 'true';
@@ -139,7 +152,7 @@ console.log(now);
 
             });
 
-            $('.carousel').carousel({
+            $('.myCarousel').carousel({
                 interval: 2000,
                 pause: "hover",
                 wrap:true
@@ -191,7 +204,6 @@ All dates will be used on booking page
                 </button>
                 <a class="navbar-brand" href="#">Airline Reservation</a>
             </div>
-
             <!-- Collect the nav links, forms, and other content for toggling -->
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav">
@@ -218,7 +230,8 @@ All dates will be used on booking page
                     <button type="submit" class="btn btn-default">Submit</button>
                 </form>
                 <ul class="nav navbar-nav navbar-right" style="margin-right: 60px" ">
-                    <li><a href="#" data-html="true" data-toggle="modal" data-target="#loginview" class="btn-link" data-placement="bottom" data-original-title="Log into account" >Login</a></li>
+                <li><a href="#main" data-html="true" data-target="#" class="btn-link" data-placement="bottom" onclick="hideCarousel();" data-original-title="Flight Search" >Flight Search</a></li>
+                <li><a href="#" data-html="true" data-toggle="modal" data-target="#loginview" class="btn-link" data-placement="bottom" data-original-title="Log into account" >Login</a></li>
                     <li><a href="#" data-html="true" data-toggle="modal" data-target="#registerview" class="btn-link" data-placement="bottom" data-original-title="Register for new account" >Register</a></li>
                     <li><button class="btn" id="loginbutton" data-toggle="popover" data-placement="bottom" data-html="true" data-original-title="Click to Log In" data-title="<div style='width:800px'>asdasdas</div>"
                           data-content="<div><form class='form-horizontal' role='form'  >
@@ -848,45 +861,7 @@ Enter you email address
 
     </div>
 
-    <div id="carousel-example-generic" class="carousel slide" data-ride="carousel" ng-show="true">
-        <!-- Indicators -->
-        <ol class="carousel-indicators">
-            <li data-target="#carousel-example-generic" data-slide-to="0" class="active"></li>
-            <li data-target="#carousel-example-generic" data-slide-to="1"></li>
-            <li data-target="#carousel-example-generic" data-slide-to="2"></li>
-        </ol>
 
-        <!-- Wrapper for slides -->
-        <div class="carousel-inner">
-            <div class="item active">
-                <img src="images/airline1.jpg" alt="..." >
-                <div class="carousel-caption">
-
-                </div>
-            </div>
-            <div class="item">
-                <img src="images/airline2.jpg" alt="...">
-                <div class="carousel-caption">
-
-                </div>
-            </div>
-            <div class="item">
-                <img src="images/airline3.jpg" alt="...">
-                <div class="carousel-caption">
-
-                </div>
-            </div>
-
-        </div>
-
-        <!-- Controls -->
-        <a class="left carousel-control" href="#carousel-example-generic" data-slide="prev">
-            <span class="glyphicon glyphicon-chevron-left"></span>
-        </a>
-        <a class="right carousel-control" href="#carousel-example-generic" data-slide="next">
-            <span class="glyphicon glyphicon-chevron-right"></span>
-        </a>
-    </div>
 
     <!--
     Bottom menu bar - Maybe wont be much useful for now

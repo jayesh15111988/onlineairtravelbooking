@@ -5,12 +5,12 @@
 
 var airlinetravelmodule=angular.module('airtravelbookingappApp')
   .controller('MainCtrl', function ($scope) {
-    $scope.awesomeThings = [
-      'HTML5 Boilerplate',
-      'AngularJS',
-      'Karma'
-    ];
+
   });
+
+airlinetravelmodule.controller('MainCtrlSample', function ($scope) {
+
+    });
 
 
 airlinetravelmodule.directive('registerFirstpage', function() {
