@@ -36,9 +36,69 @@
 
             height: 100px;
         }
-        .container .frontpage{
-            margin-left: -40px;
+        .jvFloat {
+            position: relative;
+            display: inline;
+            margin-top: 1em;
         }
+
+        .customtooltip{
+            display: inline;
+            position: relative;
+        }
+        .customtooltip:hover:after{
+            background: #333;
+            background: rgba(0,0,0,.8);
+            border-radius: 5px;
+            bottom: 26px;
+            color: #fff;
+            content: attr(title);
+            padding: 5px 15px;
+            position: absolute;
+            z-index: 98;
+            width: 220px;
+        }
+
+        /* Start CSS3 Animations on supported browser */
+        .jvFloat .placeHolder {
+            position: absolute;
+            top: 0;
+            left: 0;
+            color: #0c61fc;
+            font-size: .8em;
+            font-weight: bold;
+            -webkit-transform: translate(0, 0);
+            -moz-transform: translate(0, 0);
+            -o-transform: translate(0, 0);
+            -ms-transform: translate(0, 0);
+            transform: translate(0, 0);
+            -webkit-transition: -webkit-transform 150ms, opacity 5s;
+            transition: transform 150ms, opacity 5s;
+            opacity: 0;
+            visibility: hidden;
+        }
+        .jvFloat .placeHolder.active {
+            display: block;
+            visibility: visible;
+            -webkit-transform: translate(0, -1.5em);
+            -moz-transform: translate(0, -1.5em);
+            -o-transform: translate(0, -1.5em);
+            -ms-transform: translate(0, -1.5em);
+            transform: translate(0, -1.5em);
+            -webkit-transition: -webkit-transform 100ms, opacity 120ms;
+            transition: transform 100ms, opacity 120ms;
+            opacity: 1;
+        }
+        /* End CSS3 */
+
+        /* New classes for controlling width of select box */
+        .input-mini { width: 60px; } .input-small { width: 90px; } .input-medium { width: 150px; } .input-large { width: 210px; } .input-xlarge { width: 270px; } .input-xxlarge { width: 530px; }
+
+
+
+
+
+
     </style>
 
     <!-- Google Analytics: change UA-XXXXX-X to be your site's ID -->
@@ -53,6 +113,7 @@
     </script>
 
 
+
     <!--[if lt IE 9]>
     <script src="bower_components/es5-shim/es5-shim.js"></script>
     <script src="bower_components/json3/lib/json3.min.js"></script>
@@ -60,14 +121,15 @@
 
     <!-- build:js scripts/vendor.js -->
     <!-- bower:js -->
-    <script src="bower_components/angular/angular.js"></script>
     <script src="bower_components/jquery/jquery.js"></script>
+    <script src="bower_components/angular/angular.js"></script>
     <script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
     <script src="bower_components/angular-resource/angular-resource.js"></script>
     <script src="bower_components/angular-cookies/angular-cookies.js"></script>
     <script src="bower_components/angular-sanitize/angular-sanitize.js"></script>
     <script src="bower_components/angular-route/angular-route.js"></script>
     <script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
+    <script src="bower_components/jquery/bootstrap-datepicker.js"></script>
     <!-- endbower -->
     <!-- endbuild -->
 
@@ -83,54 +145,60 @@
 
     <script>
 
+
+        (function($) {
+            // Init Plugin Functions
+            $.fn.jvFloat = function() {
+                // Check input type - filter submit buttons.
+                return this.filter('input').each(function() {
+                    // store placeholder text in placeHolder Variable
+                    var placeholderText = $(this).attr('placeholder');
+                    // Wrap the input in div.jvFloat
+                    $(this).wrap('<div class=jvFloat>');
+                    // Store the placeholder text in span.placeHolder
+                    $(this).before('<span class=placeHolder>' + placeholderText);
+                    // change span.placeHolder to span.placeHolder.active
+                    $(this).bind('keyup blur', function() {
+                        if ($(this).val() === '') {
+                            $(this).siblings('.placeHolder').removeClass('active');
+                        } else {
+                            $(this).siblings('.placeHolder').addClass('active');
+                        }
+                    });
+                });
+            };
+// Make Zeptojs & jQuery Compatible
+        })(window.jQuery || window.Zepto || window.$);
+
+        $(function() {
+            $('.testBox').jvFloat();
+        });
+
         function setRegion(selectedRegion){
             document.getElementById("regionname").innerHTML=selectedRegion+"<b class='caret'>";
         }
 
-        function hideCarousel(){
-            document.getElementById('frontPageCarousel').style.display='none';
-        }
 
-        function showCarousel(){
-            //alert(document.URL);
-            document.getElementById('frontPageCarousel').style.display='inline';
-        }
         $(document).ready(function() {
 
-/*
-To delete no longer necessary
-            $.fn.datepicker.defaults.keyboardNavigation = 'true';
-            var nowTemp = new Date();
-            var now = new Date(nowTemp.getFullYear(), nowTemp.getMonth(), nowTemp.getDate(), 0, 0, 0, 0);
-console.log(now);
-            var checkin = $('#dpd1').datepicker({
-                keyboardNavigation:'true',
-                onRender: function(date) {
-                    return date.valueOf() < now.valueOf() ? 'disabled' : '';
-                }
-            }).on('changeDate', function(ev) {
-                        if (ev.date.valueOf() > checkout.date.valueOf()) {
-                            var newDate = new Date(ev.date)
-                            newDate.setDate(newDate.getDate() + 1);
-                            checkout.setValue(newDate);
-                        }
-                        checkin.hide();
-                        $('#dpd2')[0].focus();
-                    }).data('datepicker');
-            var checkout = $('#dpd2').datepicker({
-                onRender: function(date) {
-                    return date.valueOf() <= checkin.date.valueOf() ? 'disabled' : '';
-                }
-            }).on('changeDate', function(ev) {
-                        checkout.hide();
-                    }).data('datepicker');
 
-*/
+//To delete no longer necessary
+            $('.datepicker').datepicker({
+startDate:'+d'
+            });
+
 
             $('a').tooltip({
 
             });
-           $('a').on('click',function(e){
+
+
+
+
+
+
+
+            $('a').on('click',function(e){
             $("#loginbutton").popover('hide');
            });
 
@@ -161,17 +229,12 @@ console.log(now);
 
 
 
-                var nowTemp = new Date();
-            var now = new Date(nowTemp.getFullYear(), nowTemp.getMonth(), nowTemp.getDate(), 0, 0, 0, 0);
 
-            $('#dob').datepicker({
-                keyboardNavigation:'true',
-                format:'mm/dd/yyyy',
-                startDate:"+d",
-                endDate:"+90d",
-                autoclose:true
-            });
+
+
+
         });
+
 
 
     </script>
@@ -181,17 +244,12 @@ console.log(now);
     <!--[if lt IE 7]>
       <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
     <![endif]-->
-<!--
-All dates will be used on booking page
-    <input data-provide="datepicker">
 
-    <input type="text" id="dpd1" data-provide="datepicker" data-keyboardNavigation="true">
-    <input type="text" id="dpd2" data-provide="datepicker">
+<!--All dates will be used on booking page-->
 
-    <div class="input-append date" id="dp3" data-date="12-02-2012" data-date-format="dd-mm-yyyy">
-        <input class="span2" size="16" type="text" value="12-02-2012">
-        <span class="add-on"><i class="icon-th"></i></span>
-    </div>-->
+
+
+
     <nav class="navbar navbar-default" role="navigation">
         <div class="container-fluid">
             <!-- Brand and toggle get grouped for better mobile display -->
@@ -229,8 +287,8 @@ All dates will be used on booking page
                     </div>
                     <button type="submit" class="btn btn-default">Submit</button>
                 </form>
-                <ul class="nav navbar-nav navbar-right" style="margin-right: 60px" ">
-                <li><a href="#main" data-html="true" data-target="#" class="btn-link" data-placement="bottom" onclick="hideCarousel();" data-original-title="Flight Search" >Flight Search</a></li>
+                <ul class="nav navbar-nav navbar-right" style="margin-right: 60px" >
+                <li><a href="#/flightsearch" data-html="true" data-target="#" class="btn-link" data-placement="bottom"  data-original-title="Flight Search" >Flight Search</a></li>
                 <li><a href="#" data-html="true" data-toggle="modal" data-target="#loginview" class="btn-link" data-placement="bottom" data-original-title="Log into account" >Login</a></li>
                     <li><a href="#" data-html="true" data-toggle="modal" data-target="#registerview" class="btn-link" data-placement="bottom" data-original-title="Register for new account" >Register</a></li>
                     <li><button class="btn" id="loginbutton" data-toggle="popover" data-placement="bottom" data-html="true" data-original-title="Click to Log In" data-title="<div style='width:800px'>asdasdas</div>"
@@ -885,7 +943,10 @@ Enter you email address
 
 
     <!-- Add your site or application content here -->
-    <div class="container" ng-view=""></div>
+    <div class="container-fluid" ng-view>
+
+
+    </div>
 
   </body>
 </html>

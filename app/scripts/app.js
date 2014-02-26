@@ -16,7 +16,11 @@ angular.module('airtravelbookingappApp', [
         templateUrl: 'views/main.html',
         controller: 'MainCtrl'
       })
+        .when('/flightsearch', {
+            templateUrl: 'views/flightsearch.html',
+            controller: 'MainCtrl'
+        })
       .otherwise({
-        redirectTo: '/'
+        redirectTo: 'views/sam.php'
       });
   });
