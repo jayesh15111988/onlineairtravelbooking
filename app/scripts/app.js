@@ -5,7 +5,8 @@ angular.module('airtravelbookingappApp', [
   'ngResource',
   'ngSanitize',
   'ngRoute',
-  'ui.bootstrap'
+  'ui.bootstrap',
+        'ngResource'
 ])
 
     /* Route Provider decides which page to show based on the input URL */
@@ -18,9 +19,9 @@ angular.module('airtravelbookingappApp', [
       })
         .when('/flightsearch', {
             templateUrl: 'views/flightsearch.html',
-            controller: 'MainCtrl'
+            controller: 'flightsearchcontroller'
         })
       .otherwise({
-        redirectTo: 'views/sam.php'
+        redirectTo: '/'
       });
   });

@@ -1,5 +1,45 @@
+<script>
+    $('.datepicker').datepicker({
 
-<div class="container-fluid" style="height: 100%;background-color: #000000" xmlns="http://www.w3.org/1999/html">
+    });
+
+    var nowTemp = new Date();
+    var now = new Date(nowTemp.getFullYear(), nowTemp.getMonth(), nowTemp.getDate(), 0, 0, 0, 0);
+
+    var checkin = $('#dpd1').datepicker({
+        startDate:'+d',
+        endDate:'+90d',
+        onRender: function(date) {
+            return date.valueOf() < now.valueOf() ? 'disabled' : '';
+        }
+    }).on('changeDate', function(ev) {
+                if (ev.date.valueOf() > checkout.date.valueOf()) {
+                    var newDate = new Date(ev.date)
+                    newDate.setDate(newDate.getDate() + 1);
+                    checkout.setValue(newDate);
+                }
+                checkin.hide();
+                $('#dpd2')[0].focus();
+            }).data('datepicker');
+    var checkout = $('#dpd2').datepicker({
+        startDate:'+d',
+        endDate:'+90d',
+        onRender: function(date) {
+            return date.valueOf() <= checkin.date.valueOf() ? 'disabled' : '';
+        }
+    }).on('changeDate', function(ev) {
+                checkout.hide();
+            }).data('datepicker');
+
+
+
+
+
+
+
+
+</script>
+<div class="container-fluid" ng-controller="flightsearchcontroller" style="height: 100%;background-color: #000000" xmlns="http://www.w3.org/1999/html">
 <div class="mini-layout fluid" style="height:900px;background-color: darkgray">
     <div style="background-color: #808080;height: 100%;width:20%;float: left" ></div>
     <div class="mini-layout-sidebar" style="margin-left: 0%;width: 60%;background-color: lightgrey;height: 100%;float: left">
@@ -13,7 +53,7 @@
             <div class="radio">
                 <label>
                     <input type="radio" name="optionsRadios" id="optionsRadios1" value="option1" checked>
-                    Option one is this and that&mdash;be sure to include why it's great
+                    Option one is this  and that&mdash;be sure to include why it's great
                 </label>
             </div>
             <div class="radio">
@@ -27,19 +67,41 @@
 
         <div class="row"></br></br>
             <div class="col-md-6">From: <label class="sr-only" for="exampleInputEmail2">Email address</label>
-                <input type="email" class="form-control" id="exampleInputEmail2" placeholder="Enter email"></div>
+                <input type="text"  ng-model="searchString" ng-keyup="getAirports();"  class="form-control" id="exampleInputEmail24" placeholder="Enter email"></div>
             <div class="col-md-6">To:
                 <label class="sr-only" for="exampleInputEmail2">Email address</label>
-                <input type="email" class="form-control" id="exampleInputEmail2" placeholder="Enter email">
+                <input type="email" ng-model="simple" class="form-control" id="exampleInputEmail2" placeholder="Enter email">
             </div>
         </div>
 
+
+   <!--         <form onsubmit="fuckoff();">
+
+                <div id="name-group" class="form-group">
+                    <label>Name</label>
+                    <input type="text" name="name" class="form-control" placeholder="Bruce Wayne">
+                    <span class="help-block"></span>
+                </div>
+
+
+                <div id="superhero-group" class="form-group">
+                    <label>Superhero Alias</label>
+                    <input type="text" name="superheroAlias" class="form-control" placeholder="Caped Crusader">
+                    <span class="help-block"></span>
+                </div>
+
+
+                <button type="submit" class="btn btn-success btn-lg btn-block">
+                    <span class="glyphicon glyphicon-flash"></span> Submit!
+                </button>
+            </form>
+-->
 
 
 
             <div class="row"></br></br>
                 <div class="col-md-6">From: <label class="sr-only" for="leavingon">Leaving On</label>
-                    <input id="dpd1" type="text" class="form-control" data-start-date="+d" id="leavingon" placeholder="Leaving On" data-provide="datepicker"></div>
+                    <input id="dpd1" type="text" class="form-control" data-start-date="+d"  id="leavingon" placeholder="Leaving On" data-provide="datepicker"></div>
                 <div class="col-md-6">To:
                     <label class="sr-only" for="reachingon">Reaching On</label>
                     <input id="dpd2" type="text" class="form-control" id="reachingon" placeholder="Leaving On" data-provide="datepicker"></div>
