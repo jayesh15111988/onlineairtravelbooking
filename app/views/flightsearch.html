@@ -66,11 +66,11 @@
             </div>
 
         <div class="row"></br></br>
-            <div class="col-md-6">From: <label class="sr-only" for="exampleInputEmail2">Email address</label>
-                <input type="text"  ng-model="searchString" ng-keyup="getAirports();"  class="form-control" id="exampleInputEmail24" placeholder="Enter email"></div>
-            <div class="col-md-6">To:
-                <label class="sr-only" for="exampleInputEmail2">Email address</label>
-                <input type="email" ng-model="simple" class="form-control" id="exampleInputEmail2" placeholder="Enter email">
+            <div class="col-md-6">From Source:
+                <input type="text"  ng-model="searchStringSource" ng-change="getAirports();"  class="form-control" id="exampleInputEmail24" placeholder="Source"></div>
+            <div class="col-md-6">To Destination:
+
+                <input type="email" ng-model="searchStringDestination" ng-change="getAirports();" class="form-control" id="exampleInputEmail2" placeholder="Destination">
             </div>
         </div>
 

@@ -155,60 +155,39 @@ airlinetravelmodule.controller('flightsearchcontroller',function($scope,$http){
 
 airlinetravelmodule.controller('flightsearchcontroller',function($scope,$http){
     $scope.getAirports=function(){
+var searchStringToPass='';
 
+        if( typeof $scope.searchStringSource !== "undefined"){
+            searchStringToPass=$scope.searchStringSource;
+        }
 
-     /*   $http({
-            method: 'GET',
-            url: 'https://api.flightstats.com/flex/airports/rest/v1/json/active',
-            params: { appId : '9738bcd8', appKey : '6c713890a9bf2822f783ab8870332617' }
-        })
-*/
-     /*   $http({
-            method: 'GET',
-            url  var url = "https://api.flightstats.com/flex/airports/rest/v1/json/active";
+        else if(typeof $scope.searchStringDestination !== "undefined"){
+            searchStringToPass=$scope.searchStringDestination;
+        }
 
-
-      var config = {headers:  {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type',
-      'Accept':'*',
-      'Content-Type':'application/json;charset=UTF-8'
-
-      },
-      params:{
-      'appId':'9738bcd8',
-      'appKey':'6c713890a9bf2822f783ab8870332617'
-      }
-      };
-
-      $http.get(url,config).
-      success(function(data) {
-
-      }).
-      error(function(data) {
-      alert("Error --");
-      });: 'https://api.flightstats.com/flex/airports/rest/v1/json/active',
-            params: { appId : '9738bcd8', appKey : '6c713890a9bf2822f783ab8870332617' }.
-            success(function(data, status, headers, config) {
-                // this callback will be called asynchronously
-                // when the response is available
-            }).
-            error(function(data, status, headers, config) {
-                // called asynchronously if an error occurs
-                // or server returns response with an error status.
-            })});*/
-    /*    $http({method: 'GET', url: 'http://api.flightstats.com/flex/airports/rest/v1/json/active',
-             params: { appId : '9738bcd8', appKey : '6c713890a9bf2822f783ab8870332617' }
+        $http({method: 'GET', url: 'http://jayeshkawli.com/airlinetravel/airportsapi.php?searchstring='+searchStringToPass,
+             params: {}
         }).
-            success(function(data, status, headers, config) {
+            success(function(airportslist, status, headers, config) {
+                if (airportslist instanceof Array){
+                for(var airports in airportslist){
+                    console.log(airportslist[airports]);
+                }
+                }
+                else{
+                    console.log("No Suggestions");
+                }
+              //  for(var indiairports in airportsList){
+                //    console.log(airportsList[indiairports]+"<br/>");
+                //}
                 // this callback will be called asynchronously
                 // when the response is available
             }).
             error(function(data, status, headers, config) {
+
                 // called asynchronously if an error occurs
                 // or server returns response with an error status.
             });
-*/
+
 
 }});
