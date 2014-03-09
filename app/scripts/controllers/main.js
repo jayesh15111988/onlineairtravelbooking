@@ -170,6 +170,59 @@ airlinetravelmodule.controller('flightsearchcontroller',function($scope,$http){
     var isSource=true;
 $scope.sourcevisible=false;
     $scope.destinationvisible=false;
+    $scope.firstClassButtonClicked=true;
+    $scope.businessClassButtonClicked=false;
+    $scope.economyClassButtonClicked=false;
+    $scope.whichAirline=true;
+
+    $scope.isVisibleReturningDate=false;
+    $scope.searchByPrice=true;
+    $scope.searchByVariableDates=false;
+    $scope.searchBySpecificDates=false;
+
+    $scope.isRoundTrip=function(val){
+        if(val==0){
+            $scope.isVisibleReturningDate=false;
+        }
+        else if(val==1){
+            $scope.isVisibleReturningDate=true;
+        }
+    }
+
+    $scope.classButtonPressed=function(val){
+        $scope.firstClassButtonClicked=$scope.businessClassButtonClicked=$scope.economyClassButtonClicked=false;
+        if(val==1){
+            $scope.firstClassButtonClicked=true;
+        }
+        else if(val==2){
+            $scope.businessClassButtonClicked=true;
+        }
+        else if (val==3){
+            $scope.economyClassButtonClicked=true;
+
+        }
+    }
+
+    $scope.searchByCriteriaButtonPressed=function(val){
+        $scope.searchByPrice =$scope.searchByVariableDates =$scope.searchBySpecificDates =false;
+        if(val==1){
+            $scope.searchByPrice=true;
+        }
+        else if(val==2){
+            $scope.searchByVariableDates=true;
+        }
+        else if (val==3){
+            $scope.searchBySpecificDates=true;
+
+        }
+    }
+    $scope.isFlightButtonClicked=true;
+    $scope.whichClassButtonClicked=true;
+
+
+
+
+
     $scope.getAirports=function(){
 
 
@@ -180,15 +233,19 @@ $scope.isDomestic=false;
 
         $scope.setpref=function(val){
             if(val==0){
+                $scope.isFlightButtonClicked=true;
                 $scope.isDomestic=true;
             }
             else{
+                $scope.isFlightButtonClicked=false;
                 $scope.isDomestic=false;
             }
         }
         $scope.changeDomestic= function(){
+//console.log($scope.sourcecode);
 
             if($scope.isDomestic==true){
+
                 $scope.destcode1=document.getElementById('autocomplete1').value;
             }
         }
