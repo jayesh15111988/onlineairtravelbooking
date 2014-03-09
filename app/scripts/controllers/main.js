@@ -188,29 +188,32 @@ console.log(isSourceTyping)
             }
         }
         if( typeof $scope.searchStringSource !== "undefined" && isSource==true){
-            //console.log("source");
+            console.log("source");
             $scope.sourcevisible=true;
             searchStringToPass=$scope.searchStringSource;
         }
 
-        if(typeof $scope.searchStringDestination !== "undefined" && isSource==false){
-            //console.log("destination");
+        else if(typeof $scope.searchStringDestination !== "undefined" && isSource==false){
+            console.log("destination");
             $scope.destinationvisible=true;
             searchStringToPass=$scope.searchStringDestination;
         }
 
+         var baseUrl='http://jayeshkawli.com/airlinetravel/airportsapi.php?';
+
+
+        baseUrl=baseUrl+'searchString='+searchStringToPass;
         $http({method: 'GET', url: 'http://jayeshkawli.com/airlinetravel/airportsapi.php?searchstring='+searchStringToPass,
              params: {}
         }).
             success(function(airportslist, status, headers, config) {
 
-                if($scope.sourcevisible==true){
 
-                $scope.sourcevisible=!$scope.sourcevisible;
-                }
-                else{
-                $scope.destinationvisible=!$scope.destinationvisible;
-                }
+
+                $scope.sourcevisible=false;
+
+                $scope.destinationvisible=false;
+
 
 
                 $scope.movies=airportslist;

@@ -50,6 +50,11 @@ background-color: #4bf;
 background-color: #E2E2E2;
 }
 
+.autocomplete-suggestions { border: 1px solid #999; background: #fff; cursor: default; overflow: auto; }
+.autocomplete-suggestion { padding: 10px 5px; font-size: 1.2em; white-space: nowrap; overflow: hidden; }
+.autocomplete-selected { background: #f0f0f0; }
+.autocomplete-suggestions strong { font-weight: normal; color: #3399ff; }
+
 .autocomplete li.active .highlight {
 background: #666;
 color: #fff;
@@ -105,6 +110,7 @@ ul>li{
 </style>
 
 <script src="../bower_components/jquery/autocomplete.js"></script>
+        <script src="../bower_components/jquery/currency-autocomplete.js"></script>
 
 <script>
     $('.datepicker').datepicker({
@@ -172,8 +178,33 @@ ul>li{
                 </label>
 
             </div>
+Type of travel:<br/>
+            <div class="input-group">
+            <div class="btn-group btn-group-md">
+                <button type="button" class="btn btn-default">Domestic</button>
+                <button type="button" class="btn btn-default">International</button>
 
 
+            </div>
+                </div>
+
+
+
+<br/>
+            <div class="row" style="margin-top: 0px">
+                <div class="col-md-6">Source Country code:<img ng-class="{'isVisible': false,'isInvisible':true }" style="margin-left: 200px" src="../images/ajax-loader.gif">
+
+                    <input type="text" name="currency" class="form-control" placeholder="Source Country code" class="biginput" id="autocomplete">
+
+                    <!--= <input type="text"  ng-model="searchStringSource" ng-change="getAirports();"  class="form-control" id="exampleInputEmail24" placeholder="Source">-->
+                </div>
+
+                <div class="col-md-6">Destination Country code:<img ng-class="{'isVisible':false,'isInvisible':true }" style="margin-left: 200px" src="../images/ajax-loader.gif">
+                    <input type="text" name="currency" class="form-control" placeholder="Destination Country code" class="biginput" id="autocomplete1">
+
+                    <!--<input type="email" ng-model="searchStringDestination" ng-change="getAirports();" class="form-control" id="exampleInputEmail2" placeholder="Destination">-->
+                </div>
+            </div>
 
 
         <div class="row" style="margin-top: 0px">
