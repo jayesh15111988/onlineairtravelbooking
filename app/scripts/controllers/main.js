@@ -189,7 +189,7 @@ $scope.isDomestic=false;
         $scope.changeDomestic= function(){
 
             if($scope.isDomestic==true){
-                $scope.destcode=document.getElementById('autocomplete1').value;;
+                $scope.destcode1=document.getElementById('autocomplete1').value;
             }
         }
         $scope.setSource =function(isSourceTyping){
@@ -203,23 +203,29 @@ console.log(isSourceTyping)
                 isSource=false;
             }
         }
+        var countryCode="";
         if( typeof $scope.searchStringSource !== "undefined" && isSource==true){
             console.log("source");
             $scope.sourcevisible=true;
             searchStringToPass=$scope.searchStringSource;
+            countryCode=document.getElementById('autocomplete1').value;
         }
 
         else if(typeof $scope.searchStringDestination !== "undefined" && isSource==false){
             console.log("destination");
             $scope.destinationvisible=true;
             searchStringToPass=$scope.searchStringDestination;
+            countryCode=document.getElementById('autocomplete').value;
         }
-
+if(typeof countryCode ==="undefined"){
+    countryCode="";
+}
          var baseUrl='http://jayeshkawli.com/airlinetravel/airportsapi.php?';
 
 
+
         baseUrl=baseUrl+'searchString='+searchStringToPass;
-        $http({method: 'GET', url: 'http://jayeshkawli.com/airlinetravel/airportsapi.php?searchstring='+searchStringToPass,
+        $http({method: 'GET', url: 'http://jayeshkawli.com/airlinetravel/airportsapi.php?searchstring='+searchStringToPass+"&countryCode="+countryCode,
              params: {}
         }).
             success(function(airportslist, status, headers, config) {
