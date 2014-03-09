@@ -175,7 +175,23 @@ $scope.sourcevisible=false;
 
         var searchStringToPass='';
 
+$scope.isDomestic=false;
 
+
+        $scope.setpref=function(val){
+            if(val==0){
+                $scope.isDomestic=true;
+            }
+            else{
+                $scope.isDomestic=false;
+            }
+        }
+        $scope.changeDomestic= function(){
+
+            if($scope.isDomestic==true){
+                $scope.destcode=document.getElementById('autocomplete1').value;;
+            }
+        }
         $scope.setSource =function(isSourceTyping){
 console.log(isSourceTyping)
             if(isSourceTyping==1){
