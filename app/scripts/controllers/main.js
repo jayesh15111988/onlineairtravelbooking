@@ -151,17 +151,51 @@ airlinetravelmodule.controller('flightsearchcontroller',function($scope,$http){
 })*/
 
 
+airlinetravelmodule.controller('MyCtrl1', function($scope){
+
+});
 
 
 airlinetravelmodule.controller('flightsearchcontroller',function($scope,$http){
-    $scope.getAirports=function(){
-var searchStringToPass='';
+    $scope.movies = [""];
 
-        if( typeof $scope.searchStringSource !== "undefined"){
+    // gives another movie array on change
+    /*$scope.updateMovies = function(typed){
+        // MovieRetriever could be some service returning a promise
+        // $scope.newmovies = MovieRetriever.getmovies(typed);
+        // $scope.newmovies.then(function(data){
+        //  $scope.movies = data;
+        //});
+    }*/
+    var isSource=true;
+$scope.sourcevisible=false;
+    $scope.destinationvisible=false;
+    $scope.getAirports=function(){
+
+
+        var searchStringToPass='';
+
+
+        $scope.setSource =function(isSourceTyping){
+console.log(isSourceTyping)
+            if(isSourceTyping==1){
+               // console.log("this is function1");
+                isSource=true;
+            }
+            else if(isSourceTyping==0){
+                //console.log("this is function2");
+                isSource=false;
+            }
+        }
+        if( typeof $scope.searchStringSource !== "undefined" && isSource==true){
+            //console.log("source");
+            $scope.sourcevisible=true;
             searchStringToPass=$scope.searchStringSource;
         }
 
-        else if(typeof $scope.searchStringDestination !== "undefined"){
+        if(typeof $scope.searchStringDestination !== "undefined" && isSource==false){
+            //console.log("destination");
+            $scope.destinationvisible=true;
             searchStringToPass=$scope.searchStringDestination;
         }
 
@@ -169,14 +203,27 @@ var searchStringToPass='';
              params: {}
         }).
             success(function(airportslist, status, headers, config) {
+
+                if($scope.sourcevisible==true){
+
+                $scope.sourcevisible=!$scope.sourcevisible;
+                }
+                else{
+                $scope.destinationvisible=!$scope.destinationvisible;
+                }
+
+
+                $scope.movies=airportslist;
+                $scope.sam="";
                 if (airportslist instanceof Array){
                 for(var airports in airportslist){
-                    console.log(airportslist[airports]);
+                  //  console.log(airportslist[airports]);
                 }
                 }
                 else{
                     console.log("No Suggestions");
                 }
+
               //  for(var indiairports in airportsList){
                 //    console.log(airportsList[indiairports]+"<br/>");
                 //}

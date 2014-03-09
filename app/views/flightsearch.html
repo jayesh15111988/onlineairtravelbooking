@@ -1,3 +1,111 @@
+<style type="text/css">
+.autocomplete{
+width: 100%;
+position: relative;
+border:0;
+}
+
+.autocomplete input{
+font-size: 1.2em;
+width: 100%;
+padding:0em;
+    border: 0;
+}
+
+.autocomplete:focus{
+    border: 0;
+}
+
+.autocomplete ul{
+position: absolute;
+left: 0px;
+width: 100%;
+border-left: 1px solid #888;
+border-right: 1px solid #888;
+border-bottom: 1px solid #888;
+z-index: 1;
+}
+
+.autocomplete li{
+text-align: left;
+list-style:none;
+width: 100%;
+padding:0.4em;
+background-color: #fff;
+}
+
+.autocomplete li.active{
+width: 100%;
+background-color: #4bf;
+}
+
+.isVisible{
+    display:inline;
+}
+.isInvisible{
+    display:none;
+}
+
+.autocomplete .highlight {
+background-color: #E2E2E2;
+}
+
+.autocomplete li.active .highlight {
+background: #666;
+color: #fff;
+}
+
+@font-face { /* Entypo pictograms by Daniel Bruce — www.entypo.com */
+    font-family: 'Entypo';
+    src: url('../assets/entypo.ttf') format('truetype'),
+    url('../assets/entypo.eot') format('eot');
+}
+
+* {
+    margin: 0px;
+    padding: 0px;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+}
+
+a{
+    text-decoration: none;
+    color: #2b7;
+    font-weight: bold;
+}
+
+a:hover{
+    color: #b15;
+    transition: 0.1s all ease-in-out;
+}
+
+
+
+
+
+
+.input-block-level {
+    display: block;
+    width: 100%;
+    min-height: 30px;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+
+
+ul>li{
+    list-style:none;
+}
+
+
+
+
+</style>
+
+<script src="../bower_components/jquery/autocomplete.js"></script>
+
 <script>
     $('.datepicker').datepicker({
 
@@ -53,58 +161,47 @@
             <div class="radio">
                 <label>
                     <input type="radio" name="optionsRadios" id="optionsRadios1" value="option1" checked>
-                    Option one is this  and that&mdash;be sure to include why it's great
+                    One Way
                 </label>
             </div>
             <div class="radio">
                 <label>
                     <input type="radio" name="optionsRadios" id="optionsRadios1" value="option1">
-                    Option one is this and that&mdash;be sure to include why it's great
+                    Round
 
                 </label>
 
             </div>
 
-        <div class="row"></br></br>
-            <div class="col-md-6">From Source:
-                <input type="text"  ng-model="searchStringSource" ng-change="getAirports();"  class="form-control" id="exampleInputEmail24" placeholder="Source"></div>
-            <div class="col-md-6">To Destination:
 
-                <input type="email" ng-model="searchStringDestination" ng-change="getAirports();" class="form-control" id="exampleInputEmail2" placeholder="Destination">
+
+
+        <div class="row" style="margin-top: 0px">
+            <div class="col-md-6">From Source:<img ng-class="{'isVisible': sourcevisible,'isInvisible':!sourcevisible }" style="margin-left: 200px" src="../images/ajax-loader.gif">
+
+                <autocomplete ng-model="searchStringSource"  ng-keyup="setSource(1);" data="movies" on-type="getAirports" ng-model="sam" placeholder=""></autocomplete>
+
+               <!--= <input type="text"  ng-model="searchStringSource" ng-change="getAirports();"  class="form-control" id="exampleInputEmail24" placeholder="Source">-->
+            </div>
+
+            <div class="col-md-6">To Destination:<img ng-class="{'isVisible': destinationvisible,'isInvisible':!destinationvisible }" style="margin-left: 200px" src="../images/ajax-loader.gif">
+                <autocomplete ng-model="searchStringDestination" ng-keyup="setSource(0);" data="movies" on-type="getAirports" ng-model="sam" placeholder=""></autocomplete>
+
+                <!--<input type="email" ng-model="searchStringDestination" ng-change="getAirports();" class="form-control" id="exampleInputEmail2" placeholder="Destination">-->
             </div>
         </div>
 
 
-   <!--         <form onsubmit="fuckoff();">
-
-                <div id="name-group" class="form-group">
-                    <label>Name</label>
-                    <input type="text" name="name" class="form-control" placeholder="Bruce Wayne">
-                    <span class="help-block"></span>
-                </div>
-
-
-                <div id="superhero-group" class="form-group">
-                    <label>Superhero Alias</label>
-                    <input type="text" name="superheroAlias" class="form-control" placeholder="Caped Crusader">
-                    <span class="help-block"></span>
-                </div>
-
-
-                <button type="submit" class="btn btn-success btn-lg btn-block">
-                    <span class="glyphicon glyphicon-flash"></span> Submit!
-                </button>
-            </form>
--->
 
 
 
-            <div class="row"></br></br>
-                <div class="col-md-6">From: <label class="sr-only" for="leavingon">Leaving On</label>
-                    <input id="dpd1" type="text" class="form-control" data-start-date="+d"  id="leavingon" placeholder="Leaving On" data-provide="datepicker"></div>
-                <div class="col-md-6">To:
+
+            <div class="row">
+                <div class="col-md-6">Leaving On: <label class="sr-only" for="leavingon">Leaving On</label>
+                    <input id="dpd1" type="text" class="form-control" data-start-date="+d"  id="leavingon" placeholder="Leaving On (mm/dd/yyyy)" data-provide="datepicker"></div>
+                <div class="col-md-6">Reaching On:
                     <label class="sr-only" for="reachingon">Reaching On</label>
-                    <input id="dpd2" type="text" class="form-control" id="reachingon" placeholder="Leaving On" data-provide="datepicker"></div>
+                    <input id="dpd2" type="text" class="form-control" id="reachingon" placeholder="Reaching On (mm/dd/yyyy)" data-provide="datepicker"></div>
                 </div>
 
 

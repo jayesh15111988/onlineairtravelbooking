@@ -5,7 +5,7 @@ angular.module('airtravelbookingappApp', [
   'ngResource',
   'ngSanitize',
   'ngRoute',
-  'ui.bootstrap',
+  'ui.bootstrap','autocomplete',
         'ngResource'
 ])
 
