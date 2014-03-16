@@ -113,12 +113,13 @@ ul>li{
 </style>
 
 <script src="../bower_components/jquery/autocomplete.js"></script>
-        <script src="../bower_components/jquery/currency-autocomplete.js"></script>
+        <!--<script src="../bower_components/jquery/currency-autocomplete.js"></script>-->
 
 <script>
     $('.datepicker').datepicker({
 
     });
+
 
     var nowTemp = new Date();
     var now = new Date(nowTemp.getFullYear(), nowTemp.getMonth(), nowTemp.getDate(), 0, 0, 0, 0);
@@ -196,13 +197,13 @@ Type of travel:<br/>
             <div class="row" style="margin-top: 0px">
                 <div class="col-md-6">Source Country code:<img ng-class="{'isVisible': false,'isInvisible':true }" style="margin-left: 200px" src="../images/ajax-loader.gif">
 
-                    <input type="text" name="currency" ng-model="sourcecode" class="form-control" placeholder="Source Country code" class="biginput" id="autocomplete1">
+                    <input type="text" name="currency" class="form-control" placeholder="Source Country code" class="biginput" id="autocomplete1">
 
                     <!--= <input type="text"  ng-model="searchStringSource" ng-change="getAirports();"  class="form-control" id="exampleInputEmail24" placeholder="Source">-->
                 </div>
 
                 <div class="col-md-6">Destination Country code:<img ng-class="{'isVisible':false,'isInvisible':true }" style="margin-left: 200px" src="../images/ajax-loader.gif">
-                    <input type="text" name="currency" ng-model="destcode1" ng-focus="changeDomestic();" class="form-control" placeholder="Destination Country code" class="biginput" id="autocomplete">
+                    <input type="text" name="currency" ng-model="destcodenew"  ng-focus="changeDomestic();" class="form-control" placeholder="Destination Country code" class="biginput" id="autocomplete">
 
                     <!--<input type="email" ng-model="searchStringDestination" ng-change="getAirports();" class="form-control" id="exampleInputEmail2" placeholder="Destination">-->
                 </div>
@@ -231,10 +232,10 @@ Type of travel:<br/>
 
             <div class="row">
                 <div class="col-md-6">Leaving On: <label class="sr-only" for="leavingon">Leaving On</label>
-                    <input id="dpd1" type="text" class="form-control" data-start-date="+d"  id="leavingon" placeholder="Leaving On (mm/dd/yyyy)" data-provide="datepicker"></div>
+                    <input id="dpd1" type="text" ng-model="leavingOut" class="form-control" data-start-date="+d"  id="leavingon" placeholder="Leaving On (mm/dd/yyyy)" data-provide="datepicker"></div>
                 <div ng-show="isVisibleReturningDate" class="col-md-6">Reaching On:
                     <label class="sr-only" for="reachingon">Reaching On</label>
-                    <input id="dpd2" type="text" class="form-control" id="reachingon" placeholder="Reaching On (mm/dd/yyyy)" data-provide="datepicker">
+                    <input id="dpd2" type="text" ng-model="comingIn"  class="form-control" id="reachingon" placeholder="Reaching On (mm/dd/yyyy)" data-provide="datepicker">
                 </div>
                 </div>
 
@@ -242,12 +243,8 @@ Type of travel:<br/>
 
 
             <span>Number of Adults</span>&nbsp;&nbsp;<a href="#" class="customtooltip" title="Any person above 5 years will be considered as an adult" >i</a>
-            <select class="form-control input-large">
-                <option>1</option>
-                <option>2</option>
-                <option>3</option>
-                <option>4</option>
-                <option>5</option>
+            <select ng-model="numberOfAdults" ng-options="c.number for c in numberAdult" class="form-control input-large">
+
             </select>
 
 
@@ -255,20 +252,12 @@ Type of travel:<br/>
 
 
                 <span>Number of Children</span>&nbsp;&nbsp;<span><a href="#" class="customtooltip" title="Child above 2 years will be considered as child" >i</a></span>
-            <select class="form-control input-large">
-                <option>0</option>
-                <option>1</option>
-                <option>2</option>
-                <option>3</option>
-                <option>4</option>
-                <option>5</option>
+            <select ng-model="numberOfChildren" ng-options="c.number for c in numberChildren" class="form-control input-large">
+
             </select>
             <span>Number of Infants</span>&nbsp;&nbsp;<a href="#" class="customtooltip" title="Child below 2 years will be considered as an infant" >i</a>
-            <select class="form-control input-large">
-                <option>0</option>
-                <option>1</option>
-                <option>2</option>
-                <option>3</option>
+            <select ng-model="numberOfInfants" ng-options="c.number for c in numberChildren" class="form-control input-large">
+
             </select>
 <div>
                      <span class="divider">Class</span><br/>
@@ -281,7 +270,7 @@ Type of travel:<br/>
      <div>
                 <span>Airline</span></br>
             <div class="btn-group btn-group-md">
-                <button type="button" ng-class="{'whichAirlineClicked':whichAirline}" class="btn btn-default">My Airline</button>
+                <button type="button" ng-click="airlineSelection();" ng-class="{'whichAirlineClicked':whichAirline}" class="btn btn-default">My Airline</button>
             </div>
 </div>
 
@@ -295,7 +284,7 @@ Type of travel:<br/>
      </div>
  </div>
                      <div class="row col-lg-offset-10">
-                         <button type="button" class="btn btn-primary btn-lg" >book now</button>
+                         <button ng-click="bookNowPressed();" type="button" class="btn btn-primary btn-lg" >book now</button>
                      </div>
 </div>
     </div>

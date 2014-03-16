@@ -132,7 +132,6 @@
     <script src="bower_components/angular-sanitize/angular-sanitize.js"></script>
     <script src="bower_components/angular-route/angular-route.js"></script>
     <script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
-    <script src="bower_components/jquery/jquery.autocomplete.min.js"></script>
     <!-- endbower -->
     <!-- endbuild -->
 
@@ -197,7 +196,7 @@ startDate:'+d'
                     //the 'is' for buttons that trigger popups
                     //the 'has' for icons within a button that triggers a popup
                     if (!$(this).is(e.target) && $(this).has(e.target).length === 0 && $('.popover').has(e.target).length === 0) {
-                       console.log(this+ " read now ")
+                       //console.log(this+ " read now ")
                      //   $(this).popover('hide');
                     }
                 });

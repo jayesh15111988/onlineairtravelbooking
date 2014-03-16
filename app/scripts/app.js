@@ -21,6 +21,14 @@ angular.module('airtravelbookingappApp', [
             templateUrl: 'views/flightsearch.html',
             controller: 'flightsearchcontroller'
         })
+        .when('/showavailableflights/:id', {
+            templateUrl: 'views/showflights.html',
+            controller: 'showflightscontroller'
+        })
+        .when('/view/:id', {
+            controller: 'DetailController',
+            templateUrl: 'views/detail.html'
+        })
       .otherwise({
         redirectTo: '/'
       });

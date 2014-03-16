@@ -1,0 +1,9 @@
+<div ng-controller="DetailController">
+    <table>
+        <tr><th><div><h4>Flights Index</h4></div></th></tr>
+        <tr ng-repeat="page in totalPages">
+            <td><a href="#/view/{{page*10}}">{{page}}</a></td>
+        </tr>
+    </table>
+
+    </div>

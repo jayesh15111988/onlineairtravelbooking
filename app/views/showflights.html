@@ -1,0 +1,80 @@
+<style type="text/css">
+    .moveleft {
+        margin-left: -35%;
+    }
+    .moveleftmiddle{
+        margin-left: -75%;
+    }
+    .col-xs-9{
+        width:120%;
+    }
+    .tableMain{
+        max-width: 350%;
+        width: 350%;
+    }
+    </style>
+
+        <script>
+
+            </script>
+
+<div class="container" ng-controller="showflightscontroller">
+    <div class="row">
+
+
+        <div class="col-xs-3 moveleft">
+            <table>
+                <tr><th><div>Available Airlines</div></th></tr>
+<tr ng-repeat="airline in airlines">
+
+    <td><div id='{{airline.iata}}'><a href='{{airline.icao}}'>{{airline.name}}</a><br/>{{airline.phoneNumber?airline.phoneNumber:""}}</div><br/></td>
+    </tr>
+                </table>
+            <table>
+                <tr><th><div><h4>Available Airports</h4></div></th></tr>
+                <tr ng-repeat="airport in airports">
+
+                    <td><div><h4>{{airport.name}}</h4>{{airport.city}}<br/>{{airport.countryName}}</br> {{airport.regionName}}</div><br/></td>
+                </tr>
+            </table>
+            <table>
+                <tr><th><div><h4>Available Airplanes</h4></div></th></tr>
+                <tr ng-repeat="equipment in equipments">
+
+                    <td><div id="{{equipment.iata}}">{{equipment.name}}</div><br/></td>
+                </tr>
+            </table>
+
+            <table>
+                <tr ng-repeat="flight in flightDetails ">
+                    <td>{{flight}}</td>
+
+                </tr>
+            </table>
+
+
+
+        </div>
+        <div class="col-xs-9">
+
+            <div class="col-md-4 col-md-push-9 col-sm-4 col-sm-push-8 moveleftmiddle">
+
+
+
+
+                    <div ng-repeat="flightDetail in flightDetailss">
+                        <div class="tableMain" style="background-color: black">{{flightDetail}}</div><br/><br/>
+                    </div>
+
+
+<div class="tableMain">
+                    <div style="float:left" ng-repeat="page in totalPages ">
+                        <a href="#/showavailableflights/{{page}}">{{page}}&nbsp;&nbsp;&nbsp;</a>
+                    </div>
+    </div>
+            </div>
+
+        </div>
+
+    </div>
+</div>
