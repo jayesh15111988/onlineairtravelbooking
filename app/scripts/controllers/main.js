@@ -267,7 +267,7 @@ sourcecode= suggestion.data;
 
     });
 
-    $scope.movies = [""];
+    $scope.movies = [];
 
     // gives another movie array on change
     /*$scope.updateMovies = function(typed){

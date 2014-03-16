@@ -113,7 +113,8 @@ ul>li{
 </style>
 
 <script src="../bower_components/jquery/autocomplete.js"></script>
-        <!--<script src="../bower_components/jquery/currency-autocomplete.js"></script>-->
+<script src="../bower_components/jquery/jquery.autocomplete.min.js"></script>
+      <!--  <script src="../bower_components/jquery/currency-autocomplete.js"></script>-->
 
 <script>
     $('.datepicker').datepicker({
@@ -213,7 +214,7 @@ Type of travel:<br/>
         <div class="row" style="margin-top: 0px">
             <div class="col-md-6">From Source:<img ng-class="{'isVisible': sourcevisible,'isInvisible':!sourcevisible }" style="margin-left: 200px" src="../images/ajax-loader.gif">
 
-                <autocomplete ng-model="searchStringSource"  ng-keyup="setSource(1);" data="movies" on-type="getAirports" ng-model="sam" placeholder=""></autocomplete>
+               <autocomplete ng-model="searchStringSource"  ng-keyup="setSource(1);" data="movies" on-type="getAirports" ng-model="sam" placeholder=""></autocomplete>
 
                <!--= <input type="text"  ng-model="searchStringSource" ng-change="getAirports();"  class="form-control" id="exampleInputEmail24" placeholder="Source">-->
             </div>
