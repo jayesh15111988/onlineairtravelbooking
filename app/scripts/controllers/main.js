@@ -258,6 +258,11 @@ airlinetravelmodule.controller('showflightscontroller',function($scope,$http,$ro
             });
     }
 
+    $scope.doitnow=function(){
+        console.log("deteted");
+$scope.servermessage="hahha";
+    }
+
 $scope.bookorgotoreturingflights=function(index){
 
 

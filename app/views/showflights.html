@@ -12,11 +12,45 @@
         max-width: 350%;
         width: 350%;
     }
-    </style>
+
+    .customtooltip{
+        display: inline;
+        position: relative;
+    }
+    .customtooltip:hover:after{
+        background: #333;
+        background: rgba(0,0,0,.8);
+        border-radius: 5px;
+        bottom: 26px;
+        left:-40px;
+        color: #fff;
+        content: attr(title);
+        padding: 5px 15px;
+        position: absolute;
+        z-index: 98;
+        width: 220px;
+    }
+
+</style>
 
         <script>
+            $(document).ready(function(){
+                $("button#airlines").click(function(){
+                    console.log("clicek");
+                    $("p#airlinesDetails").toggle(1000);
+                });
+                $("button#airports").click(function(){
+                    $("p#airportsDetails").toggle(1000);
+                });
+                $("button#airplnaes").click(function(){
+                    $("p#airplanesDetails").toggle(1000);
+                });
+            });
 
-            </script>
+
+
+
+        </script>
 
 <div class="container" ng-controller="showflightscontroller">
     <div class="row">
@@ -24,25 +58,32 @@
 
         <div class="col-xs-3 moveleft">
             <table>
-                <tr><th><div>Available Airlines</div></th></tr>
-<tr ng-repeat="airline in airlines">
+                <tr><th><button id="airlines"><h6>Available Airlines</h6></button></th></tr>
+<p id="airlinesDetails">
+
+                <tr ng-repeat="airline in airlines">
 
     <td><div id='{{airline.iata}}'><a href='{{airline.icao}}'>{{airline.name}}</a><br/>{{airline.phoneNumber?airline.phoneNumber:""}}</div><br/></td>
     </tr>
+                </p>
                 </table>
             <table>
-                <tr><th><div><h4>Available Airports</h4></div></th></tr>
+                <tr><th><button id="airports"><h6>Available Airports</h6></button></th></tr>
+                <p id="airportsDetails">
                 <tr ng-repeat="airport in airports">
 
                     <td><div><h4>{{airport.name}}</h4>{{airport.city}}<br/>{{airport.countryName}}</br> {{airport.regionName}}</div><br/></td>
                 </tr>
+                </p>
             </table>
             <table>
-                <tr><th><div><h4>Available Airplanes</h4></div></th></tr>
+                <tr><th><button id="airplanes"><h6>Available Airplanes</h6></button></th></tr>
+                <p id="airplanesDetails">
                 <tr ng-repeat="equipment in equipments">
 
                     <td><div id="{{equipment.iata}}">{{equipment.name}}</div><br/></td>
                 </tr>
+                </p>
             </table>
 
 
@@ -87,11 +128,12 @@
 
                     </div>
                 <div class="tableMain" ng-repeat="error in errors">
-                    <div>Error: {{error.name}} </div>
+                    <a class="customtooltip" ng-mouseover="doitnow();" title="{{servermessage}}">Error: {{error.name}} </a>
                     <div>Error Code: {{error.code}} </div>
                     <div>Error Code: {{error.codemessage}} </div>
                     <div>Error Resolution {{error.resolution}} </div>
                 <div><a href="{{error.gobacklink}}">Go Back</a></div>
+
                 </div>
 
 
