@@ -59,6 +59,7 @@
 
                     <div ng-repeat="flightDetail in flightDetails">
                         <div class="tableMain" style="background-color: lightgray">
+                           <div>Date of Travel: {{departureDate}} </div>
                             <div>Departing From: {{flightDetail.departureAirportFsCode}} At {{flightDetail.departureTime}} </div>
                             <div>Arriving To: {{flightDetail.arrivalAirportFsCode}} At {{flightDetail.arrivalTime}}</div>
                             <!--<div>Deparing On: {{flightDetail.departureDaysOfWeek[0]}}</div>-->
@@ -81,15 +82,22 @@
 <br/>
                             </div>
                     <br/>
-                            <button ng-click="doit()">Book Now</button>
+                            <button ng-click="bookorgotoreturingflights($index)">{{bookbuttontitle}}</button>
                         </div><br/><br/>
 
                     </div>
+                <div class="tableMain" ng-repeat="error in errors">
+                    <div>Error: {{error.name}} </div>
+                    <div>Error Code: {{error.code}} </div>
+                    <div>Error Code: {{error.codemessage}} </div>
+                    <div>Error Resolution {{error.resolution}} </div>
+                <div><a href="{{error.gobacklink}}">Go Back</a></div>
+                </div>
 
 
 <div class="tableMain">
                     <div style="float:left" ng-repeat="page in totalPages ">
-                        <a href="#/showavailableflights/{{page}}">{{page}}&nbsp;&nbsp;&nbsp;</a>
+                        <a href="#/showavailableflights/{{page}}">{{page+1}}&nbsp;&nbsp;&nbsp;</a>
                     </div>
     </div>
             </div>

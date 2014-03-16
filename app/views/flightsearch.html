@@ -143,6 +143,7 @@ ul>li{
     var checkout = $('#dpd2').datepicker({
         startDate:'+d',
         endDate:'+90d',
+        dateFormat:'YYYY//MM/DD',
         onRender: function(date) {
             return date.valueOf() <= checkin.date.valueOf() ? 'disabled' : '';
         }
