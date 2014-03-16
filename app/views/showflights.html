@@ -45,12 +45,7 @@
                 </tr>
             </table>
 
-            <table>
-                <tr ng-repeat="flight in flightDetails ">
-                    <td>{{flight}}</td>
 
-                </tr>
-            </table>
 
 
 
@@ -62,8 +57,33 @@
 
 
 
-                    <div ng-repeat="flightDetail in flightDetailss">
-                        <div class="tableMain" style="background-color: black">{{flightDetail}}</div><br/><br/>
+                    <div ng-repeat="flightDetail in flightDetails">
+                        <div class="tableMain" style="background-color: lightgray">
+                            <div>Departing From: {{flightDetail.departureAirportFsCode}} At {{flightDetail.departureTime}} </div>
+                            <div>Arriving To: {{flightDetail.arrivalAirportFsCode}} At {{flightDetail.arrivalTime}}</div>
+                            <!--<div>Deparing On: {{flightDetail.departureDaysOfWeek[0]}}</div>-->
+                            <div>Distance in Miles: {{flightDetail.distanceMiles}}</div>
+                            <div>Flight Duration: {{flightDetail.flightDurationMinutes}}</div>
+                            <div>Layover Duration: {{flightDetail.layoverDurationMinutes}}</div>
+                            <div>Flight Type: {{flightDetail.flightType}}</div>
+                            <div>Connection Details</div><br/>
+                            <div ng-repeat="connectionDetail in flightDetail.flightLegs">
+                                <div>Departing From: {{connectionDetail.departureAirportFsCode}} At {{connectionDetail.departureTime}} </div>
+                                <div>Terminal {{connectionDetail.departureTerminal}}</div>
+                                <div>Arriving To: {{connectionDetail.arrivalAirportFsCode}} At {{connectionDetail.arrivalTime}}</div>
+                                <div>Terminal {{connectionDetail.arrivalTerminal}}</div>
+                                <div>Carrier Airline {{connectionDetail.carrierFsCode}}</div>
+                                <div>Flight Number {{connectionDetail.flightNumber}}</div>
+                                <div>Day difference between source and destination {{connectionDetail.arrivalDateAdjustment}}</div>
+                                <div>Distance in Miles {{connectionDetail.distanceMiles}}</div>
+                                <div>Flight Duration {{connectionDetail.flightDurationMinutes}}</div>
+                                <div>Leasing Info: {{connectionDetail.wetleaseInfo?connectionDetail.wetleaseInfo:"N/A"}} </div>
+<br/>
+                            </div>
+                    <br/>
+                            <button ng-click="doit()">Book Now</button>
+                        </div><br/><br/>
+
                     </div>
 
 

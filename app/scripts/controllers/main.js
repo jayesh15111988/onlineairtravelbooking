@@ -156,6 +156,8 @@ airlinetravelmodule.controller('MyCtrl1', function($scope){
 });
 
 var allFlightsDetail=Array();
+var appendixDictionary={};
+var totalPagesCount=Array();
 var totalP;
 
 airlinetravelmodule.controller('DetailController',function($scope,$routeParams){
@@ -192,11 +194,16 @@ airlinetravelmodule.controller('showflightscontroller',function($scope,$http,$ro
     //console.log($routeParams.id+ " id "+ (parseInt($routeParams.id)+9));
 
     if(allFlightsDetail.length>0){
-    $scope.flightDetails = allFlightsDetail.slice($routeParams.id*10,parseInt($routeParams.id*10)+9);
+        console.log("yesss***");
+        $scope.flightDetails = allFlightsDetail.slice($routeParams.id*10,parseInt($routeParams.id*10)+9);
+    $scope.totalPages=totalPagesCount;
+    $scope.airlines=appendixDictionary.airlines;
+    $scope.airports=appendixDictionary.airports;
+    $scope.equipments=appendixDictionary.equipments;
     console.log($scope.flightDetails.length);
     }
 
-
+if(allFlightsDetail.length==0){
     $http({method: 'GET', url: 'http://jayeshkawli.com/airlinetravel/flightsearchapi.php',//?searchstring='+searchStringToPass+"&countryCode="+countryCode,
         params: {}
     }).
@@ -204,15 +211,19 @@ airlinetravelmodule.controller('showflightscontroller',function($scope,$http,$ro
 
             //$scope.flightdetails=flightslist;
             //airline=flightslist;
-            var mainHandle=flightslist.appendix;
-            $scope.airlines=mainHandle.airlines;
-            $scope.airports=mainHandle.airports;
-            $scope.equipments=mainHandle.equipments;
+           console.log("noooooooo***");
+            appendixDictionary=flightslist.appendix;
+            $scope.airlines=appendixDictionary.airlines;
+            $scope.airports=appendixDictionary.airports;
+            $scope.equipments=appendixDictionary.equipments;
             totalP=Math.ceil(flightslist.flights.length/$scope.numberOfResultsPerPage);
             $scope.totalPages=Array();
+            console.log(totalP+"&&");
             for(var i=0;i<totalP;i++){
-                $scope.totalPages.push(i);
+               $scope.totalPages.push(i);
             }
+            console.log(totalPagesCount+"&&");
+            totalPagesCount=$scope.totalPages;
             allFlightsDetail=flightslist.flights;
 
 
@@ -221,7 +232,7 @@ airlinetravelmodule.controller('showflightscontroller',function($scope,$http,$ro
             for(airline in airlines){
                 airlineslisttodisplay+="<div id='"+airlines[airline].icao+"'><a href='"+airlines[airline].iata+"'>"+airlines[airline].name+"</a></div><br/>";
             }
-            $scope.flightDetailss = allFlightsDetail.slice(0,9);
+            $scope.flightDetails = allFlightsDetail.slice(0,9);
 //console.log(airlineslisttodisplay);
          //   $scope.data=airlineslisttodisplay;
 
@@ -229,6 +240,7 @@ airlinetravelmodule.controller('showflightscontroller',function($scope,$http,$ro
         error(function(data, status, headers, config) {
 console.log("error");
         });
+}
 });
 
 airlinetravelmodule.controller('flightsearchcontroller',function($scope,$http,$window){
