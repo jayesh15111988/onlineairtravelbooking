@@ -1,9 +1,17 @@
 <div ng-controller="DetailController">
     <table>
-        <tr><th><div><h4>Flights Index</h4></div></th></tr>
-        <tr ng-repeat="page in totalPages">
+        <tr><th><div><h4>Departing Flight Details</h4></div></th></tr>
+        <tr ng-repeat="departuredata in fullTravelDetails.departure">
             <td><a href="#/view/{{page*10}}">{{page}}</a></td>
         </tr>
     </table>
 
+    <table>
+        <tr><th><div><h4>{{arrivalstatus}}</h4></div></th></tr>
+        <tr ng-repeat="arrivaldata in fullTravelDetails.arrival">
+            <td><a href="#/view/{{page*10}}">{{page}}</a></td>
+        </tr>
+    </table>
+    <button>Book Now</button>
+<div>{{bottomarrivalstatus}}</div>
     </div>

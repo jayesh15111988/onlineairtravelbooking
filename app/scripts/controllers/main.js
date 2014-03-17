@@ -1,7 +1,7 @@
 'use strict';
 
 
-/* This is the main controller moduel. We will store all controllers used in our code in this module */
+/* This is the main controller module. We will store all controllers used in our code in this module */
 
 
 var airlinetravelmodule=angular.module('airtravelbookingappApp');
@@ -98,6 +98,8 @@ airlinetravelmodule.controller('loginController',function($scope){
     $scope.forgotPassword=function(){
     $scope.showForgotPasswordView();
     }
+
+
 })
 
 
@@ -169,9 +171,18 @@ airlinetravelmodule.controller('DetailController',function($scope,$routeParams){
     for(var i=0;i<totalP;i++){
         $scope.totalPages.push(i);
     }*/
-$scope.fullTravelDetails=travelDetails;
+    $scope.fullTravelDetails.departure=travelDetails.departureDetails;
+    if($routeParams==2){
+$scope.arrivalstatus="Arrival Flight Details";
+        $scope.fullTravelDetails.arrival=travelDetails.arrivalDetails;
+    $scope.bottomarrivalstatus="Have a nice flight";
+    }
+    else{
+        $scope.arrivalstatus="Have a nice flight";
+    }
 
-    //console.log($routeParams.id*10+ " id "+ (parseInt($routeParams.id)*10+9));
+
+    console.log($routeParams.id+ "This is whether one way or round trip");
 
 //    $scope.flightDetails = allFlightsDetail.slice($routeParams.id,parseInt($routeParams.id)+9);
     //console.log($scope.flightDetails.length);
@@ -273,10 +284,12 @@ if($scope.bookbuttontitle=="Book Now"){
 var numberOfKeys=Object.keys(travelDetails).length;
 if(numberOfKeys==2){
     console.log("two way flight")
+
 }
     else if(numberOfKeys==1){
     console.log("One way flight this is");
 }
+    $window.location.href="#/views/"+numberOfKeys;
     //console.log(Object.keys(travelDetails).length+ " aaarrival");
 }
     else if($scope.bookbuttontitle=="Select Returning Flight"){
@@ -299,6 +312,13 @@ if(allFlightsDetail.length==0){
 
 
 });
+
+airlinetravelmodule.controller('upperleftbarcontroller',function($scope){
+
+    $scope.setRegion=function(regionname){
+        console.log(regionname);
+    }
+})
 
 airlinetravelmodule.controller('flightsearchcontroller',function($scope,$http,$window){
 

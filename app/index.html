@@ -43,6 +43,7 @@
             position: relative;
             display: inline;
             margin-top: 1em;
+            margin-top: 1em;
         }
 
         .customtooltip{
@@ -249,7 +250,7 @@ startDate:'+d'
                 <a class="navbar-brand" href="#">Airline Reservation</a>
             </div>
             <!-- Collect the nav links, forms, and other content for toggling -->
-            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <div class="collapse navbar-collapse" ng-controller="upperleftbarcontroller" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav">
 
                     <li class="dropdown">
@@ -260,7 +261,7 @@ startDate:'+d'
 
                             </li>
 
-                            <li><a href="#" onclick="setRegion('Asia Pacific')">Asia Pacific</a></li>
+                            <li><a ng-click="setRegion('Asia Pacific')">Asia Pacific</a></li>
                             <li><a href="#" onclick="setRegion('Middle East')">Middle East</a></li>
                             <li><a href="#" onclick="setRegion('Europe')">Europe</a></li>
 
