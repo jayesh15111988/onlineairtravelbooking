@@ -63,6 +63,11 @@
             width: 220px;
         }
 
+        .dropdown-menu{
+            cursor: pointer;
+            cursor: hand;
+        }
+
         /* Start CSS3 Animations on supported browser */
         .jvFloat .placeHolder {
             position: absolute;
@@ -256,14 +261,10 @@ startDate:'+d'
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" id="regionname" data-toggle="dropdown">Select your Region: <b class="caret"></b></a>
                         <ul class="dropdown-menu">
-                            <li><a href="#" onclick="setRegion('Americas')">Americas</a>
-
-
-                            </li>
-
-                            <li><a ng-click="setRegion('Asia Pacific')">Asia Pacific</a></li>
-                            <li><a href="#" onclick="setRegion('Middle East')">Middle East</a></li>
-                            <li><a href="#" onclick="setRegion('Europe')">Europe</a></li>
+                            <li><a ng-click="setRegion('americas')">Americas</a></li>
+                            <li><a ng-click="setRegion('asia')">Asia Pacific</a></li>
+                            <li><a ng-click="setRegion('middleeast')">Middle East</a></li>
+                            <li><a ng-click="setRegion('europe')">Europe</a></li>
 
                         </ul>
                     </li>

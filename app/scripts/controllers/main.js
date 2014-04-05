@@ -157,11 +157,14 @@ airlinetravelmodule.controller('MyCtrl1', function($scope){
 
 });
 
+/* real global variable */
 var allFlightsDetail=Array();
 var appendixDictionary={};
 var totalPagesCount=Array();
 var totalP;
 var bookbuttontitletext='Book Now';
+var numberOfDaysToRetrieveFlight=1;
+var connectionType='direct';
 var getParameteresDictionary;
 var travelDetails={};
 
@@ -203,7 +206,7 @@ airlinetravelmodule.controller('showflightscontroller',function($scope,$http,$ro
     $scope.departureDate='';
     var airline,airports;//=Array();
     var airlines=Array();//[{"name":"abs","iata":"xyz","icao":"asda"}];
-
+$scope.airportsDeepDetails={};
 
 
 
@@ -222,8 +225,24 @@ airlinetravelmodule.controller('showflightscontroller',function($scope,$http,$ro
     console.log($scope.flightDetails.length);
     }
 
+
+function addToAirportDetails(airportsArray){
+    var airportsArrayLength=airportsArray.length;
+//sdfsd
+    for(var i =0;i<airportsArrayLength;i++){
+var airportCode=airportsArray[i].iata;
+        console.log(airportCode);
+        $scope.airportsDeepDetails[airportCode]=airportsArray[i];
+
+        console.log($scope.airportsDeepDetails[airportCode]);
+    }
+}
+$scope.getairports=function(iatacode){
+    return $scope.airportsDeepDetails[iatacode].name+ ' '+$scope.airportsDeepDetails[iatacode].countryName+ ' '+$scope.airportsDeepDetails[iatacode].city;
+}
+
     var getFlightFromGivenParameters=function(source,destination,leavingdate,comingindate){
-        $http({method: 'GET', url: 'http://jayeshkawli.com/airlinetravel/flightsearchapi.php?source='+source+"&destination="+destination+"&leavingdate="+leavingdate+"&comingindate="+comingindate,
+        $http({method: 'GET', url: 'http://jayeshkawli.com/airlinetravel/flightsearchapi.php?source='+source+"&destination="+destination+"&leavingdate="+leavingdate+"&comingindate="+comingindate+"&numberofdays="+numberOfDaysToRetrieveFlight+"&connectiontype="+connectionType,
             params: {}
         }).
             success(function(flightslist, status, headers, config) {
@@ -237,6 +256,7 @@ airlinetravelmodule.controller('showflightscontroller',function($scope,$http,$ro
                     }
                     if(appendixDictionary.airports.length>0){
                         $scope.airports=appendixDictionary.airports;
+                    addToAirportDetails(appendixDictionary.airports);
                     }
                     if(appendixDictionary.equipments.length>0){
                         $scope.equipments=appendixDictionary.equipments;
@@ -354,6 +374,10 @@ sourcecode= suggestion.data;
         //  $scope.movies = data;
         //});
     }*/
+
+    /*Global Variable */
+
+
     var isSource=true;
     var sourcecode="";
     var destcode="";
@@ -364,9 +388,10 @@ sourcecode= suggestion.data;
     $scope.economyClassButtonClicked=true;
     $scope.whichAirline=true;
     $scope.isVisibleReturningDate=false;
-    $scope.searchByPrice=true;
+    $scope.flighttypedesiredwithstops=false;
+    $scope.flighttypedesireddirect=true;
     $scope.searchByVariableDates=false;
-    $scope.searchBySpecificDates=false;
+    $scope.searchBySpecificDates=true;
 
     /* parameters to be sent to database */
     var tripDirection="Oneway";
@@ -374,7 +399,8 @@ sourcecode= suggestion.data;
     var whichAirline="My Airline";
     var travelClass="Economy Class";
     var searchCriteria="Price";
-
+    var numberOfDaysToRetrieveFlight=1;
+    var connectionType='direct';
 
     $scope.numberAdult=[{number:'1'},{number:'2'},{number:'3'},{number:'4'},{number:'5'}];
     $scope.numberChildren=[{number:'0'},{number:'1'},{number:'2'},{number:'3'},{number:'4'},{number:'5'}];
@@ -416,6 +442,19 @@ sourcecode= suggestion.data;
         }
     }
 
+    $scope.searchbyconnectiontype=function(connectiontype){
+        $scope.flighttypedesireddirect=$scope.flighttypedesiredwithstops=false;
+
+        if(connectiontype==1){
+            connectionType='direct';
+            $scope.flighttypedesireddirect=true;
+        }
+        else{
+            connectionType='non_stop';
+            $scope.flighttypedesiredwithstops=true;
+        }
+    } //1 for direct flight and 2 for flights with stop
+
     $scope.bookNowPressed=function(){
        /* tripDirection="Oneway";
         var travelType="Domestic";
@@ -426,6 +465,7 @@ allFlightsDetail.clear();
         if(typeof searchCriteria =="undefined"){
             searchCriteria="Price";
         }
+
         if(typeof  $scope.comingIn=="undefined"){
             $scope.comingIn="N/A";
         }
@@ -440,6 +480,7 @@ allFlightsDetail.clear();
         console.log($scope.numberOfAdults.number);
         console.log($scope.numberOfChildren.number);
         console.log($scope.numberOfInfants.number);
+        console.log(numberOfDaysToRetrieveFlight);
         console.log(travelClass);
         console.log(whichAirline);
         console.log(searchCriteria);
@@ -468,7 +509,7 @@ allFlightsDetail.clear();
             headers: {'Content-Type': 'application/x-www-form-urlencoded'}
         }).success(function (data, status, headers, config) {
                 console.log(data);
-                $window.location.href = "#/showavailableflights/0?source="+$scope.searchStringSource+"&destination="+$scope.searchStringDestination+"&direction="+tripDirection+"&leavingdate="+$scope.leavingOut+"&comingindate="+$scope.comingIn;
+                $window.location.href = "#/showavailableflights/0?source="+$scope.searchStringSource+"&destination="+$scope.searchStringDestination+"&direction="+tripDirection+"&leavingdate="+$scope.leavingOut+"&comingindate="+$scope.comingIn+"&numberofdays="+numberOfDaysToRetrieveFlight;
 
             }).error(function (data, status, headers, config) {
                 $scope.status = status;
@@ -486,10 +527,12 @@ allFlightsDetail.clear();
         }
         else if(val==2){
             searchCriteria="Variable Dates";
+            numberOfDaysToRetrieveFlight=3;
             $scope.searchByVariableDates=true;
         }
         else if (val==3){
             searchCriteria="Specific Dates";
+            numberOfDaysToRetrieveFlight=1;
             $scope.searchBySpecificDates=true;
 
         }

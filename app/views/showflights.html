@@ -42,8 +42,8 @@
         background-color:black;
         color:white;
         border-radius:5px;
-        /*opacity:0;*/
-        visibility: hidden;
+        opacity:0;
+        /*visibility: hidden;*/
         position:absolute;
         -webkit-transition: opacity 0.5s;
         -moz-transition:  opacity 0.5s;
@@ -53,8 +53,8 @@
     }
 
     .hover:hover .tooltip {
-        /*opacity:1;*/
-        visibility:visible;
+        opacity:1;
+        /*visibility:visible;*/
     }
 
 </style>
@@ -62,14 +62,13 @@
         <script>
             $(document).ready(function(){
                 $("button#airlines").click(function(){
-                    console.log("clicek");
-                    $("p#airlinesDetails").toggle(1000);
+                    $(".airlinesDetails").toggle(1000);
                 });
                 $("button#airports").click(function(){
-                    $("p#airportsDetails").toggle(1000);
+                    $(".airportsDetails").toggle(1000);
                 });
-                $("button#airplnaes").click(function(){
-                    $("p#airplanesDetails").toggle(1000);
+                $("button#airplanes").click(function(){
+                    $(".airplanesDetails").toggle(1000);
                 });
             });
 
@@ -81,40 +80,40 @@
 <div class="container" ng-controller="showflightscontroller">
     <div class="row">
 
-        <div class="hover">hover
-            <div class="tooltip">asdadasd<br/>sdasd
-            </div>
 
         </div>
 
+
         <div class="col-xs-3 moveleft">
+
+
             <table>
                 <tr><th><button id="airlines"><h6>Available Airlines</h6></button></th></tr>
-<p id="airlinesDetails">
 
-                <tr ng-repeat="airline in airlines">
 
-    <td><div id='{{airline.iata}}'><a href='{{airline.icao}}'>{{airline.name}}</a><br/>{{airline.phoneNumber?airline.phoneNumber:""}}</div><br/></td>
+               <tr  ng-repeat="airline in airlines" >
+
+    <td class="airlinesDetails"><div id='{{airline.iata}}'><a href='{{airline.icao}}'>{{airline.name}}</a><br/>{{airline.phoneNumber?airline.phoneNumber:""}}</div><br/></td>
     </tr>
-                </p>
+
                 </table>
             <table>
                 <tr><th><button id="airports"><h6>Available Airports</h6></button></th></tr>
-                <p id="airportsDetails">
+
                 <tr ng-repeat="airport in airports">
 
-                    <td><div><h4>{{airport.name}}</h4>{{airport.city}}<br/>{{airport.countryName}}</br> {{airport.regionName}}</div><br/></td>
+                    <td class="airportsDetails"><div><h4>{{airport.name}}</h4>{{airport.city}}<br/>{{airport.countryName}}</br> {{airport.regionName}}</div><br/></td>
                 </tr>
-                </p>
+
             </table>
             <table>
                 <tr><th><button id="airplanes"><h6>Available Airplanes</h6></button></th></tr>
-                <p id="airplanesDetails">
+
                 <tr ng-repeat="equipment in equipments">
 
-                    <td><div id="{{equipment.iata}}">{{equipment.name}}</div><br/></td>
+                    <td class="airplanesDetails"><div id="{{equipment.iata}}">{{equipment.name}}</div><br/></td>
                 </tr>
-                </p>
+
             </table>
 
 
@@ -132,8 +131,8 @@
                     <div ng-repeat="flightDetail in flightDetails">
                         <div class="tableMain" style="background-color: lightgray">
                            <div>Date of Travel: {{departureDate}} </div>
-                            <div>Departing From: {{flightDetail.departureAirportFsCode}} At {{flightDetail.departureTime}} </div>
-                            <div>Arriving To: {{flightDetail.arrivalAirportFsCode}} At {{flightDetail.arrivalTime}}</div>
+                            <div>Departing From:<span popover="{{getairports(flightDetail.departureAirportFsCode)}}" popover-trigger="mouseenter"> {{flightDetail.departureAirportFsCode}}</span> At {{flightDetail.departureTime}} </div>
+                            <div>Arriving To:<span popover="{{airportsDeepDetails[flightDetail.arrivalAirportFsCode]}}" popover-trigger="mouseenter"> {{flightDetail.arrivalAirportFsCode}}</span> At {{flightDetail.arrivalTime}}</div>
                             <!--<div>Deparing On: {{flightDetail.departureDaysOfWeek[0]}}</div>-->
                             <div>Distance in Miles: {{flightDetail.distanceMiles}}</div>
                             <div>Flight Duration: {{flightDetail.flightDurationMinutes}}</div>
@@ -141,9 +140,9 @@
                             <div>Flight Type: {{flightDetail.flightType}}</div>
                             <div>Connection Details</div><br/>
                             <div ng-repeat="connectionDetail in flightDetail.flightLegs">
-                                <div>Departing From: {{connectionDetail.departureAirportFsCode}} At {{connectionDetail.departureTime}} </div>
+                                <div>Departing From: <span popover="{{airportsDeepDetails[connectionDetail.departureAirportFsCode]}}" popover-trigger="mouseenter">{{connectionDetail.departureAirportFsCode}}</span> At {{connectionDetail.departureTime}} </div>
                                 <div>Terminal {{connectionDetail.departureTerminal}}</div>
-                                <div>Arriving To: {{connectionDetail.arrivalAirportFsCode}} At {{connectionDetail.arrivalTime}}</div>
+                                <div>Arriving To:<span popover="{{airportsDeepDetails[connectionDetail.arrivalAirportFsCode]}}" popover-trigger="mouseenter"> {{connectionDetail.arrivalAirportFsCode}}</span> At {{connectionDetail.arrivalTime}}</div>
                                 <div>Terminal {{connectionDetail.arrivalTerminal}}</div>
                                 <div>Carrier Airline {{connectionDetail.carrierFsCode}}</div>
                                 <div>Flight Number {{connectionDetail.flightNumber}}</div>
