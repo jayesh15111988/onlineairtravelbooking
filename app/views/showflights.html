@@ -1,4 +1,5 @@
 <style type="text/css">
+
     .moveleft {
         margin-left: -35%;
     }
@@ -70,9 +71,11 @@
                 $("button#airplanes").click(function(){
                     $(".airplanesDetails").toggle(1000);
                 });
+                $('.pop').popover({ html : true });
             });
 
-
+            $('#popoverData').popover();
+            $('#popoverOption').popover({ trigger: "hover" });
 
 
         </script>
@@ -128,11 +131,21 @@
 
 
 
-                    <div ng-repeat="flightDetail in flightDetails">
+
+                <div ng-repeat="flightDetail in flightDetails">
                         <div class="tableMain" style="background-color: lightgray">
-                           <div>Date of Travel: {{departureDate}} </div>
-                            <div>Departing From:<span popover="{{getairports(flightDetail.departureAirportFsCode)}}" popover-trigger="mouseenter"> {{flightDetail.departureAirportFsCode}}</span> At {{flightDetail.departureTime}} </div>
-                            <div>Arriving To:<span popover="{{airportsDeepDetails[flightDetail.arrivalAirportFsCode]}}" popover-trigger="mouseenter"> {{flightDetail.arrivalAirportFsCode}}</span> At {{flightDetail.arrivalTime}}</div>
+
+                            <!--<div class="hover">hover
+                                <div class="tooltip">asdadasd<br/>asdas
+                                </div>
+                            </div>-->
+
+
+                            <div>Date of Travel: {{departureDate}} </div>
+
+                            <!--<div class="hover">{{flightDetail.departureAirportFsCode}}<div class="tooltip">{{getairportsindi(flightDetail.departureAirportFsCode)}}</div></div>-->
+                            <div>Departing From:<span class="pop" popover="{{getairportsindi(flightDetail.departureAirportFsCode)}}" popover-trigger="mouseenter"> {{flightDetail.departureAirportFsCode}}</span> At {{flightDetail.departureTime}} </div>
+                            <div>Arriving To:<span popover="{{getairportsindi(flightDetail.arrivalAirportFsCode)}}" popover-trigger="mouseenter"> {{flightDetail.arrivalAirportFsCode}}</span> At {{flightDetail.arrivalTime}}</div>
                             <!--<div>Deparing On: {{flightDetail.departureDaysOfWeek[0]}}</div>-->
                             <div>Distance in Miles: {{flightDetail.distanceMiles}}</div>
                             <div>Flight Duration: {{flightDetail.flightDurationMinutes}}</div>
@@ -140,9 +153,9 @@
                             <div>Flight Type: {{flightDetail.flightType}}</div>
                             <div>Connection Details</div><br/>
                             <div ng-repeat="connectionDetail in flightDetail.flightLegs">
-                                <div>Departing From: <span popover="{{airportsDeepDetails[connectionDetail.departureAirportFsCode]}}" popover-trigger="mouseenter">{{connectionDetail.departureAirportFsCode}}</span> At {{connectionDetail.departureTime}} </div>
+                                <div>Departing From: <span  popover="{{getairportsindi(connectionDetail.departureAirportFsCode)}}" popover-trigger="mouseenter">{{connectionDetail.departureAirportFsCode}}</span> At {{connectionDetail.departureTime}} </div>
                                 <div>Terminal {{connectionDetail.departureTerminal}}</div>
-                                <div>Arriving To:<span popover="{{airportsDeepDetails[connectionDetail.arrivalAirportFsCode]}}" popover-trigger="mouseenter"> {{connectionDetail.arrivalAirportFsCode}}</span> At {{connectionDetail.arrivalTime}}</div>
+                                <div>Arriving To:<span popover="{{getairportsindi(connectionDetail.arrivalAirportFsCode)}}" popover-trigger="mouseenter"> {{connectionDetail.arrivalAirportFsCode}}</span> At {{connectionDetail.arrivalTime}}</div>
                                 <div>Terminal {{connectionDetail.arrivalTerminal}}</div>
                                 <div>Carrier Airline {{connectionDetail.carrierFsCode}}</div>
                                 <div>Flight Number {{connectionDetail.flightNumber}}</div>
@@ -153,7 +166,7 @@
 <br/>
                             </div>
                     <br/>
-                            <button ng-click="bookorgotoreturingflights($index)">{{bookbuttontitle}}</button>
+                            <button ng-click="bookorgotoreturingflights($index);">{{bookbuttontitle}}</button>
                         </div><br/><br/>
 
                     </div>

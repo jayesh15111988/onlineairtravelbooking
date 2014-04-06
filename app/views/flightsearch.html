@@ -137,14 +137,15 @@ ul>li{
                 if (ev.date.valueOf() > checkout.date.valueOf()) {
                     //console.log(ev.date.valueOf());
                     //console.log(checkout.date.valueOf());
-                    data=((Math.floor((ev.date.valueOf() - now.valueOf()) / (1000 * 60 * 60 * 24)))).toString();
+                }
+                    data=(((Math.floor((ev.date.valueOf() - now.valueOf()) / (1000 * 60 * 60 * 24))))-1).toString();
                     data='+'+data+'d';
                     var newDate = new Date(ev.date)
                     newDate.setDate(newDate.getDate() + 10);
                     //checkout.setValue(newDate);
                     $('#dpd2').datepicker(
                             'setStartDate',data)
-                }
+
                 checkin.hide();
                 $('#dpd2')[0].focus();
             }).data('datepicker');

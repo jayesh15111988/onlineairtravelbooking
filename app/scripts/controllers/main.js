@@ -4,6 +4,9 @@
 /* This is the main controller module. We will store all controllers used in our code in this module */
 
 
+var numberOfDaysToRetrieveFlight=1;
+var connectionType='connection';
+var airportsDeepDetailsGlobal=[];
 var airlinetravelmodule=angular.module('airtravelbookingappApp');
 airlinetravelmodule.controller('MainCtrl', function ($scope) {
 
@@ -163,21 +166,29 @@ var appendixDictionary={};
 var totalPagesCount=Array();
 var totalP;
 var bookbuttontitletext='Book Now';
-var numberOfDaysToRetrieveFlight=1;
-var connectionType='direct';
 var getParameteresDictionary;
 var travelDetails={};
-
+var departureDetailsGlobal=[];
+var arrivalDetailsglobal=[];
 airlinetravelmodule.controller('DetailController',function($scope,$routeParams){
 
   /*  $scope.totalPages=Array();
     for(var i=0;i<totalP;i++){
         $scope.totalPages.push(i);
     }*/
-    $scope.fullTravelDetails.departure=travelDetails.departureDetails;
+
+    var numberOfKeys=Object.keys(arrivalDetailsglobal).length;
+    console.log("&&"+numberOfKeys+"***");
+
+    $scope.fullTravelDetails=[];
+    $scope.fullTravelDetails.arrival=[];
+    $scope.fullTravelDetails.departure=[];
+    $scope.fullTravelDetails.arrival=arrivalDetailsglobal;
     if($routeParams==2){
 $scope.arrivalstatus="Arrival Flight Details";
-        $scope.fullTravelDetails.arrival=travelDetails.arrivalDetails;
+        $scope.fullTravelDetails.departure=departureDetailsGlobal;
+
+
     $scope.bottomarrivalstatus="Have a nice flight";
     }
     else{
@@ -197,7 +208,7 @@ Array.prototype.clear = function() {
     }
 };
 
-airlinetravelmodule.controller('showflightscontroller',function($scope,$http,$routeParams,$location){
+airlinetravelmodule.controller('showflightscontroller',function($scope,$http,$routeParams,$location,$window){
     //var baseUrl='http://jayeshkawli.com/airlinetravel/airportsapi.php?';
    // baseUrl=baseUrl+'searchString='+searchStringToPass;
 
@@ -206,9 +217,35 @@ airlinetravelmodule.controller('showflightscontroller',function($scope,$http,$ro
     $scope.departureDate='';
     var airline,airports;//=Array();
     var airlines=Array();//[{"name":"abs","iata":"xyz","icao":"asda"}];
-$scope.airportsDeepDetails={};
+    $scope.airportsDeepDetails={};
+    $scope.bookorgotoreturingflights=function(index){
+        console.log("pressed");
+        if($scope.bookbuttontitle=="Book Now"){
+            arrivalDetailsglobal=allFlightsDetail[index];
+            var numberOfKeys=Object.keys(arrivalDetailsglobal).length;
+            console.log("&&&&"+numberOfKeys+"*******");
 
+            if(numberOfKeys==2){
+                console.log("two way flight")
 
+            }
+            else if(numberOfKeys==1){
+                console.log("One way flight this is");
+            }
+            $window.location.href="#/view/"+numberOfKeys;
+            //console.log(Object.keys(travelDetails).length+ " aaarrival");
+        }
+        else if($scope.bookbuttontitle=="Select Returning Flight"){
+            bookbuttontitletext="Book Now";
+            console.log(index +"departure");
+            departureDetailsGlobal=allFlightsDetail[index];
+            console.log(departureDetailsGlobal+ "departure");
+            allFlightsDetail.clear();
+
+            getFlightFromGivenParameters(getParameteresDictionary.destination,getParameteresDictionary.source,getParameteresDictionary.comingindate,getParameteresDictionary.leavingdate,connectionType,numberOfDaysToRetrieveFlight);
+
+        }
+    }
 
     //console.log($routeParams.id+ " id "+ (parseInt($routeParams.id)+9));
 
@@ -236,13 +273,23 @@ var airportCode=airportsArray[i].iata;
 
         console.log($scope.airportsDeepDetails[airportCode]);
     }
+    airportsDeepDetailsGlobal=$scope.airportsDeepDetails;
 }
-$scope.getairports=function(iatacode){
-    return $scope.airportsDeepDetails[iatacode].name+ ' '+$scope.airportsDeepDetails[iatacode].countryName+ ' '+$scope.airportsDeepDetails[iatacode].city;
+$scope.getairportsindi=function(iatacode){
+    //console.log(iatacode+ "iata code");
+    ///console.log($scope.airportsDeepDetails[iatacode]+ "airport details");
+    //console.log("airprot length"+ Object.keys($scope.airportsDeepDetails).length);
+    //console.log("airprot dummy length"+ Object.keys(airportsDeepDetailsGlobal).length);
+    if(Object.keys($scope.airportsDeepDetails).length==0){
+        $scope.airportsDeepDetails=airportsDeepDetailsGlobal;
+    }
+    return $scope.airportsDeepDetails[iatacode].name+ ' '+$scope.airportsDeepDetails[iatacode].countryName+ ' '+$scope.airportsDeepDetails[iatacode].city+ ' Region -  '+$scope.airportsDeepDetails[iatacode].regionName + ' Local Time'+ $scope.airportsDeepDetails[iatacode].localTime+' Latitude - '+$scope.airportsDeepDetails[iatacode].latitude+ ' Longitude - '+$scope.airportsDeepDetails[iatacode].longitude;
 }
 
-    var getFlightFromGivenParameters=function(source,destination,leavingdate,comingindate){
-        $http({method: 'GET', url: 'http://jayeshkawli.com/airlinetravel/flightsearchapi.php?source='+source+"&destination="+destination+"&leavingdate="+leavingdate+"&comingindate="+comingindate+"&numberofdays="+numberOfDaysToRetrieveFlight+"&connectiontype="+connectionType,
+    var getFlightFromGivenParameters=function(source,destination,leavingdate,comingindate,contype,numberofdays){
+
+
+        $http({method: 'GET', url: 'http://jayeshkawli.com/airlinetravel/flightsearchapi.php?source='+source+"&destination="+destination+"&leavingdate="+leavingdate+"&comingindate="+comingindate+"&numberofdays="+numberofdays+"&connectiontype="+contype,
             params: {}
         }).
             success(function(flightslist, status, headers, config) {
@@ -294,43 +341,13 @@ $scope.getairports=function(iatacode){
 $scope.servermessage="hahha";
     }
 
-$scope.bookorgotoreturingflights=function(index){
-
-
-
-if($scope.bookbuttontitle=="Book Now"){
-
-    travelDetails.arrivalDetails=allFlightsDetail[index];
-var numberOfKeys=Object.keys(travelDetails).length;
-if(numberOfKeys==2){
-    console.log("two way flight")
-
-}
-    else if(numberOfKeys==1){
-    console.log("One way flight this is");
-}
-    $window.location.href="#/views/"+numberOfKeys;
-    //console.log(Object.keys(travelDetails).length+ " aaarrival");
-}
-    else if($scope.bookbuttontitle=="Select Returning Flight"){
-bookbuttontitletext="Book Now";
-    console.log(index +"departure");
-    travelDetails.departureDetails=allFlightsDetail[index];
-    console.log(travelDetails.departureDetails+ "departure");
-    allFlightsDetail.clear();
-    getFlightFromGivenParameters(getParameteresDictionary.destination,getParameteresDictionary.source,getParameteresDictionary.comingindate,getParameteresDictionary.leavingdate);
-
-}
-}
 
     getParameteresDictionary=$location.search();
 if(allFlightsDetail.length==0){
-
-    getFlightFromGivenParameters(getParameteresDictionary.source,getParameteresDictionary.destination,getParameteresDictionary.leavingdate,getParameteresDictionary.comingindate);
+    console.log("cont type"+ connectionType);
+    console.log("number of days "+ numberOfDaysToRetrieveFlight);
+    getFlightFromGivenParameters(getParameteresDictionary.source,getParameteresDictionary.destination,getParameteresDictionary.leavingdate,getParameteresDictionary.comingindate,connectionType,numberOfDaysToRetrieveFlight);
 }
-
-
-
 });
 
 airlinetravelmodule.controller('upperleftbarcontroller',function($scope){
@@ -399,8 +416,7 @@ sourcecode= suggestion.data;
     var whichAirline="My Airline";
     var travelClass="Economy Class";
     var searchCriteria="Price";
-    var numberOfDaysToRetrieveFlight=1;
-    var connectionType='direct';
+    //var numberOfDaysToRetrieveFlight=1;
 
     $scope.numberAdult=[{number:'1'},{number:'2'},{number:'3'},{number:'4'},{number:'5'}];
     $scope.numberChildren=[{number:'0'},{number:'1'},{number:'2'},{number:'3'},{number:'4'},{number:'5'}];
@@ -446,13 +462,14 @@ sourcecode= suggestion.data;
         $scope.flighttypedesireddirect=$scope.flighttypedesiredwithstops=false;
 
         if(connectiontype==1){
-            connectionType='direct';
+            connectionType='non_stop';
             $scope.flighttypedesireddirect=true;
         }
         else{
-            connectionType='non_stop';
+            connectionType='connection';
             $scope.flighttypedesiredwithstops=true;
         }
+        console.log("connection type "+connectionType);
     } //1 for direct flight and 2 for flights with stop
 
     $scope.bookNowPressed=function(){
@@ -514,9 +531,6 @@ allFlightsDetail.clear();
             }).error(function (data, status, headers, config) {
                 $scope.status = status;
             });
-
-
-
     }
 
     $scope.searchByCriteriaButtonPressed=function(val){
@@ -536,6 +550,7 @@ allFlightsDetail.clear();
             $scope.searchBySpecificDates=true;
 
         }
+        console.log(numberOfDaysToRetrieveFlight+ "total number");
     }
     $scope.isFlightButtonClicked=true;
     $scope.whichClassButtonClicked=true;
