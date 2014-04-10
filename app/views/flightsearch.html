@@ -16,7 +16,9 @@ padding:0em;
     border: 0;
 }
 
-.isFlightTypeClicked,.isWhichTypeClicked,.whichAirlineClicked,.searchByCriteria,.flighttypedesired{
+
+
+.isFlightTypeClicked,.isWhichTypeClicked,.whichAirlineClicked,.searchByCriteria,.flighttypedesired,.numberofresults{
     background-color: #ebebeb;
 
 }
@@ -154,7 +156,8 @@ ul>li{
         endDate:'+90d',
         dateFormat:'YYYY//MM/DD',
         onRender: function(date) {
-           jjj// return date.valueOf() <= checkin.date.valueOf() ? 'disabled' : '';
+
+            // return date.valueOf() <= checkin.date.valueOf() ? 'disabled' : '';
         }
     }).on('changeDate', function(ev) {
                 checkout.hide();
@@ -300,13 +303,21 @@ Type of travel:<br/>
 
                 </div>
 
+
+            <div>
+                <span>Number of results per page</span><br/>
+                <button type="button" ng-click="numberOfResultsPerPage(10)" ng-class="{'numberofresults':ten}" class="btn btn-default">10</button>
+                <button type="button" ng-click="numberOfResultsPerPage(20)" ng-class="{'numberofresults':twenty}" class="btn btn-default">20</button>
+                <button type="button" ng-click="numberOfResultsPerPage(30)" ng-class="{'numberofresults':thirty}" class="btn btn-default">30</button>
+                <button type="button" ng-click="numberOfResultsPerPage(all)" ng-class="{'numberofresults':all}" class="btn btn-default">All</button>
+            </div>
+
           <!--  <div>
                 <span>How do you want to sort flights?</span><br/>
                 <button type="button" ng-click="searchbyconnectiontype(1)" ng-class="{'flighttypedesired':flighttypedesireddirect}" class="btn btn-default">Non-Stop Flights</button>
                 <button type="button" ng-click="searchbyconnectiontype(2)" ng-class="{'flighttypedesired':flighttypedesiredwithstops}" class="btn btn-default">Flights with stop</button>
 
             </div>-->
-
 
                      <div class="row col-lg-offset-10">
                          <button ng-click="bookNowPressed();" type="button" class="btn btn-primary btn-lg" >book now</button>

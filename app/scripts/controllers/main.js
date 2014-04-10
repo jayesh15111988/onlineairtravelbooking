@@ -170,6 +170,7 @@ var getParameteresDictionary;
 var travelDetails={};
 var departureDetailsGlobal=[];
 var arrivalDetailsglobal=[];
+var numberOfResultsPerPage=10;
 airlinetravelmodule.controller('DetailController',function($scope,$routeParams){
 
   /*  $scope.totalPages=Array();
@@ -213,8 +214,8 @@ airlinetravelmodule.controller('showflightscontroller',function($scope,$http,$ro
    // baseUrl=baseUrl+'searchString='+searchStringToPass;
 
     $scope.availableflightparameters="";
-    $scope.numberOfResultsPerPage=10;
     $scope.departureDate='';
+    $scope.loadingToDisplay=true;
     var airline,airports;//=Array();
     var airlines=Array();//[{"name":"abs","iata":"xyz","icao":"asda"}];
     $scope.airportsDeepDetails={};
@@ -309,7 +310,12 @@ $scope.getairportsindi=function(iatacode){
                         $scope.equipments=appendixDictionary.equipments;
                     }
                 }
-                totalP=Math.ceil(flightslist.flights.length/$scope.numberOfResultsPerPage);
+                    if(numberOfResultsPerPage=='all'){
+                        totalP=flightslist.flights.length;
+                    }
+                    else{
+                totalP=Math.ceil(flightslist.flights.length/numberOfResultsPerPage);
+                    }
                 $scope.totalPages=Array();
                 for(var i=0;i<totalP;i++){
                     $scope.totalPages.push(i);
@@ -321,6 +327,7 @@ $scope.getairportsindi=function(iatacode){
 
                 console.log(allFlightsDetail.departureDate+ " this is leaving ");
                 $scope.flightDetails = allFlightsDetail.slice(0,9);
+                $scope.loadingToDisplay=false;
                 }
                 else{
                     if(flightslist.error){
@@ -409,7 +416,7 @@ sourcecode= suggestion.data;
     $scope.flighttypedesireddirect=true;
     $scope.searchByVariableDates=false;
     $scope.searchBySpecificDates=true;
-
+    $scope.ten=true;
     /* parameters to be sent to database */
     var tripDirection="Oneway";
     var travelType="Domestic";
@@ -471,6 +478,24 @@ sourcecode= suggestion.data;
         }
         console.log("connection type "+connectionType);
     } //1 for direct flight and 2 for flights with stop
+
+    $scope.numberOfResultsPerPage=function(numberofresultsinput){
+        $scope.ten=$scope.twenty=$scope.thirty=$scope.all=false;
+
+        numberOfResultsPerPage=numberofresultsinput;
+      if(numberofresultsinput==10){
+          $scope.ten=true;
+      }
+       else if(numberofresultsinput==20){
+    $scope.twenty=true;
+        }
+        else if(numberofresultsinput==30){
+          $scope.thirty=true;
+      }
+        else{
+          $scope.all=true;
+      }
+    }
 
     $scope.bookNowPressed=function(){
        /* tripDirection="Oneway";

@@ -58,6 +58,13 @@
         /*visibility:visible;*/
     }
 
+    .loadinganimation{
+        position: absolute;
+        z-index: 100;
+        margin-top: 10px;
+        margin-left: 150px;
+    }
+
 </style>
 
         <script>
@@ -81,6 +88,9 @@
         </script>
 
 <div class="container" ng-controller="showflightscontroller">
+    <div>
+        <img src="../images/loading.gif" ng-show="loadingToDisplay" class="loadinganimation">
+    </div>
     <div class="row">
 
 
@@ -88,6 +98,7 @@
 
 
         <div class="col-xs-3 moveleft">
+
 
 
             <table>
@@ -185,6 +196,7 @@
                         <a href="#/showavailableflights/{{page}}">{{page+1}}&nbsp;&nbsp;&nbsp;</a>
                     </div>
     </div>
+
             </div>
 
         </div>
