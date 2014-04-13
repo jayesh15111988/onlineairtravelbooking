@@ -161,6 +161,7 @@ airlinetravelmodule.controller('MyCtrl1', function($scope){
 });
 
 /* real global variable */
+var tripDirection="OneWay";
 var allFlightsDetail=Array();
 var appendixDictionary={};
 var totalPagesCount=Array();
@@ -178,22 +179,37 @@ airlinetravelmodule.controller('DetailController',function($scope,$routeParams){
 
 
     var numberOfKeys=Object.keys(arrivalDetailsglobal).length;
-    console.log("&&"+numberOfKeys+"***");
+    console.log("&&"+tripDirection+"***");
 
     $scope.fullTravelDetails=[];
     $scope.fullTravelDetails.arrival=[];
     $scope.fullTravelDetails.departure=[];
-    $scope.fullTravelDetails.arrival=arrivalDetailsglobal;
-    if($routeParams==2){
+
+
+
+    console.log(arrivalDetailsglobal.distanceMiles);
+    console.log(departureDetailsGlobal.distanceMiles);
+
+    if(tripDirection=="OneWay"){
+        console.log("still one");
+        $scope.showreturningflights=false;
+        $scope.fullTravelDetails.arrival=arrivalDetailsglobal;
+        console.log(arrivalDetailsglobal.distanceMiles);
+        $scope.bottomarrivalstatus="Have a nice flight1";
+    }
+
+    else if(tripDirection=="Round Trip"){
 $scope.arrivalstatus="Arrival Flight Details";
+$scope.showgoingflights=true;
+$scope.showreturningflights=true;
+console.log(departureDetailsGlobal.departureDateFrom+" first");
+        console.log(arrivalDetailsglobal.distanceMiles+" second");
+
         $scope.fullTravelDetails.departure=departureDetailsGlobal;
-
-
-    $scope.bottomarrivalstatus="Have a nice flight";
+        $scope.fullTravelDetails.arrival=arrivalDetailsglobal;
+        $scope.arrivalstatus="Have a nice flight2";
     }
-    else{
-        $scope.arrivalstatus="Have a nice flight";
-    }
+
 
 
     console.log($routeParams.id+ "This is whether one way or round trip");
@@ -266,13 +282,13 @@ airlinetravelmodule.controller('showflightscontroller',function($scope,$http,$ro
         if($scope.bookbuttontitle=="Book Now"){
             arrivalDetailsglobal=allFlightsDetail[index];
             var numberOfKeys=Object.keys(arrivalDetailsglobal).length;
-            console.log("&&&&"+numberOfKeys+"*******");
+            console.log("&&&&"+arrivalDetailsglobal.flightDurationMinutes+"*******");
 
-            if(numberOfKeys==2){
+            if(tripDirection=="Round Trip"){
                 console.log("two way flight")
 
             }
-            else if(numberOfKeys==1){
+            else if(tripDirection=="OneWay"){
                 console.log("One way flight this is");
             }
             $window.location.href="#/view/"+numberOfKeys;
@@ -282,9 +298,9 @@ airlinetravelmodule.controller('showflightscontroller',function($scope,$http,$ro
             bookbuttontitletext="Book Now";
             console.log(index +"departure");
             departureDetailsGlobal=allFlightsDetail[index];
-            console.log(departureDetailsGlobal+ "departure");
+            console.log(departureDetailsGlobal.flightType+ "departure");
             allFlightsDetail.clear();
-
+            $scope.loadingToDisplay=true;
             getFlightFromGivenParameters(getParameteresDictionary.destination,getParameteresDictionary.source,getParameteresDictionary.comingindate,getParameteresDictionary.leavingdate,connectionType,numberOfDaysToRetrieveFlight);
 
         }
@@ -412,8 +428,9 @@ if(allFlightsDetail.length==0){
 });
 
 airlinetravelmodule.controller('upperleftbarcontroller',function($scope){
-
+$scope.regionName="Please Select Region";
     $scope.setRegion=function(regionname){
+        $scope.regionName=regionname;
         console.log(regionname);
     }
 })
@@ -472,7 +489,7 @@ sourcecode= suggestion.data;
     $scope.searchBySpecificDates=true;
     $scope.ten=true;
     /* parameters to be sent to database */
-    var tripDirection="Oneway";
+
     var travelType="Domestic";
     var whichAirline="My Airline";
     var travelClass="Economy Class";
@@ -534,10 +551,13 @@ sourcecode= suggestion.data;
     } //1 for direct flight and 2 for flights with stop
 
     $scope.numberOfResultsPerPage=function(numberofresultsinput){
-        $scope.ten=$scope.twenty=$scope.thirty=$scope.all=false;
+        $scope.ten=$scope.twenty=$scope.thirty=$scope.all=$scope.five=false;
 
         numberOfResultsPerPage=numberofresultsinput;
-      if(numberofresultsinput==10){
+        if(numberofresultsinput==5){
+            $scope.five=true;
+        }
+        else if(numberofresultsinput==10){
           $scope.ten=true;
       }
        else if(numberofresultsinput==20){

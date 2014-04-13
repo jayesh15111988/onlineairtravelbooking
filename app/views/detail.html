@@ -1,17 +1,22 @@
 <div ng-controller="DetailController">
-    <table>
-        <tr><th><div><h4>Arriving Flight Details</h4></div></th></tr>
-      <tr>
-            <td>{{fullTravelDetails.arrival.departureDateFrom}}</td>
-        </tr>
-    </table>
+    <table ng-show="showreturningflights">
+        <tr><th><div><h4> arrivng filight details</h4></div></th></tr>
 
-    <table>
-        <tr><th><div><h4>{{arrivalstatus}}</h4></div></th></tr>
-        <tr ng-repeat="arrivaldata in fullTravelDetails.departure">
-            <td><a href="#/view/{{page*10}}">{{fullTravelDetails.departure}}</a></td>
+        <tr>
+            <td>{{fullTravelDetails.departure}}</td>
         </tr>
     </table>
+    <table>
+        <tr><th><div><h4>Arriving Flight Details1</h4></div></th></tr>
+      <tr>
+
+            <td>{{fullTravelDetails.arrival}}</td>
+        </tr>
+    </table>
+    <div>{{arrivalstatus}}</div>
+
     <button>Book Now</button>
 <div>{{bottomarrivalstatus}}</div>
+
+
     </div>
