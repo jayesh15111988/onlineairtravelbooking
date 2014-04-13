@@ -105,11 +105,11 @@
                 <tr><th><button id="airlines"><h6>Available Airlines</h6></button></th></tr>
 
 
-               <tr  ng-repeat="airline in airlines" >
+                <tr  ng-repeat="airline in airlines" >
 
-    <td class="airlinesDetails"><div id='{{airline.iata}}'><a href='{{airline.icao}}'>{{airline.name}}</a><br/>{{airline.phoneNumber?airline.phoneNumber:""}}</div><br/></td>
+    <td class="airlinesDetails"><div id='{{airline.iata}}'><a ng-click="filterWithAirline(airline.iata);">{{airline.name}}</a><br/>{{airline.phoneNumber?airline.phoneNumber:""}}</div><br/></td>
     </tr>
-
+<tr><td class="airlinesDetails"><div><a ng-click="filterWithAirline('clearall');">Clear All</a><br/><br/></div></td></tr>
                 </table>
             <table>
                 <tr><th><button id="airports"><h6>Available Airports</h6></button></th></tr>

@@ -165,6 +165,9 @@ var allFlightsDetail=Array();
 var appendixDictionary={};
 var totalPagesCount=Array();
 var totalP;
+var filteredArrayAfterAirlineSelection=[];
+var tempHolderForAllFlights=[];
+var isFilteringBasedOnAirline=false;
 var bookbuttontitletext='Book Now';
 var getParameteresDictionary;
 var travelDetails={};
@@ -173,10 +176,6 @@ var arrivalDetailsglobal=[];
 var numberOfResultsPerPage=10;
 airlinetravelmodule.controller('DetailController',function($scope,$routeParams){
 
-  /*  $scope.totalPages=Array();
-    for(var i=0;i<totalP;i++){
-        $scope.totalPages.push(i);
-    }*/
 
     var numberOfKeys=Object.keys(arrivalDetailsglobal).length;
     console.log("&&"+numberOfKeys+"***");
@@ -199,8 +198,7 @@ $scope.arrivalstatus="Arrival Flight Details";
 
     console.log($routeParams.id+ "This is whether one way or round trip");
 
-//    $scope.flightDetails = allFlightsDetail.slice($routeParams.id,parseInt($routeParams.id)+9);
-    //console.log($scope.flightDetails.length);
+
 })
 
 Array.prototype.clear = function() {
@@ -213,12 +211,56 @@ airlinetravelmodule.controller('showflightscontroller',function($scope,$http,$ro
     //var baseUrl='http://jayeshkawli.com/airlinetravel/airportsapi.php?';
    // baseUrl=baseUrl+'searchString='+searchStringToPass;
 
+    var tempStorageForFlightDetailsAfterFilteringOnAirlines=[];
+
     $scope.availableflightparameters="";
     $scope.departureDate='';
     $scope.loadingToDisplay=true;
     var airline,airports;//=Array();
     var airlines=Array();//[{"name":"abs","iata":"xyz","icao":"asda"}];
     $scope.airportsDeepDetails={};
+
+   // console.log("New Page Arrived");
+    $scope.filterWithAirline=function(airlineName){
+   airlineName==='clearall'?(isFilteringBasedOnAirline=false):(isFilteringBasedOnAirline=true);
+        filteredArrayAfterAirlineSelection.clear();
+        if(isFilteringBasedOnAirline){
+            if(tempHolderForAllFlights.length==0){
+            tempHolderForAllFlights=allFlightsDetail;
+            }
+
+
+
+        var numberOfFlights = tempHolderForAllFlights.length;
+        var flightLegsFromSavedData=[];
+        var connectionDetailObject={};
+        var connections={};
+        for (var i = 0; i < numberOfFlights; i++) {
+            flightLegsFromSavedData=tempHolderForAllFlights[i].flightLegs;
+            var connectionLength=flightLegsFromSavedData.length;
+            for(var connections=0;connections<connectionLength;connections++){
+                connectionDetailObject= flightLegsFromSavedData[connections];
+                if(connectionDetailObject.carrierFsCode===airlineName){
+                    filteredArrayAfterAirlineSelection.push(tempHolderForAllFlights[i]);
+                    break;
+                }
+            }
+        }
+            console.log(tempHolderForAllFlights.length+ "length of holder first one");
+        }
+        else{
+            console.log(tempHolderForAllFlights.length+ "length of holder last one");
+            //filteredArrayAfterAirlineSelection.concat(tempHolderForAllFlights);
+            filteredArrayAfterAirlineSelection.push.apply(filteredArrayAfterAirlineSelection, tempHolderForAllFlights);
+            console.log(filteredArrayAfterAirlineSelection.length+ "length of holder last one");
+            tempHolderForAllFlights.clear();
+        }
+        setupPageWithAllFlightDetails(filteredArrayAfterAirlineSelection);
+        $scope.loadingToDisplay=false;
+        console.log(filteredArrayAfterAirlineSelection.length);
+        console.log("hahhhaha");
+    }
+
     $scope.bookorgotoreturingflights=function(index){
         console.log("pressed");
         if($scope.bookbuttontitle=="Book Now"){
@@ -254,15 +296,36 @@ airlinetravelmodule.controller('showflightscontroller',function($scope,$http,$ro
     if(allFlightsDetail.length>0){
      //   console.log("yesss***");
         //source destination leavingdate comingindate direction
-        $scope.flightDetails = allFlightsDetail.slice($routeParams.id*10,parseInt($routeParams.id*10)+9);
+        $scope.flightDetails = allFlightsDetail.slice($routeParams.id*numberOfResultsPerPage,parseInt($routeParams.id*numberOfResultsPerPage)+numberOfResultsPerPage);
     $scope.bookbuttontitle=bookbuttontitletext;
         $scope.totalPages=totalPagesCount;
     $scope.airlines=appendixDictionary.airlines;
     $scope.airports=appendixDictionary.airports;
     $scope.equipments=appendixDictionary.equipments;
+        $scope.loadingToDisplay=false;
     console.log($scope.flightDetails.length);
     }
 
+
+    var setupPageWithAllFlightDetails=function(flightDetails){
+        if(numberOfResultsPerPage=='all'){
+            totalP=flightDetails.length;
+        }
+        else{
+            totalP=Math.ceil(flightDetails.length/numberOfResultsPerPage);
+        }
+        $scope.totalPages=Array();
+        for(var i=0;i<totalP;i++){
+            $scope.totalPages.push(i);
+        }
+        $scope.bookbuttontitle=bookbuttontitletext;
+        totalPagesCount=$scope.totalPages;
+        $scope.departureDate=getParameteresDictionary.leavingdate;
+        allFlightsDetail=flightDetails;
+        console.log("should refresh page with new result");
+        $scope.flightDetails = allFlightsDetail.slice(0,numberOfResultsPerPage);
+        $scope.loadingToDisplay=false;
+    }
 
 function addToAirportDetails(airportsArray){
     var airportsArrayLength=airportsArray.length;
@@ -294,7 +357,7 @@ $scope.getairportsindi=function(iatacode){
             params: {}
         }).
             success(function(flightslist, status, headers, config) {
-               console.log(flightslist.flights+ "final result");
+
                 if(flightslist.flights){
                 appendixDictionary=flightslist.appendix;
                 // console.log(appendixDictionary);
@@ -304,30 +367,13 @@ $scope.getairportsindi=function(iatacode){
                     }
                     if(appendixDictionary.airports.length>0){
                         $scope.airports=appendixDictionary.airports;
-                    addToAirportDetails(appendixDictionary.airports);
+                        addToAirportDetails(appendixDictionary.airports);
                     }
                     if(appendixDictionary.equipments.length>0){
                         $scope.equipments=appendixDictionary.equipments;
                     }
                 }
-                    if(numberOfResultsPerPage=='all'){
-                        totalP=flightslist.flights.length;
-                    }
-                    else{
-                totalP=Math.ceil(flightslist.flights.length/numberOfResultsPerPage);
-                    }
-                $scope.totalPages=Array();
-                for(var i=0;i<totalP;i++){
-                    $scope.totalPages.push(i);
-                }
-                $scope.bookbuttontitle=bookbuttontitletext;
-                totalPagesCount=$scope.totalPages;
-                $scope.departureDate=leavingdate;
-                allFlightsDetail=flightslist.flights;
-
-                console.log(allFlightsDetail.departureDate+ " this is leaving ");
-                $scope.flightDetails = allFlightsDetail.slice(0,9);
-                $scope.loadingToDisplay=false;
+                   setupPageWithAllFlightDetails(flightslist.flights);
                 }
                 else{
                     if(flightslist.error){
@@ -336,6 +382,7 @@ $scope.getairportsindi=function(iatacode){
                     else{
                     $scope.errors=[{"name":"No results found","code":"404","resolution":"Try with different source and destinations","gobacklink":"#/flightsearch"}];
                     }
+                    $scope.loadingToDisplay=false;
                 }
             }).
             error(function(data, status, headers, config) {
