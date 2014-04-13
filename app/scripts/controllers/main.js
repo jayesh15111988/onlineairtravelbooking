@@ -339,16 +339,23 @@ var airportCode=airportsArray[i].iata;
     }
     airportsDeepDetailsGlobal=$scope.airportsDeepDetails;
 }
-$scope.getairportsindi=function(iatacode){
+
+
+$scope.getairportsindi=function(iatacode,isTitle){
+    $scope.airportTitle=iatacode;
     //console.log(iatacode+ "iata code");
     ///console.log($scope.airportsDeepDetails[iatacode]+ "airport details");
     //console.log("airprot length"+ Object.keys($scope.airportsDeepDetails).length);
     //console.log("airprot dummy length"+ Object.keys(airportsDeepDetailsGlobal).length);
+
     if(Object.keys($scope.airportsDeepDetails).length==0){
         $scope.airportsDeepDetails=airportsDeepDetailsGlobal;
     }
-    return $scope.airportsDeepDetails[iatacode].name+ ' '+$scope.airportsDeepDetails[iatacode].countryName+ ' '+$scope.airportsDeepDetails[iatacode].city+ ' Region -  '+$scope.airportsDeepDetails[iatacode].regionName + ' Local Time'+ $scope.airportsDeepDetails[iatacode].localTime+' Latitude - '+$scope.airportsDeepDetails[iatacode].latitude+ ' Longitude - '+$scope.airportsDeepDetails[iatacode].longitude;
-}
+
+
+    return '<div style="width: 300px">'+$scope.airportsDeepDetails[iatacode].name+ '<br/><br/> '+$scope.airportsDeepDetails[iatacode].countryName+ ' '+$scope.airportsDeepDetails[iatacode].city+ ' Region -  '+$scope.airportsDeepDetails[iatacode].regionName + '<br/><br/>Local Time  '+ $scope.airportsDeepDetails[iatacode].localTime+'<br/><br/><button class="btn btn-default"><a href="http://maps.google.com/maps?q='+$scope.airportsDeepDetails[iatacode].latitude+','+$scope.airportsDeepDetails[iatacode].longitude+'" target=_blank > Map It </a></button></div>';
+
+    }
 
     var getFlightFromGivenParameters=function(source,destination,leavingdate,comingindate,contype,numberofdays){
 

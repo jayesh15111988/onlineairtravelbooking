@@ -13,7 +13,15 @@
         max-width: 350%;
         width: 350%;
     }
-
+a {
+    text-decoration: none;
+}
+    a:hover{
+        text-decoration: none;
+    }
+    .tooltip-inner{
+        max-width: 400px;
+    }
     .customtooltip{
         display: inline;
         position: relative;
@@ -155,8 +163,16 @@
                             <div>Date of Travel: {{departureDate}} </div>
 
                             <!--<div class="hover">{{flightDetail.departureAirportFsCode}}<div class="tooltip">{{getairportsindi(flightDetail.departureAirportFsCode)}}</div></div>-->
-                            <div>Departing From:<span class="pop" popover="{{getairportsindi(flightDetail.departureAirportFsCode)}}" popover-trigger="mouseenter"> {{flightDetail.departureAirportFsCode}}</span> At {{flightDetail.departureTime}} </div>
-                            <div>Arriving To:<span popover="{{getairportsindi(flightDetail.arrivalAirportFsCode)}}" popover-trigger="mouseenter"> {{flightDetail.arrivalAirportFsCode}}</span> At {{flightDetail.arrivalTime}}</div>
+                            <!--popover-trigger="mouseenter"  Just kepr if anything needs in the future just add this attriubte to underlying tooltip tag-->
+                            <!--<div>Departing From:<span class="pop"  popover="{{getairportsindi(flightDetail.departureAirportFsCode,0)}}" popover-title="{{getairportsindi(flightDetail.departureAirportFsCode,1)}}" popover-placement="right"> {{flightDetail.departureAirportFsCode}}</span> At {{flightDetail.departureTime}} </div>
+                            <div>Arriving To:<span popover="{{getairportsindi(flightDetail.arrivalAirportFsCode,0)}}" popover-title="{{getairportsindi(flightDetail.arrivalAirportFsCode,1)}}" popover-placement="right" > {{flightDetail.arrivalAirportFsCode}}</span> At {{flightDetail.arrivalTime}}</div>-->
+                            <!-- changing popover with tooltip, as former would not allow any html elements in it will change if
+                            requires in the future -->
+
+                            <div>Departing From:<span class="pop"   tooltip-html-unsafe="{{getairportsindi(flightDetail.departureAirportFsCode,0)}}" tooltip-trigger="click: click" tooltip-popup-delay="0" tooltip-placement="right"> {{flightDetail.departureAirportFsCode}}</span> At {{flightDetail.departureTime}} </div>
+                            <div>Arriving To:<span  tooltip-html-unsafe="{{getairportsindi(flightDetail.arrivalAirportFsCode,0)}}" tooltip-trigger="click: click" tooltip-popup-delay="0" tooltip-placement="right" > {{flightDetail.arrivalAirportFsCode}}</span> At {{flightDetail.arrivalTime}}</div>
+
+
                             <!--<div>Deparing On: {{flightDetail.departureDaysOfWeek[0]}}</div>-->
                             <div>Distance in Miles: {{flightDetail.distanceMiles}}</div>
                             <div>Flight Duration: {{flightDetail.flightDurationMinutes}}</div>
@@ -164,9 +180,9 @@
                             <div>Flight Type: {{flightDetail.flightType}}</div>
                             <div>Connection Details</div><br/>
                             <div ng-repeat="connectionDetail in flightDetail.flightLegs">
-                                <div>Departing From: <span  popover="{{getairportsindi(connectionDetail.departureAirportFsCode)}}" popover-trigger="mouseenter">{{connectionDetail.departureAirportFsCode}}</span> At {{connectionDetail.departureTime}} </div>
+                                <div>Departing From: <span  tooltip-html-unsafe="{{getairportsindi(connectionDetail.departureAirportFsCode,0)}}"  popover-placement="right">{{connectionDetail.departureAirportFsCode}}</span> At {{connectionDetail.departureTime}} </div>
                                 <div>Terminal {{connectionDetail.departureTerminal}}</div>
-                                <div>Arriving To:<span popover="{{getairportsindi(connectionDetail.arrivalAirportFsCode)}}" popover-trigger="mouseenter"> {{connectionDetail.arrivalAirportFsCode}}</span> At {{connectionDetail.arrivalTime}}</div>
+                                <div>Arriving To:<span tooltip-html-unsafe="{{getairportsindi(connectionDetail.arrivalAirportFsCode,0)}}" popover-trigger="mouseenter" popover-placement="right"> {{connectionDetail.arrivalAirportFsCode}}</span> At {{connectionDetail.arrivalTime}}</div>
                                 <div>Terminal {{connectionDetail.arrivalTerminal}}</div>
                                 <div>Carrier Airline {{connectionDetail.carrierFsCode}}</div>
                                 <div>Flight Number {{connectionDetail.flightNumber}}</div>
