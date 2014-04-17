@@ -1,18 +1,72 @@
 <div ng-controller="DetailController">
+    <!-- We are hiding this table when user has requested one way flight. If it's two way flight,we are
+    shwoing outbound flight details in this space -->
+
     <table ng-show="showreturningflights">
-        <tr><th><div><h4> arrivng filight details</h4></div></th></tr>
+        <tr><th><div><h4> {{flightDetailsFirstPart}}</h4></div></th></tr>
 
-        <tr>
-            <td>{{fullTravelDetails.departure}}</td>
-        </tr>
-    </table>
-    <table>
-        <tr><th><div><h4>Arriving Flight Details1</h4></div></th></tr>
-      <tr>
 
-            <td>{{fullTravelDetails.arrival}}</td>
-        </tr>
+
+        <tr> <td>Departing From </td> <td>{{fullTravelDetails.departure.departureAirportFsCode}}</td></tr>
+        <tr><td>Departing Airport Code </td> <td> {{getairportsindi(fullTravelDetails.departure.departureAirportFsCode)}}</td></tr>
+        <tr><td>Arriving To </td> <td>{{fullTravelDetails.departure.arrivalAirportFsCode}}</td></tr>
+        <tr><td>Arriving Airport Code </td> <td> {{getairportsindi(fullTravelDetails.departure.arrivalAirportFsCode)}}</td></tr>
+
+        <tr><td>Departing On </td> <td>{{fullTravelDetails.departure.departureDateFrom}}</td></tr>
+        <tr><td>Reaching On </td> <td>{{fullTravelDetails.departure.departureDateTo}}</td></tr>
+        <tr><td>Departing At time </td> <td>{{fullTravelDetails.departure.departureTime}}</td></tr>
+        <tr><td>Arriving At time </td> <td>{{fullTravelDetails.departure.arrivalTime}}</td></tr>
+        <tr><td>Flight duration (In minutes) </td> <td>{{fullTravelDetails.departure.flightDurationMinutes}}</td></tr>
+
+        <tr><td> Connection Details</td> </tr><td>
+        <div ng-repeat="connectionDetail in fullTravelDetails.departure.flightLegs">
+            <div>Departing From: At {{connectionDetail.departureTime}} </div>
+            <div>Terminal  {{connectionDetail.departureTerminal}}</div>
+            <div>Arriving To:  {{connectionDetail.arrivalTime}}</div>
+            <div>Terminal {{connectionDetail.arrivalTerminal}}</div>
+            <div>Carrier Airline {{connectionDetail.carrierFsCode}}</div>
+            <div>Flight Number {{connectionDetail.flightNumber}}</div>
+            <div>Day difference between source and destination {{connectionDetail.arrivalDateAdjustment}}</div>
+            <div>Distance in Miles {{connectionDetail.distanceMiles}}</div>
+            <div>Flight Duration {{connectionDetail.flightDurationMinutes}}</div>
+            <br/>
+        </div>
+    </td>
+
+
     </table>
+    <table ng-show="showsecondpartofflightbooking">
+        <tr><th><div><h4>{{flightDetailsSecondPart}}</h4></div></th></tr>
+
+        <tr> <td>Departing From </td> <td>{{fullTravelDetails.arrival.departureAirportFsCode}}</td></tr>
+          <tr><td>Departing Airport Code </td> <td> {{getairportsindi(fullTravelDetails.arrival.departureAirportFsCode)}}</td></tr>
+        <tr><td>Arriving To </td> <td>{{fullTravelDetails.arrival.arrivalAirportFsCode}}</td></tr>
+        <tr><td>Arriving Airport Code </td> <td> {{getairportsindi(fullTravelDetails.arrival.arrivalAirportFsCode)}}</td></tr>
+
+        <tr><td>Departing On </td> <td>{{fullTravelDetails.arrival.departureDateFrom}}</td></tr>
+        <tr><td>Reaching On </td> <td>{{fullTravelDetails.arrival.departureDateTo}}</td></tr>
+        <tr><td>Departing At time </td> <td>{{fullTravelDetails.arrival.departureTime}}</td></tr>
+        <tr><td>Arriving At time </td> <td>{{fullTravelDetails.arrival.arrivalTime}}</td></tr>
+        <tr><td>Flight duration (In minutes) </td> <td>{{fullTravelDetails.arrival.flightDurationMinutes}}</td></tr>
+
+<tr><td> Connection Details</td> </tr><td>
+        <div ng-repeat="connectionDetail in fullTravelDetails.arrival.flightLegs">
+            <div>Departing From: At {{connectionDetail.departureTime}} </div>
+            <div>Terminal  {{connectionDetail.departureTerminal}}</div>
+            <div>Arriving To:  {{connectionDetail.arrivalTime}}</div>
+            <div>Terminal {{connectionDetail.arrivalTerminal}}</div>
+            <div>Carrier Airline {{connectionDetail.carrierFsCode}}</div>
+            <div>Flight Number {{connectionDetail.flightNumber}}</div>
+            <div>Day difference between source and destination {{connectionDetail.arrivalDateAdjustment}}</div>
+            <div>Distance in Miles {{connectionDetail.distanceMiles}}</div>
+            <div>Flight Duration {{connectionDetail.flightDurationMinutes}}</div>
+
+            <br/>
+        </div>
+</td>
+        <tr></tr>
+    </table>
+
     <div>{{arrivalstatus}}</div>
 
     <button>Book Now</button>

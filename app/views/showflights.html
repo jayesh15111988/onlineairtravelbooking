@@ -169,8 +169,8 @@ a {
                             <!-- changing popover with tooltip, as former would not allow any html elements in it will change if
                             requires in the future -->
 
-                            <div>Departing From:<span class="pop"   tooltip-html-unsafe="{{getairportsindi(flightDetail.departureAirportFsCode,0)}}" tooltip-trigger="click: click" tooltip-popup-delay="0" tooltip-placement="right"> {{flightDetail.departureAirportFsCode}}</span> At {{flightDetail.departureTime}} </div>
-                            <div>Arriving To:<span  tooltip-html-unsafe="{{getairportsindi(flightDetail.arrivalAirportFsCode,0)}}" tooltip-trigger="click: click" tooltip-popup-delay="0" tooltip-placement="right" > {{flightDetail.arrivalAirportFsCode}}</span> At {{flightDetail.arrivalTime}}</div>
+                            <div>Departing From:<span class="pop"   tooltip-html-unsafe="{{getairportsindi(flightDetail.departureAirportFsCode,0)}}" tooltip-trigger="mouseenter : mouseleave" tooltip-popup-delay="0" tooltip-placement="right"> {{flightDetail.departureAirportFsCode}}</span> At {{flightDetail.departureTime}} </div>
+                            <div>Arriving To:<span  tooltip-html-unsafe="{{getairportsindi(flightDetail.arrivalAirportFsCode,0)}}" tooltip-trigger="mouseenter : click" tooltip-popup-delay="0" tooltip-placement="right" > {{flightDetail.arrivalAirportFsCode}}</span> At {{flightDetail.arrivalTime}}</div>
 
 
                             <!--<div>Deparing On: {{flightDetail.departureDaysOfWeek[0]}}</div>-->

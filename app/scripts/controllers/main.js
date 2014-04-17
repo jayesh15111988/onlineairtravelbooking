@@ -190,10 +190,52 @@ airlinetravelmodule.controller('DetailController',function($scope,$routeParams){
     console.log(arrivalDetailsglobal.distanceMiles);
     console.log(departureDetailsGlobal.distanceMiles);
 
+    $scope.getairportsindi=function(iatacode){
+       // $scope.airportTitle=iatacode;
+            return airportsDeepDetailsGlobal[iatacode].name;
+    }
+
+    var storeInLocalDatabase=function(){
+
+        window.indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB;
+        window.IDBTransaction = window.IDBTransaction || window.webkitIDBTransaction || window.msIDBTransaction;
+        window.IDBKeyRange = window.IDBKeyRange || window.webkitIDBKeyRange || window.msIDBKeyRange;
+
+        if (!window.indexedDB) {
+            console.log("Your browser doesn't support a stable version of IndexedDB. Such and such feature will not be available.");
+        }
+        var request = window.indexedDB.open("temporaryflightdetails", 3);
+        var db;
+        request.onerror = function(event) {
+            // Do something with request.errorCode!
+        };
+        request.onsuccess = function(event) {
+            db=request.result;
+
+            request.onupgradeneeded = function (event) {
+
+                var db = event.target.result;
+
+                var transaction = db.transaction(["flighdetails"], "readwrite");
+
+
+
+
+            }
+
+        };
+
+    }
+
     if(tripDirection=="OneWay"){
         console.log("still one");
         $scope.showreturningflights=false;
         $scope.fullTravelDetails.arrival=arrivalDetailsglobal;
+        $scope.flightDetailsSecondPart="One way flight details";
+
+        //Storing our details in the indexDB database
+        storeInLocalDatabase(arrivalDetailsglobal);
+
         console.log(arrivalDetailsglobal.distanceMiles);
         $scope.bottomarrivalstatus="Have a nice flight1";
     }
@@ -202,10 +244,14 @@ airlinetravelmodule.controller('DetailController',function($scope,$routeParams){
 $scope.arrivalstatus="Arrival Flight Details";
 $scope.showgoingflights=true;
 $scope.showreturningflights=true;
+        $scope.flightDetailsFirstPart="Two way flight details - First Part";
+        $scope.flightDetailsSecondPart="Two way flight details - Second Part";
 console.log(departureDetailsGlobal.departureDateFrom+" first");
         console.log(arrivalDetailsglobal.distanceMiles+" second");
-
+//Going two way first part
         $scope.fullTravelDetails.departure=departureDetailsGlobal;
+        storeInLocalDatabase(departureDetailsGlobal);
+//Going two way second part
         $scope.fullTravelDetails.arrival=arrivalDetailsglobal;
         $scope.arrivalstatus="Have a nice flight2";
     }
@@ -274,7 +320,7 @@ airlinetravelmodule.controller('showflightscontroller',function($scope,$http,$ro
         setupPageWithAllFlightDetails(filteredArrayAfterAirlineSelection);
         $scope.loadingToDisplay=false;
         console.log(filteredArrayAfterAirlineSelection.length);
-        console.log("hahhhaha");
+        //console.log("hahhhaha");
     }
 
     $scope.bookorgotoreturingflights=function(index){
@@ -368,8 +414,13 @@ $scope.getairportsindi=function(iatacode,isTitle){
         $scope.airportsDeepDetails=airportsDeepDetailsGlobal;
     }
 
+if(isTitle==1){
+    return $scope.airportsDeepDetails[iatacode].name;
+}
 
+    else{
     return '<div style="width: 300px">'+$scope.airportsDeepDetails[iatacode].name+ '<br/><br/> '+$scope.airportsDeepDetails[iatacode].countryName+ ' '+$scope.airportsDeepDetails[iatacode].city+ ' Region -  '+$scope.airportsDeepDetails[iatacode].regionName + '<br/><br/>Local Time  '+ $scope.airportsDeepDetails[iatacode].localTime+'<br/><br/><button class="btn btn-default"><a href="http://maps.google.com/maps?q='+$scope.airportsDeepDetails[iatacode].latitude+','+$scope.airportsDeepDetails[iatacode].longitude+'" target=_blank > Map It </a></button></div>';
+    }
 
     }
 
@@ -600,11 +651,15 @@ allFlightsDetail.clear();
         console.log(travelClass);
         console.log(whichAirline);
         console.log(searchCriteria);
+
+        console.log($scope.sourcecodenew);
+        console.log($scope.destcodenew);
+
         var formData = {
             'tripdirection' 				: tripDirection,
             'travelType':travelType,
-            'sourcecode':sourcecode,
-            'destcode':destcode,
+            'sourcecode':$scope.sourcecodenew,
+            'destcode':$scope.destcodenew,
             'sourceairport':$scope.searchStringSource,
         'destairport':$scope.searchStringDestination,
             'leavingout':$scope.leavingOut,
@@ -614,18 +669,20 @@ allFlightsDetail.clear();
         'numinfants':$scope.numberOfInfants.number,
             'travelclass':travelClass,
             'travelAirline':whichAirline,
-            'serachcriteria':searchCriteria
+            'serachcriteria':searchCriteria,
+            'connectiontype':connectionType,
+                'numberofresultsperpage':numberOfResultsPerPage
         };
 
         $http({
-            url: 'http://localhost:9000/airlinetravel/flightdetailsinsert.php',
+            url: 'http://jayeshkawli.com/airlinetravel/flightdetailsinsert.php',
             method: "GET",
             cache:true,
             params: formData,
             headers: {'Content-Type': 'application/x-www-form-urlencoded'}
         }).success(function (data, status, headers, config) {
                 console.log(data);
-                $window.location.href = "#/showavailableflights/0?source="+$scope.searchStringSource+"&destination="+$scope.searchStringDestination+"&direction="+tripDirection+"&leavingdate="+$scope.leavingOut+"&comingindate="+$scope.comingIn+"&numberofdays="+numberOfDaysToRetrieveFlight;
+              //  $window.location.href = "#/showavailableflights/0?source="+$scope.searchStringSource+"&destination="+$scope.searchStringDestination+"&direction="+tripDirection+"&leavingdate="+$scope.leavingOut+"&comingindate="+$scope.comingIn+"&numberofdays="+numberOfDaysToRetrieveFlight;
 
             }).error(function (data, status, headers, config) {
                 $scope.status = status;
