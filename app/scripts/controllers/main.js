@@ -6,7 +6,7 @@
 
 var numberOfDaysToRetrieveFlight=1;
 var connectionType='connection';
-var airportsDeepDetailsGlobal=[];
+var airportsDeepDetailsGlobal={};
 var airlinetravelmodule=angular.module('airtravelbookingappApp');
 airlinetravelmodule.controller('MainCtrl', function ($scope) {
 
@@ -190,73 +190,83 @@ airlinetravelmodule.controller('DetailController',function($scope,$routeParams){
     console.log(arrivalDetailsglobal.distanceMiles);
     console.log(departureDetailsGlobal.distanceMiles);
 
-    $scope.getairportsindi=function(iatacode){
-       // $scope.airportTitle=iatacode;
-            return airportsDeepDetailsGlobal[iatacode].name;
+
+    if(Object.keys(airportsDeepDetailsGlobal).length>0){
+        console.log("**non empty");
+
+        localStorage.setItem( 'allAvailableAirportDetailsWithFullNames', JSON.stringify(arrivalDetailsglobal) );
     }
-
-    var storeInLocalDatabase=function(){
-
-        window.indexedDB = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB;
-        window.IDBTransaction = window.IDBTransaction || window.webkitIDBTransaction || window.msIDBTransaction;
-        window.IDBKeyRange = window.IDBKeyRange || window.webkitIDBKeyRange || window.msIDBKeyRange;
-
-        if (!window.indexedDB) {
-            console.log("Your browser doesn't support a stable version of IndexedDB. Such and such feature will not be available.");
-        }
-        var request = window.indexedDB.open("temporaryflightdetails", 3);
-        var db;
-        request.onerror = function(event) {
-            // Do something with request.errorCode!
-        };
-        request.onsuccess = function(event) {
-            db=request.result;
-
-            request.onupgradeneeded = function (event) {
-
-                var db = event.target.result;
-
-                var transaction = db.transaction(["flighdetails"], "readwrite");
-
-
-
-
-            }
-
-        };
-
-    }
+    airportsDeepDetailsGlobal=JSON.parse(localStorage.getItem('allAvailableAirportDetailsWithFullNames'));
 
     if(tripDirection=="OneWay"){
         console.log("still one");
-        $scope.showreturningflights=false;
-        $scope.fullTravelDetails.arrival=arrivalDetailsglobal;
+        $scope.showsecondpartofflightbooking=false;
+
+        $scope.showreturningflights=true;
         $scope.flightDetailsSecondPart="One way flight details";
 
-        //Storing our details in the indexDB database
-        storeInLocalDatabase(arrivalDetailsglobal);
+       // if(localStorage.getItem('goingoutdetails')){
+         //   localStorage.removeItem('goingoutdetails');
+        //}
 
-        console.log(arrivalDetailsglobal.distanceMiles);
+        //Storing our details in the local storage
+    console.log("Length of dictionary with airport name in it"+Object.keys(arrivalDetailsglobal).length);
+        if(Object.keys(arrivalDetailsglobal).length>0){
+            console.log("**non empty");
+
+        localStorage.setItem( 'goingoutdetails', JSON.stringify(arrivalDetailsglobal) );
+        }
+        else{
+            console.log("***Empty");
+        }
+        $scope.fullTravelDetails.departure=JSON.parse(localStorage.getItem('goingoutdetails'));
+        ////$scope.fullTravelDetails.departure=arrivalDetailsglobal;
+
+
+
+        console.log(JSON.parse(localStorage.getItem('goingoutdetails')) + "these are total entries from local storage ");
         $scope.bottomarrivalstatus="Have a nice flight1";
     }
 
     else if(tripDirection=="Round Trip"){
 $scope.arrivalstatus="Arrival Flight Details";
-$scope.showgoingflights=true;
+$scope.showsecondpartofflightbooking=true;
 $scope.showreturningflights=true;
         $scope.flightDetailsFirstPart="Two way flight details - First Part";
         $scope.flightDetailsSecondPart="Two way flight details - Second Part";
 console.log(departureDetailsGlobal.departureDateFrom+" first");
         console.log(arrivalDetailsglobal.distanceMiles+" second");
 //Going two way first part
-        $scope.fullTravelDetails.departure=departureDetailsGlobal;
-        storeInLocalDatabase(departureDetailsGlobal);
+
+        //We are removing any stale entries that might be lingering in local storage
+
+        if(Object.keys(departureDetailsGlobal).length>0 || Object.keys(arrivalDetailsglobal).length>0){
+        localStorage.setItem( 'goingoutdetails', JSON.stringify(departureDetailsGlobal) );
 //Going two way second part
-        $scope.fullTravelDetails.arrival=arrivalDetailsglobal;
+            localStorage.setItem( 'comingindetails', JSON.stringify(arrivalDetailsglobal) );
+        }
+
+//Departure section comes first and then arrives arrival - I mean name of identifier which displays airline booking info
+            $scope.fullTravelDetails.departure=JSON.parse(localStorage.getItem('goingoutdetails'));
+            $scope.fullTravelDetails.arrival=JSON.parse(localStorage.getItem('comingindetails'));
+
+        //$scope.fullTravelDetails.arrival=arrivalDetailsglobal;
         $scope.arrivalstatus="Have a nice flight2";
     }
 
+    $scope.getairportsindi=function(iatacode){
+        // $scope.airportTitle=iatacode;
 
+       // console.log(airportsDeepDetailsGlobal[iatacode].name+ " sad "+iatacode);
+        if(airportsDeepDetailsGlobal.hasOwnProperty(iatacode)){
+            console.log("NON EMPTY");
+        return airportsDeepDetailsGlobal[iatacode].name;
+        }
+        else{
+            console.log("EMPTY");
+            return "";
+        }
+    }
 
     console.log($routeParams.id+ "This is whether one way or round trip");
 
@@ -390,6 +400,7 @@ airlinetravelmodule.controller('showflightscontroller',function($scope,$http,$ro
     }
 
 function addToAirportDetails(airportsArray){
+    console.log("full airport details in the array"+ airportsArray);
     var airportsArrayLength=airportsArray.length;
 //sdfsd
     for(var i =0;i<airportsArrayLength;i++){
@@ -400,6 +411,7 @@ var airportCode=airportsArray[i].iata;
         console.log($scope.airportsDeepDetails[airportCode]);
     }
     airportsDeepDetailsGlobal=$scope.airportsDeepDetails;
+    console.log("Length of full airports "+ Object.keys(airportsDeepDetailsGlobal).length);
 }
 
 
@@ -682,7 +694,7 @@ allFlightsDetail.clear();
             headers: {'Content-Type': 'application/x-www-form-urlencoded'}
         }).success(function (data, status, headers, config) {
                 console.log(data);
-              //  $window.location.href = "#/showavailableflights/0?source="+$scope.searchStringSource+"&destination="+$scope.searchStringDestination+"&direction="+tripDirection+"&leavingdate="+$scope.leavingOut+"&comingindate="+$scope.comingIn+"&numberofdays="+numberOfDaysToRetrieveFlight;
+                $window.location.href = "#/showavailableflights/0?source="+$scope.searchStringSource+"&destination="+$scope.searchStringDestination+"&direction="+tripDirection+"&leavingdate="+$scope.leavingOut+"&comingindate="+$scope.comingIn+"&numberofdays="+numberOfDaysToRetrieveFlight;
 
             }).error(function (data, status, headers, config) {
                 $scope.status = status;

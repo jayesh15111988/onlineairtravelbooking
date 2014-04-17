@@ -20,9 +20,11 @@
 
         <tr><td> Connection Details</td> </tr><td>
         <div ng-repeat="connectionDetail in fullTravelDetails.departure.flightLegs">
-            <div>Departing From: At {{connectionDetail.departureTime}} </div>
+            <div>Departing From {{connectionDetail.departureAirportFsCode}} </div>
+            <div>Departing At {{connectionDetail.departureTime}} </div>
             <div>Terminal  {{connectionDetail.departureTerminal}}</div>
-            <div>Arriving To:  {{connectionDetail.arrivalTime}}</div>
+            <div>Arriving To:  {{connectionDetail.arrivalAirportFsCode}}</div>
+            <div>Arriving at:  {{connectionDetail.arrivalTime}}</div>
             <div>Terminal {{connectionDetail.arrivalTerminal}}</div>
             <div>Carrier Airline {{connectionDetail.carrierFsCode}}</div>
             <div>Flight Number {{connectionDetail.flightNumber}}</div>
