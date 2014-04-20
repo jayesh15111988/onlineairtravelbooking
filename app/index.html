@@ -14,7 +14,6 @@
     <!-- build:css styles/vendor.css -->
     <!-- bower:css -->
     <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css" />
-    <link rel="stylesheet" href="bower_components/adaptiveslider/dist/styles/adaptiveslider.min.css">
     <!-- endbower -->
     <!-- endbuild -->
     <!-- build:css({.tmp,app}) styles/main.css -->
@@ -51,6 +50,16 @@
             display: inline;
             position: relative;
         }
+        #input01{
+
+            margin:1em;
+            border:2px solid #ffc600;
+            font-size:14px;
+            border-radius:4px;
+            padding:.25em;
+
+        }
+
         .customtooltip:hover:after{
             background: #333;
             background: rgba(0,0,0,.8);
@@ -68,6 +77,16 @@
             cursor: pointer;
             cursor: hand;
         }
+
+        th.next{
+            content:url("images/arrow_r.gif");
+        }
+
+        th.prev{
+            visibility:visible !important;
+            content:url("images/arrow_l.gif");
+        }
+
 
         /* Start CSS3 Animations on supported browser */
         .jvFloat .placeHolder {
@@ -120,6 +139,10 @@
 
         ga('create', 'UA-XXXXX-X');
         ga('send', 'pageview');
+
+
+
+
     </script>
 
 
@@ -127,14 +150,12 @@
     <!--[if lt IE 9]>
     <script src="bower_components/es5-shim/es5-shim.js"></script>
     <script src="bower_components/json3/lib/json3.min.js"></script>
+    <script src="bower_components/angular/promise-tracker.js"></script>
     <![endif]-->
 
     <!-- build:js scripts/vendor.js -->
     <!-- bower:js -->
     <script src="bower_components/jquery/jquery.js"></script>
-    <!-- For slider we import adaptiveslider -->
-    <script src="bower_components/rgbaster/rgbaster.js"></script>
-    <script src="bower_components/adaptiveslider/dist/js/jquery.adaptiveslider.min.js"></script>
     <!-- endbower -->
     <script src="bower_components/angular/angular.js"></script>
     <script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
@@ -169,6 +190,7 @@
         }
 
 
+
         $(document).ready(function() {
 
 
@@ -178,8 +200,21 @@
 
 //To delete no longer necessary
             $('.datepicker').datepicker({
-startDate:'+d'
+
             });
+
+
+            var checkin = $('#dob').datepicker({
+                startDate:'+d',
+                endDate:'+90d',
+                onRender: function(date) {
+                    // return date.valueOf() < now.valueOf() ? 'disabled' : '';
+                }
+            }).on('changeDate', function(ev) {
+                        console.log("changed");
+                        checkin.hide();
+                    }).data('datepicker');
+
 
 
             $('a').tooltip({
@@ -216,7 +251,19 @@ startDate:'+d'
         });
 
 
+        $("#tandcbutton").click(function(){
+            //$("#div").fadeToggle();
+            console.log("should toggle now");
+            $("#tandc").fadeToggle("slow");
+            //$("#div3").fadeToggle(3000);
+        });
 
+        $("#tandcbuttonhide").click(function(){
+            $("div#tandc").hide();
+        });
+        $("#tandcbuttonshow").click(function(){
+            $("div#tandc").show(1000);
+        });
 
 
     </script>
@@ -328,11 +375,11 @@ startDate:'+d'
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    <h4 class="modal-title" id="myModalLabel33">Modal title</h4>
+                    <h4 class="modal-title" id="myModalLabel33">User Registration</h4>
                 </div>
                 <div class="modal-body">
 
-                    <form role="form">
+                    <form role="form" novalidate>
                         <div class="form-group">
                             <label for="exampleInputEmail1">Email address</label>
                             <div class="input-group input-group-lg">
@@ -340,6 +387,7 @@ startDate:'+d'
                             <input type="email" class="form-control" id="exampleInputEmail1" placeholder="Enter email">
                                 </div>
                         </div>
+
                         <div class="form-group">
                             <label for="exampleInputPassword1">Password</label>
                             <div class="input-group input-group-lg">
@@ -366,59 +414,52 @@ startDate:'+d'
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    <h4 class="modal-title" id="myModalLabel11">Modal title</h4>
-                </div>
-                <div class="modal-body">
-                    <form class="form-horizontal">
-                        <fieldset>
-                            <legend>Controls Bootstrap supports</legend>
 
-                            <div class="control-group">
-                                <label class="control-label" for="select01">Select list</label>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myModalLabel11">User Registration</h4>
+
+                </div>
+
+                <div class="form-actions navbar-right modal-body" ng-controller="samcontroller">
+
+                    <form name="helpForm" class="form-horizontal" novalidate role="form">
+                        <fieldset>
+                            <legend>Create an Account</legend>
+
+                            <div class="form-group">
+                                <label class="control-label" for="select01">Title</label>
                                 <div class="controls">
                                     <select id="select03">
-                                        <option>something</option>
-                                        <option>2</option>
-                                        <option>3</option>
-                                        <option>4</option>
-                                        <option>5</option>
+                                        <option>Please Select...</option>
+                                        <option>Mr.</option>
+                                        <option>Mrs.</option>
+                                        <option>Ms.</option>
+                                        <option>Dear</option>
                                     </select>
                                 </div>
                             </div>
-<br/>
-                            <div class="control-group">
 
 
-                            <div class="row">
-
-
-
-
-                                <div class="col-md-4">First Name: <input type="text" required="true"></div>
-                                <div class="col-md-4">Middle Name: <input type="text"></div>
-                                <div class="col-md-4">Last Name:<input type="text"></div>
-                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-md-4">First Name: <input type="text" required="true"></div>
+                                    <div class="col-md-4">Middle Name: <input type="text"></div>
+                                    <div class="col-md-4">Last Name:<input type="text"></div>
                                 </div>
-<br/>
-                            <div class="control-group">
+                            </div>
 
-Date of Birth<br/>
+                            <div class="form-group">
+                            Date of Birth<br/>
                                 <input type="text" id="dob" data-provide="datepicker">
                             </div>
-<hr/>
 
-                            <div class="control-groups">
+                            <hr/>
+
+                            <div class="form-group">
+
                                 <div class="col">
-
-
-
-
-
-
                                     <label class="control-label" for="select01">Select Country</label><br/>
-                                    <div class="controls">
-
+                                        <div class="controls">
                                         <select id="selectCountry">
                                         <option value="">Country...</option>
                                         <option value="Afganistan">Afghanistan</option>
@@ -669,49 +710,41 @@ Date of Birth<br/>
                                         <option value="Zambia">Zambia</option>
                                         <option value="Zimbabwe">Zimbabwe</option>
 
-
-
                                         </select>
                                     </div>
-
-
-
                                 </div>
-
-<div class="row">
-                                <div class="col-md-4">Street: <input type="text" class="input-lg glyphicon-search"><br/>
-    Street Information <input type="text" class="input-lg glyphicon-search"></div>
-
-</div>
-
-                                <div class="row">
-
-
-
-
-                                    <div class="col-md-4">Zip Code: <input type="number" maxlength="5"></div>
-                                    <div class="col-md-4">City: <input type="text"></div>
-                                    <div class="col-md-4">State:<input type="text"></div>
-
-
                                 </div>
-Enter you email address
+                    <div class="form-group">
+                    <div class="row">
+                        <div class="col-md-4">Street: <input type="text" class="input-lg glyphicon-search"><br/>
+                        Street Information <input type="text" class="input-lg glyphicon-search"></div>
+                    </div>
+    </div>
+
+                    <div class="row">
+                             <div class="col-md-4">Zip Code: <input type="number" maxlength="5"></div>
+                             <div class="col-md-4">City: <input type="text"></div>
+                             <div class="col-md-4">State:<input type="text"></div>
+                    </div>
+
+                    Enter you email address
                                 <div class="row">
                                     <div class="col-lg-6">
                                         <div class="input-group">
 
-      <span class="input-group-addon">
-        <input type="radio">
-      </span>
-                                            <input type="text" class="form-control" placeholder="Email Address">
-                                        </div><!-- /input-group -->
-                                    </div><!-- /.col-lg-6 -->
+                                            <span class="input-group-addon">
+                                            <input type="radio">
+                                            </span>
+                                            <input type="email" class="form-control" placeholder="Email Address">
+                                        </div>
+                                    </div>
+
                                     <div class="col-lg-6">
                                         <div class="input-group">
-      <span class="input-group-addon">
-        <input type="radio">
-      </span>
-                                            <input type="text" class="form-control" placeholder="Re-enter Email address">
+                                            <span class="input-group-addon">
+                                        <input type="radio">
+                                    </span>
+                                    <input type="email" class="form-control" placeholder="Re-enter Email address">
                                         </div><!-- /input-group -->
                                     </div><!-- /.col-lg-6 -->
                                 </div><!-- /.row -->
@@ -729,46 +762,132 @@ Enter you email address
                                     <div class="col-md-4">Password: <input type="password"></div>
                                     <div class="col-md-4">Re-enter Password:<input type="password"></div>
                                 </div>
+                                </div>
                                 <hr/>
-                                Please choose one of the options below<br/><br/>
-                                <div class="btn-group col-sm-offset-1" data-toggle="buttons">
-                                    <label class="btn btn-primary col-md-6">
-                                        <input type="radio" name="options" id="option1"> I conesten to use data by fffffffff
-                                    </label>
 
 
+                               <!-- Please choose one of the options below<br/><br/>-->
 
 
-                                    <label class="btn btn-primary col-md-6 ">
-                                        <input type="radio"  name="options" id="option2"> I conesten to use data by fffffffff
-                                    </label>
-
-                                </div>
-
-<br/><br/>
+                                <div class="control-group">
+                                    <label class="control-label" for="input01">Please enter you phone number</label>
+                                    <div class="controls">
+                                        <input type="text" class="input-xlarge" id="input01">
 
 
-                                <div class="panel-group" id="accordion">
-                                    <div class="panel panel-default">
-                                        <div class="panel-heading">
-                                            <h4 class="panel-title">
-                                         <input type="checkbox">       <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
-                                                    Collapsible Group Item #1
-                                                </a>
-                                            </h4>
-                                        </div>
-                                        <div id="collapseOne" class="panel-collapse collapse in">
-                                            <div class="panel-body">
-                                                Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
-                                            </div>
-                                        </div>
                                     </div>
-
-
                                 </div>
+
+                                <div class="control-group">
+                                    <label class="control-label" for="optionsCheckbox">Promotional Offers</label>
+                                    <div class="controls">
+                                        <label class="checkbox">
+                                            <input type="checkbox" id="optionsCheckbox" value="option1">
+                                            Please select if you would like to receive promotional offers from AirFlightBooking Inc.
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="control-group">
+                                    <label class="control-label" for="select01">Please enlist your choice of languages</label>
+                                    <div class="controls">
+                                        <select id="select01">
+                                            <option>Select Language....</option>
+                                            <option>English</option>
+                                            <option>Hindi</option>
+                                            <option>Spanish</option>
+                                            <option>French</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+
+                                <div class="control-group">
+                                    <label class="control-label" for="multiSelect">Please select why would you want to use airline commercial</label>
+                                    <div class="controls">
+                                        <select multiple="multiple" id="multiSelect">
+                                            <option>Personal</option>
+                                            <option>Family</option>
+                                            <option>Meet Friends</option>
+                                            <option>Travel</option>
+                                            <option>Business</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+
+
+
+
+Terms And Conditions
+                            <textarea class="form-control" rows="4">  Payment
+                                All payments are due upon receipt. If a payment is not received or payment method is declined, the buyer forfeits the ownership of any items purchased. If no payment is received, no items will be shipped.
+
+                                Shipping Policies
+                                Shipping will be paid for by the buyer in the amount agreed upon by the seller at the time of purchase. If an item is lost during shipping, the total cost of item, including shipping, will be refunded to the buyer by the seller. Shipping costs may double if shipping internationally. If an item is damaged during shipping, seller will not be held responsible.
+
+                                Refund/Return Policy
+                                Items are entitled to be refunded or returned based on complaint. If an item is damaged during shipping, a replacement item will be sent free of charge. If an item is unsatisfactory, a written explanation is needed before the item may be considered for a refund. Buyer must take into account the description of the item before requesting a refund. If the item matches the description by the seller and the buyer is unsatisfied, seller is not responsible for refund. Exchanges are granted on a case-by-case basis.
+
+                                Cancellation
+                                An item may be cancelled up until payment has been processed. Once payment has been processed, the buyer is responsible for payment.
+
+                                Complaints
+                                Any complaints about items or sellers may be sent to our support team: support@wesellyourstuff.com or (888) 555-0198. There is no guarantee of a resolution. Each case will be looked at individually, and the seller will be in contact as well.
+
+                                Legalities
+                                The seller is not responsible for any health or safety concerns once the buyer has received the item. If any harm is incurred from the items purchased by the buyer, the seller shares no responsibility.
+                                These terms and conditions are subject to change.</textarea>
+
+                            <div class="btn-group col-sm-offset-1" data-toggle="buttons">
+
+
+                                <label class="btn btn-primary active col-md-6" style="margin-left: -50px">
+                                    <input type="radio" checked name="options" id="option1"> I Read Terms and Conditions
+                                </label>
+
+
+
+
+                                <label class="btn btn-primary" style="width: 270px">
+                                    <input type="radio" name="options" id="option2"  >I Didn't read Terms and Conditions
+                                </label>
+
 
 
                             </div>
+
+
+
+
+                                <!--
+                                Not needed for now
+
+                                <div class="control-group">
+                                    <label class="control-label" for="fileInput">File ddddinput</label>
+                                    <div class="controls">
+                                        <input class="input-file" id="fileInput" type="file">
+                                    </div>
+                                </div>-->
+
+                                <div class="control-group">
+                                    <label class="control-label" for="textarea">Comments and Suggestions</label>
+                                    <div class="controls">
+                                        <textarea class="input-xlarge" id="textarea" rows="3" value="Please put any suggestions and/or comments you may have in this box"></textarea>
+                                    </div>
+                                </div>
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 <br/>
@@ -777,17 +896,18 @@ Enter you email address
 
 
 
-                            <div class="form-actions navbar-right" ng-controller="samcontroller">
-                                <button type="submit"   class="btn btn-primary" data-title="go to next page" data-html="true" data-toggle="modal" ng-click="dataclicked()" data-dismiss="var1" data-target="#">Next</button>
+
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel And Close</button>
+                                <button type="submit"   class="btn btn-primary" data-ng-disabled="progress.active()" data-ng-click="submit(helpForm)" data-title="go to next page" data-html="true" data-toggle="modal" ng-click="dataclicked()" data-dismiss="var1" data-target="#">Next</button>
 
                             </div>
                         </fieldset>
                     </form>
                 </div>
-                <div class="modal-footer center-block">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <!--<div class="modal-footer center-block">
+
                     <button type="button" class="btn btn-primary">Save changes</button>
-                </div>
+                </div>-->
             </div>
         </div>
     </div>
@@ -797,7 +917,7 @@ Enter you email address
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    <h4 class="modal-title" id="myModalLabel45">Modal title</h4>
+                    <h4 class="modal-title" id="myModalLabel45">User Registration</h4>
                 </div>
                 <div class="modal-body">
 
@@ -824,64 +944,14 @@ Enter you email address
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    <h4 class="modal-title" id="myModalLabel">Modal title</h4>
+                    <h4 class="modal-title" id="myModalLabel">User Registration</h4>
                 </div>
                 <div class="modal-body">
                     <form class="form-horizontal">
                         <fieldset>
-                            <legend>Controls Bootstrap supports</legend>
-                            <div class="control-group">
-                                <label class="control-label" for="input01">Text input</label>
-                                <div class="controls">
-                                    <input type="text" class="input-xlarge" id="input01">
-                                    <p class="help-block">In addition to freeform text, any HTML5 text-based input appears like so.</p>
-                                </div>
-                            </div>
-                            <div class="control-group">
-                                <label class="control-label" for="optionsCheckbox">Checkbox</label>
-                                <div class="controls">
-                                    <label class="checkbox">
-                                        <input type="checkbox" id="optionsCheckbox" value="option1">
-                                        Option one is this and that—be sure to include why it's great
-                                    </label>
-                                </div>
-                            </div>
-                            <div class="control-group">
-                                <label class="control-label" for="select01">Select list</label>
-                                <div class="controls">
-                                    <select id="select01">
-                                        <option>something</option>
-                                        <option>2</option>
-                                        <option>3</option>
-                                        <option>4</option>
-                                        <option>5</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="control-group">
-                                <label class="control-label" for="multiSelect">Multicon-select</label>
-                                <div class="controls">
-                                    <select multiple="multiple" id="multiSelect">
-                                        <option>1</option>
-                                        <option>2</option>
-                                        <option>3</option>
-                                        <option>4</option>
-                                        <option>5</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="control-group">
-                                <label class="control-label" for="fileInput">File ddddinput</label>
-                                <div class="controls">
-                                    <input class="input-file" id="fileInput" type="file">
-                                </div>
-                            </div>
-                            <div class="control-group">
-                                <label class="control-label" for="textarea">Textarea</label>
-                                <div class="controls">
-                                    <textarea class="input-xlarge" id="textarea" rows="3"></textarea>
-                                </div>
-                            </div>
+                            <legend>Crate an account</legend>
+
+
                             <hr>
                             <br/>
                             <div class="form-actions navbar-right">

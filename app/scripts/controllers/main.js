@@ -8,6 +8,7 @@ var numberOfDaysToRetrieveFlight=1;
 var connectionType='connection';
 var airportsDeepDetailsGlobal={};
 var airlinetravelmodule=angular.module('airtravelbookingappApp');
+
 airlinetravelmodule.controller('MainCtrl', function ($scope) {
 
   });
@@ -31,6 +32,7 @@ airlinetravelmodule.directive('registerFirstpage', function() {
         }
     }
 });
+
 
 airlinetravelmodule.directive('customOnChange', function() {
     'use strict';
@@ -110,7 +112,7 @@ airlinetravelmodule.controller('forgotpasswordcontroller',function($scope){
 $scope.gotobackpage=function(){
 
     $scope.dismissForgotPasswordView();
-   //$scope.showLoginView();
+    $scope.showLoginView();
 }
 })
 
@@ -120,10 +122,14 @@ airlinetravelmodule.controller('samcontroller',function($scope){
 
 
     $scope.dataclicked=function(){
-        $scope.dismissFirstPage();
+
+       $scope.dismissFirstPage();
        $scope.showSecondPage();
 
     }
+
+
+
 })
 
 //curl -v  -X GET "https://api.flightstats.com/flex/airports/rest/v1/json/active?appId=9738bcd8&appKey=6c713890a9bf2822f783ab8870332617"
@@ -185,6 +191,15 @@ airlinetravelmodule.controller('DetailController',function($scope,$routeParams){
     $scope.fullTravelDetails.arrival=[];
     $scope.fullTravelDetails.departure=[];
 
+    /* Function to check if browser gives html5 support */
+
+    function supports_html5_storage() {
+        try {
+            return 'localStorage' in window && window['localStorage'] !== null;
+        } catch (e) {
+            return false;
+        }
+    }
 
 
     console.log(arrivalDetailsglobal.distanceMiles);
@@ -192,12 +207,17 @@ airlinetravelmodule.controller('DetailController',function($scope,$routeParams){
 
 
     if(Object.keys(airportsDeepDetailsGlobal).length>0){
-        console.log("**non empty");
+        console.log("***non empty");
+        if(localStorage.getItem('allAvailableAirportDetailsWithFullNames')){
+            localStorage.removeItem('allAvailableAirportDetailsWithFullNames');
+        }
 
-        localStorage.setItem( 'allAvailableAirportDetailsWithFullNames', JSON.stringify(arrivalDetailsglobal) );
+
+        localStorage.setItem( 'allAvailableAirportDetailsWithFullNames', JSON.stringify(airportsDeepDetailsGlobal) );
+
     }
     airportsDeepDetailsGlobal=JSON.parse(localStorage.getItem('allAvailableAirportDetailsWithFullNames'));
-
+console.log(airportsDeepDetailsGlobal+ "Total aiport entrie");
     if(tripDirection=="OneWay"){
         console.log("still one");
         $scope.showsecondpartofflightbooking=false;
@@ -496,6 +516,14 @@ $scope.regionName="Please Select Region";
         $scope.regionName=regionname;
         console.log(regionname);
     }
+
+    $scope.dateOptions = {
+        'year-format': "'yy'",
+        'starting-day': 1
+    };
+
+    $scope.formats = ['dd-MMMM-yyyy', 'yyyy/MM/dd', 'shortDate'];
+    $scope.format = $scope.formats[0];
 })
 
 airlinetravelmodule.controller('flightsearchcontroller',function($scope,$http,$window){
@@ -523,7 +551,21 @@ sourcecode= suggestion.data;
     });
 
     $scope.movies = [];
+    var userHistorydata={};
+console.log("about to enter ")
 
+
+
+    if(localStorage.getItem('historySearchData')){
+        userHistorydata=JSON.parse(localStorage.getItem('historySearchData'));
+console.log(userHistorydata +" this is previously stored user data");
+        $scope.sourcecodenew=userHistorydata.sourceCountry;
+        $scope.destcodenew=userHistorydata.destinationCountry;
+        $scope.searchStringSource=userHistorydata.sourceCity;
+        $scope.searchStringDestination=userHistorydata.destinationCity;
+        $scope.leavingOut=userHistorydata.leavingOutOn;
+        $scope.comingIn=userHistorydata.comingInOn;
+    }
     // gives another movie array on change
     /*$scope.updateMovies = function(typed){
         // MovieRetriever could be some service returning a promise
@@ -648,9 +690,24 @@ allFlightsDetail.clear();
         if(typeof  $scope.comingIn=="undefined"){
             $scope.comingIn="N/A";
         }
+
+        //We are getting current serach parameters from user and store them in the local storage for offline usage
+
+        userHistorydata.sourceCountry=$scope.sourcecodenew;
+        userHistorydata.destinationCountry=$scope.destcodenew;
+        userHistorydata.sourceCity=$scope.searchStringSource;
+        userHistorydata.destinationCity=$scope.searchStringDestination;
+        userHistorydata.leavingOutOn=$scope.leavingOut;
+        userHistorydata.comingInOn=$scope.comingIn;
+
+
+        localStorage.setItem('historySearchData',JSON.stringify(userHistorydata));
+
+
+
+
         console.log(tripDirection);
         console.log(travelType);
-        console.log(sourcecode);
         console.log(destcode);
         console.log($scope.searchStringSource);
         console.log($scope.searchStringDestination);

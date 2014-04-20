@@ -1,35 +1,35 @@
 'use strict';
 
 angular.module('airtravelbookingappApp', [
-  'ngCookies',
-  'ngResource',
-  'ngSanitize',
-  'ngRoute',
-  'ui.bootstrap','autocomplete',
+        'ngCookies',
+        'ngResource',
+        'ngSanitize',
+        'ngRoute',
+        'ui.bootstrap','autocomplete',
         'ngResource'
-])
+    ])
 
     /* Route Provider decides which page to show based on the input URL */
 
-  .config(function ($routeProvider) {
-    $routeProvider
-      .when('/', {
-        templateUrl: 'views/main.html',
-        controller: 'MainCtrl'
-      })
-        .when('/flightsearch', {
-            templateUrl: 'views/flightsearch.html',
-            controller: 'flightsearchcontroller'
-        })
-        .when('/showavailableflights/:id', {
-            templateUrl: 'views/showflights.html',
-            controller: 'showflightscontroller'
-        })
-        .when('/view/:id', {
-            controller: 'DetailController',
-            templateUrl: 'views/detail.html'
-        })
-      .otherwise({
-        redirectTo: '/'
-      });
-  });
+    .config(function ($routeProvider) {
+        $routeProvider
+            .when('/', {
+                templateUrl: 'views/main.html',
+                controller: 'MainCtrl'
+            })
+            .when('/flightsearch', {
+                templateUrl: 'views/flightsearch.html',
+                controller: 'flightsearchcontroller'
+            })
+            .when('/showavailableflights/:id', {
+                templateUrl: 'views/showflights.html',
+                controller: 'showflightscontroller'
+            })
+            .when('/view/:id', {
+                controller: 'DetailController',
+                templateUrl: 'views/detail.html'
+            })
+            .otherwise({
+                redirectTo: '/'
+            });
+    });
