@@ -141,6 +141,22 @@
         ga('send', 'pageview');
 
 
+function toremember(checkboxfield){
+
+console.log(checkboxfield.checked);
+    if(!document.getElementById('recordlocator').value){
+        checkboxfield.checked=false;
+    }
+    else{
+        if(checkboxfield.checked){
+        localStorage.setItem('recordlocatorcode',document.getElementById('recordlocator').value);
+        }
+        else{
+            localStorage.removeItem('recordlocatorcode');
+        }
+    }
+}
+
 
 
     </script>
@@ -150,7 +166,7 @@
     <!--[if lt IE 9]>
     <script src="bower_components/es5-shim/es5-shim.js"></script>
     <script src="bower_components/json3/lib/json3.min.js"></script>
-    <script src="bower_components/angular/promise-tracker.js"></script>
+
     <![endif]-->
 
     <!-- build:js scripts/vendor.js -->
@@ -166,6 +182,7 @@
     <script src="bower_components/angular-route/angular-route.js"></script>
     <script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
 
+    <script src="bower_components/angular/promise-tracker.js"></script>
 
     <!-- endbuild -->
 
@@ -193,6 +210,10 @@
 
         $(document).ready(function() {
 
+
+            $("#submitreservationrequest").click(function(){
+                alert("button");
+            });
 
 
 
@@ -251,19 +272,9 @@
         });
 
 
-        $("#tandcbutton").click(function(){
-            //$("#div").fadeToggle();
-            console.log("should toggle now");
-            $("#tandc").fadeToggle("slow");
-            //$("#div3").fadeToggle(3000);
-        });
 
-        $("#tandcbuttonhide").click(function(){
-            $("div#tandc").hide();
-        });
-        $("#tandcbuttonshow").click(function(){
-            $("div#tandc").show(1000);
-        });
+
+
 
 
     </script>
@@ -294,7 +305,7 @@
                 <a class="navbar-brand" href="#">Airline Reservation</a>
             </div>
             <!-- Collect the nav links, forms, and other content for toggling -->
-            <div class="collapse navbar-collapse" ng-controller="upperleftbarcontroller" id="bs-example-navbar-collapse-1">
+            <div class="collapse navbar-collapse" ng-controller="samcontroller" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav">
 
                     <li class="dropdown">
@@ -308,7 +319,7 @@
                         </ul>
                     </li>
                 </ul>
-                <form class="navbar-form navbar-left" role="search">
+                <form class="navbar-form navbar-left" role="search" >
                     <div class="form-group">
                         <input type="text" class="form-control" placeholder="Search">
                     </div>
@@ -316,36 +327,37 @@
                 </form>
                 <ul class="nav navbar-nav navbar-right" style="margin-right: 60px" >
                 <li><a href="#/flightsearch" data-html="true" data-target="#" class="btn-link" data-placement="bottom"  data-original-title="Flight Search" >Flight Search</a></li>
-                <li><a href="#" data-html="true" data-toggle="modal" data-target="#loginview" class="btn-link" data-placement="bottom" data-original-title="Log into account" >Login</a></li>
+
+                    <li><a href="#" data-html="true"  data-toggle="modal" data-target="#loginview" class="btn-link" data-placement="bottom" data-original-title="Log into account" >Login</a></li>
                     <li><a href="#" data-html="true" data-toggle="modal" data-target="#registerview" class="btn-link" data-placement="bottom" data-original-title="Register for new account" >Register</a></li>
                     <li><button class="btn" id="loginbutton" data-toggle="popover" data-placement="bottom" data-html="true" data-original-title="Click to Log In" data-title="<div style='width:800px'>asdasdas</div>"
-                          data-content="<div><form class='form-horizontal' role='form'  >
-  <div class='form-group' >
-    <label for='inputEmail3' class='col-sm-2 control-label'>Email</label>
+                          data-content="<div ng-controller='samcontroller'><form class='form-horizontal' role='form' action='http://jayeshkawli.com/airlinetravel/retrievereservation.php' target='_blank' method='post'>
+  <div class='form-group'>
+    <label for='inputEmail3' class='col-sm-2 control-label'>Confirmation Code</label>
     <div class='col-sm-9' style='margin-left:10px'>
-      <input type='email' class='form-control' style='margin-left:20px' id='inputEmail3' placeholder='Email'>
+      <input required='true' class='form-control' style='margin-left:20px' id='recordlocator' placeholder='Confirmation Code'>
     </div>
   </div>
-  <div class='form-group'>
+  <!--<div class='form-group'>
     <label for='inputPassword3' class='col-sm-2 control-label'>Password</label>
     <div class='col-sm-9'>
       <input type='password'  class='form-control' style='margin-left:30px' id='inputPassword3' placeholder='Password'>
     </div>
-  </div>
+  </div>-->
   <div class='form-group'>
     <div class='col-sm-offset-2 col-sm-10'>
       <div class='checkbox'>
         <label>
-          <input type='checkbox'> Remember me
+          <input type='checkbox' onclick='toremember(this);'> Remember Reservation
         </label>
       </div>
     </div>
   </div>
-  <div class='form-group'>
+  <div class='form-group'  ng-controller='samcontroller'>
     <div class='col-sm-offset-2 col-sm-10'>
 
 
-      <button type='button' class='btn btn-primary'>Retrieve Reservation</button>
+      <button type='submit' onclick='savereservationinfo()'  id='submitreservationrequest'  class='btn btn-primary'>Retrieve Reservation</button>
 
 
 
@@ -413,7 +425,8 @@
     <div class="modal fade" register-firstpage id="registerview" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
-                <div class="modal-header">
+
+            <div class="modal-header">
 
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                     <h4 class="modal-title" id="myModalLabel11">User Registration</h4>
@@ -422,6 +435,10 @@
 
                 <div class="form-actions navbar-right modal-body" ng-controller="samcontroller">
 
+                <!--<div id="messages" class="alert alert-success" data-ng-show="messages" data-ng-bind="messages"></div>-->
+                <div id="messages" class="alert alert-success" data-ng-show="messages" data-ng-bind="messages"></div>
+                <div data-ng-show="progress.active()" style="color: red; font-size: 50px;">Sending&hellip;</div>
+
                     <form name="helpForm" class="form-horizontal" novalidate role="form">
                         <fieldset>
                             <legend>Create an Account</legend>
@@ -429,8 +446,8 @@
                             <div class="form-group">
                                 <label class="control-label" for="select01">Title</label>
                                 <div class="controls">
-                                    <select id="select03">
-                                        <option>Please Select...</option>
+                                    <select id="select03" ng-model="salutation">
+
                                         <option>Mr.</option>
                                         <option>Mrs.</option>
                                         <option>Ms.</option>
@@ -441,16 +458,26 @@
 
 
                             <div class="form-group">
+
                                 <div class="row">
-                                    <div class="col-md-4">First Name: <input type="text" required="true"></div>
-                                    <div class="col-md-4">Middle Name: <input type="text"></div>
-                                    <div class="col-md-4">Last Name:<input type="text"></div>
+
+                                    <div class="col-md-4"> <label>First Name:</label>
+                                        <span class="label label-danger" data-ng-show="submitted && helpForm.firstname.$error.required">Required!</span>
+
+                                        <input type="text" id="firstname" name="firstname" ng-model="firstname" required="true"></div>
+                                    <div class="col-md-4"> <label> Middle Name:</label>
+                                        <span class="label label-danger" data-ng-show="submitted && helpForm.middlename.$error.required">Required!</span>
+                                        <input type="text" name="middlename" ng-model="middlename" required></div>
+                                    <div class="col-md-4"> <label>Last Name:</label>
+                                        <span class="label label-danger" data-ng-show="submitted && helpForm.lastname.$error.required">Required!</span>
+                                        <input type="text" name="lastname" ng-model="lastname" required></div>
                                 </div>
                             </div>
 
                             <div class="form-group">
-                            Date of Birth<br/>
-                                <input type="text" id="dob" data-provide="datepicker">
+                                <label>Date of Birth</label><br/>
+                                <span class="label label-danger" data-ng-show="submitted && helpForm.birthdate.$error.required">Required!</span>
+                                <input type="text" id="dob" data-provide="datepicker" name="birthdate" ng-model="birthdate" required>
                             </div>
 
                             <hr/>
@@ -458,10 +485,13 @@
                             <div class="form-group">
 
                                 <div class="col">
-                                    <label class="control-label" for="select01">Select Country</label><br/>
+
+                                <label for="selectCountry">Select Country</label><br/>
                                         <div class="controls">
-                                        <select id="selectCountry">
-                                        <option value="">Country...</option>
+                                        <span class="label label-danger" data-ng-show="submitted && helpForm.country.$error.required">Required!</span>
+                                        <select id="selectCountry" name="country" ng-model="country" required>
+                                        <option value=""></option>
+                                        <option value="United States of America">United States of America</option>
                                         <option value="Afganistan">Afghanistan</option>
                                         <option value="Albania">Albania</option>
                                         <option value="Algeria">Algeria</option>
@@ -694,7 +724,6 @@
                                         <option value="Ukraine">Ukraine</option>
                                         <option value="United Arab Erimates">United Arab Emirates</option>
                                         <option value="United Kingdom">United Kingdom</option>
-                                        <option value="United States of America">United States of America</option>
                                         <option value="Uraguay">Uruguay</option>
                                         <option value="Uzbekistan">Uzbekistan</option>
                                         <option value="Vanuatu">Vanuatu</option>
@@ -716,15 +745,29 @@
                                 </div>
                     <div class="form-group">
                     <div class="row">
-                        <div class="col-md-4">Street: <input type="text" class="input-lg glyphicon-search"><br/>
-                        Street Information <input type="text" class="input-lg glyphicon-search"></div>
-                    </div>
+                        <div class="col-md-4"><label>Street:</label>
+                            <span class="label label-danger" data-ng-show="submitted && helpForm.streetname.$error.required">Required!</span>
+                            <input type="text" name="streetname" ng-model="streetname" class="input-lg glyphicon-search" required><br/>
+                        Street Information <input type="text" ng-model="streetsubname" class="input-lg glyphicon-search"></div>
+
     </div>
 
                     <div class="row">
-                             <div class="col-md-4">Zip Code: <input type="number" maxlength="5"></div>
-                             <div class="col-md-4">City: <input type="text"></div>
-                             <div class="col-md-4">State:<input type="text"></div>
+
+                    <div class="col-md-4">Zip Code:
+                                 <span class="label label-danger" data-ng-show="submitted && helpForm.zipcode.$error.required">Required!</span>
+                                 <input type="number" name="zipcode" ng-model="zipcode" maxlength="5" required>
+                    </div>
+
+                    <div class="col-md-4">City:
+                            <span class="label label-danger" data-ng-show="submitted && helpForm.city.$error.required">Required!</span>
+                            <input type="text" name="city" ng-model="city" required>
+                    </div>
+
+                    <div class="col-md-4">State:
+                            <span class="label label-danger" data-ng-show="submitted && helpForm.state.$error.required">Required!</span>
+                            <input type="text" name="state" ng-model="state" required>
+                    </div>
                     </div>
 
                     Enter you email address
@@ -735,7 +778,9 @@
                                             <span class="input-group-addon">
                                             <input type="radio">
                                             </span>
-                                            <input type="email" class="form-control" placeholder="Email Address">
+                                            <label></label>
+                                            <span class="label label-danger" data-ng-show="submitted && helpForm.email.$error.required">Required!</span>
+                                            <input type="email" name="email" ng-model="email" class="form-control" placeholder="Email Address" required>
                                         </div>
                                     </div>
 
@@ -744,7 +789,9 @@
                                             <span class="input-group-addon">
                                         <input type="radio">
                                     </span>
-                                    <input type="email" class="form-control" placeholder="Re-enter Email address">
+                                            <label></label>
+                                            <span class="label label-danger" data-ng-show="submitted && helpForm.reemail.$error.required">Required!</span>
+                                    <input type="email" name="reemail" ng-model="reemail" class="form-control" placeholder="Re-enter Email address" required>
                                         </div><!-- /input-group -->
                                     </div><!-- /.col-lg-6 -->
                                 </div><!-- /.row -->
@@ -758,21 +805,33 @@
 
                             <div class="control-group">
                                 <div class="row">
-                                    <div class="col-md-4">User Id: <input type="text"></div>
-                                    <div class="col-md-4">Password: <input type="password"></div>
-                                    <div class="col-md-4">Re-enter Password:<input type="password"></div>
+                                    <div class="col-md-4">User Id:
+                                        <span class="label label-danger" data-ng-show="submitted && helpForm.userid.$error.required">Required!</span>
+                                        <input type="text" name="userid" ng-model="userid" required>
+                                    </div>
+
+                                    <div class="col-md-4">Password:
+                                        <span class="label label-danger" data-ng-show="submitted && helpForm.password.$error.required">Required!</span>
+                                        <input type="password" name="password" ng-model="password" required>
+                                    </div>
+
+                                    <div class="col-md-4">Re-enter Password:
+                                        <span class="label label-danger" data-ng-show="submitted && helpForm.repassword.$error.required">Required!</span>
+                                        <input type="password" name="repassword" ng-model="repassword" required>
+                                    </div>
                                 </div>
                                 </div>
                                 <hr/>
 
 
-                               <!-- Please choose one of the options below<br/><br/>-->
+
 
 
                                 <div class="control-group">
-                                    <label class="control-label" for="input01">Please enter you phone number</label>
+                                    <label class="control-label">Please enter you phone number</label>
                                     <div class="controls">
-                                        <input type="text" class="input-xlarge" id="input01">
+                                        <span class="label label-danger" data-ng-show="submitted && helpForm.telephonenumber.$error.required">Required!</span>
+                                        <input type="text" class="input-xlarge" id="input01" name="telephonenumber" ng-model="telephonenumber" required>
 
 
                                     </div>
@@ -782,17 +841,21 @@
                                     <label class="control-label" for="optionsCheckbox">Promotional Offers</label>
                                     <div class="controls">
                                         <label class="checkbox">
-                                            <input type="checkbox" id="optionsCheckbox" value="option1">
+                                            <input type="checkbox" id="optionsCheckbox" ng-model="subscribingforpromotionaloffers">
                                             Please select if you would like to receive promotional offers from AirFlightBooking Inc.
                                         </label>
+<?php
+echo "hahahasdasdasd";
+?>
                                     </div>
                                 </div>
 
                                 <div class="control-group">
-                                    <label class="control-label" for="select01">Please enlist your choice of languages</label>
+                                    <label class="control-label">Please enlist your choice of languages</label>
                                     <div class="controls">
-                                        <select id="select01">
-                                            <option>Select Language....</option>
+                                        <span class="label label-danger" data-ng-show="submitted && helpForm.languagechoice.$error.required">Required!</span>
+                                        <select id="select01" name="languagechoice" ng-model="languagechoice" required>
+                                            <option></option>
                                             <option>English</option>
                                             <option>Hindi</option>
                                             <option>Spanish</option>
@@ -842,22 +905,22 @@ Terms And Conditions
                             <div class="btn-group col-sm-offset-1" data-toggle="buttons">
 
 
-                                <label class="btn btn-primary active col-md-6" style="margin-left: -50px">
-                                    <input type="radio" checked name="options" id="option1"> I Read Terms and Conditions
+                                <label class="btn btn-primary active col-md-6" style="margin-left: -50px" ng-click="conditionschanged(1)">
+                                    <input type="radio" checked name="options" name="accept" ng-model="tandc" id="option1"> I Read Terms and Conditions
                                 </label>
 
 
 
 
-                                <label class="btn btn-primary" style="width: 270px">
-                                    <input type="radio" name="options" id="option2"  >I Didn't read Terms and Conditions
+                                <label class="btn btn-primary" style="width: 270px" ng-click="conditionschanged(0)" >
+                                    <input type="radio" name="options" id="option2" name="reject" ng-model="tandc">I Didn't read Terms and Conditions
                                 </label>
 
 
 
                             </div>
 
-
+                            <span class="label label-danger" data-ng-show="!didConditionsAccepted">Please accept terms and conditions!</span>
 
 
                                 <!--
@@ -873,7 +936,7 @@ Terms And Conditions
                                 <div class="control-group">
                                     <label class="control-label" for="textarea">Comments and Suggestions</label>
                                     <div class="controls">
-                                        <textarea class="input-xlarge" id="textarea" rows="3" value="Please put any suggestions and/or comments you may have in this box"></textarea>
+                                        <textarea class="input-xlarge" id="textarea" rows="3" ng-model="comments" value="Please put any suggestions and/or comments you may have in this box"></textarea>
                                     </div>
                                 </div>
 
@@ -894,16 +957,23 @@ Terms And Conditions
 
 
 
+</fieldset>
 
 
 
                                 <button type="button" class="btn btn-default" data-dismiss="modal">Cancel And Close</button>
-                                <button type="submit"   class="btn btn-primary" data-ng-disabled="progress.active()" data-ng-click="submit(helpForm)" data-title="go to next page" data-html="true" data-toggle="modal" ng-click="dataclicked()" data-dismiss="var1" data-target="#">Next</button>
+                                <button class="btn btn-primary" data-ng-disabled="progress.active()" ng-click="submit(helpForm)" data-title="go to next page" data-html="true" data-toggle="modal"  data-dismiss="var1">Next</button>
 
-                            </div>
-                        </fieldset>
+
+
                     </form>
                 </div>
+            </div>
+            </div>
+            </div>
+                </div>
+        </div>
+
                 <!--<div class="modal-footer center-block">
 
                     <button type="button" class="btn btn-primary">Save changes</button>

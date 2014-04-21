@@ -11,7 +11,7 @@ module.exports = function (grunt) {
 
   // Load grunt tasks automatically
   require('load-grunt-tasks')(grunt);
-
+    grunt.loadNpmTasks('grunt-php');
   // Time how long tasks take. Can help when optimizing build times
   require('time-grunt')(grunt);
   var gateway = require('gateway');
@@ -57,6 +57,13 @@ module.exports = function (grunt) {
       }
     },
 
+      php: {
+          dist: {
+              options: {
+                  port: 5000
+              }
+          }
+      },
     // The actual grunt server settings
     connect: {
       options: {
@@ -123,6 +130,7 @@ module.exports = function (grunt) {
       },
       server: '.tmp'
     },
+
 
     // Add vendor prefixed styles
     autoprefixer: {
@@ -345,6 +353,8 @@ module.exports = function (grunt) {
     grunt.task.run(['serve']);
   });
 
+    grunt.registerTask('default', ['php']);
+
   grunt.registerTask('test', [
     'clean:server',
     'concurrent:test',
@@ -375,4 +385,6 @@ module.exports = function (grunt) {
     'test',
     'build'
   ]);
+
+
 };

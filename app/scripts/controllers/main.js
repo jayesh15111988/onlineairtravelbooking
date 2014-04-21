@@ -117,14 +117,93 @@ $scope.gotobackpage=function(){
 })
 
 
-airlinetravelmodule.controller('samcontroller',function($scope){
+airlinetravelmodule.controller('samcontroller',function($scope, $http, $log, promiseTracker, $timeout){
 
 
 
-    $scope.dataclicked=function(){
+//    $scope.dataclicked=function(){
 
-       $scope.dismissFirstPage();
-       $scope.showSecondPage();
+  //     $scope.dismissFirstPage();
+    //   $scope.showSecondPage();
+
+    //}
+
+
+    $scope.subscribingforpromotionaloffers=false;
+$scope.didConditionsAccepted=true;
+
+    $scope.conditionschanged=function(acceptFlag){
+        $scope.didConditionsAccepted=acceptFlag;
+        console.log($scope.didConditionsAccepted+" final value accept reject ");
+    }
+
+    $scope.doit=function(){
+        console.log("Inside Function Do It");
+    }
+
+    $scope.submit=function(form){
+console.log("submit pressed");
+
+
+
+        console.log($scope.accept+" accept");
+        console.log($scope.reject+" reject");
+        $scope.submitted = true;
+
+
+
+
+        // If form is invalid, return and let AngularJS show validation errors.
+        if (form.$invalid || !$scope.didConditionsAccepted) {
+            return;
+        }
+
+        var formData={
+            'salutation':$scope.salutation,
+            'firstname':$scope.firstname,
+            'middlename':$scope.middlename,
+            'lastname':$scope.lastname,
+            'birthdate':$scope.birthdate,
+            'country':$scope.country,
+            'streetname':$scope.streetname,
+            'streetsubname':$scope.streetsubname,
+            'zipcode':$scope.zipcode,
+            'city':$scope.city,
+            'state':$scope.state,
+            'issubscribed':$scope.subscribingforpromotionaloffers,
+            'emailaddress':$scope.email,
+            'userid':$scope.userid,
+            'password':$scope.password,
+            'telephonenumber':$scope.telephonenumber,
+            'languagechoice':$scope.languagechoice,
+            'comments':$scope.comments
+        }
+
+
+        if(localStorage.getItem('userregistrationinfo')){
+            localStorage.removeItem('userregistrationinfo');
+        }
+
+        localStorage.setItem('userregistrationinfo',formData);
+
+
+        $http({
+            url: 'http://jayeshkawli.com/airlinetravel/customerdetailsinsert.php',
+            method: "GET",
+            cache:true,
+            params: formData,
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+        }).success(function (data, status, headers, config) {
+                console.log(data);
+                $scope.messages = 'Your registration information has been successfully sent! Congratulations...';
+                $scope.dismissFirstPage();
+                $scope.showSecondPage();
+                
+            }).error(function (data, status, headers, config) {
+                $scope.messages = 'Your registration information has been unsuccessfully sent! No try again later...';
+
+            });
+
 
     }
 

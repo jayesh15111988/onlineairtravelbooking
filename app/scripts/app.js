@@ -6,7 +6,7 @@ angular.module('airtravelbookingappApp', [
         'ngSanitize',
         'ngRoute',
         'ui.bootstrap','autocomplete',
-        'ngResource'
+        'ngResource','ajoslin.promise-tracker'
     ])
 
     /* Route Provider decides which page to show based on the input URL */
@@ -28,6 +28,10 @@ angular.module('airtravelbookingappApp', [
             .when('/view/:id', {
                 controller: 'DetailController',
                 templateUrl: 'views/detail.html'
+            })
+            .when('/samfile',{
+                controller:'',
+                templateUrl:'views/sam.php'
             })
             .otherwise({
                 redirectTo: '/'
