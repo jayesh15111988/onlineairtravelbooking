@@ -118,6 +118,14 @@
             transition: transform 100ms, opacity 120ms;
             opacity: 1;
         }
+
+        .modal-body{
+            background-color: #add8e6;
+            opacity: 0.7;
+            width: 100%;
+            margin-left: auto;
+            margin-right: auto;
+        }
         /* End CSS3 */
 
         /* New classes for controlling width of select box */
@@ -184,6 +192,8 @@ console.log(checkboxfield.checked);
 
     <script src="bower_components/angular/promise-tracker.js"></script>
 
+    <!--For new angular JS Bootstrap Datepicker-->
+    <script src="http://angular-ui.github.io/bootstrap/ui-bootstrap-tpls-0.10.0.js"></script>
     <!-- endbuild -->
 
     <!-- build:js({.tmp,app}) scripts/scripts.js -->
@@ -220,22 +230,22 @@ console.log(checkboxfield.checked);
 
 
 //To delete no longer necessary
-            $('.datepicker').datepicker({
+           // $('.datepicker').datepicker({
 
-            });
+//            });
 
 
-            var checkin = $('#dob').datepicker({
+  /*          var checkin = $('#dob').datepicker({
                 startDate:'+d',
                 endDate:'+90d',
                 onRender: function(date) {
-                    // return date.valueOf() < now.valueOf() ? 'disabled' : '';
+                     return date.valueOf() < now.valueOf() ? 'disabled' : '';
                 }
             }).on('changeDate', function(ev) {
                         console.log("changed");
                         checkin.hide();
                     }).data('datepicker');
-
+*/
 
 
             $('a').tooltip({
@@ -331,7 +341,7 @@ console.log(checkboxfield.checked);
                     <li><a href="#" data-html="true"  data-toggle="modal" data-target="#loginview" class="btn-link" data-placement="bottom" data-original-title="Log into account" >Login</a></li>
                     <li><a href="#" data-html="true" data-toggle="modal" data-target="#registerview" class="btn-link" data-placement="bottom" data-original-title="Register for new account" >Register</a></li>
                     <li><button class="btn" id="loginbutton" data-toggle="popover" data-placement="bottom" data-html="true" data-original-title="Click to Log In" data-title="<div style='width:800px'>asdasdas</div>"
-                          data-content="<div ng-controller='samcontroller'><form class='form-horizontal' role='form' action='http://jayeshkawli.com/airlinetravel/retrievereservation.php' target='_blank' method='post'>
+                          data-content="<div><form class='form-horizontal' role='form' action='http://jayeshkawli.com/airlinetravel/retrievereservation.php' target='_blank' method='post'>
   <div class='form-group'>
     <label for='inputEmail3' class='col-sm-2 control-label'>Confirmation Code</label>
     <div class='col-sm-9' style='margin-left:10px'>
@@ -353,7 +363,7 @@ console.log(checkboxfield.checked);
       </div>
     </div>
   </div>
-  <div class='form-group'  ng-controller='samcontroller'>
+  <div class='form-group'>
     <div class='col-sm-offset-2 col-sm-10'>
 
 
@@ -382,40 +392,42 @@ console.log(checkboxfield.checked);
 
     <!-- Modal -->
     <!-- For Login purpose -->
-    <div class="modal fade" login-view ng-controller="loginController" id="loginview" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal fade" login-view ng-controller="samcontroller" id="loginview" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    <h4 class="modal-title" id="myModalLabel33">User Registration</h4>
+                    <h4 class="modal-title" id="myModalLabel33">User Login</h4>
                 </div>
                 <div class="modal-body">
 
-                    <form role="form" novalidate>
+                    <form role="form" name="loginform" novalidate>
                         <div class="form-group">
                             <label for="exampleInputEmail1">Email address</label>
                             <div class="input-group input-group-lg">
                                 <span class="input-group-addon">@</span>
-                            <input type="email" class="form-control" id="exampleInputEmail1" placeholder="Enter email">
+                                <span class="label label-danger" data-ng-show="userloggedin && loginform.loginemail.$error.required">Required!</span>
+                            <span class="label label-danger" ng-show="loginform.loginemail.$error.email">
+      Not valid email!</span>
+                                <input type="email" name="loginemail" ng-model="loginemail" class="form-control" id="exampleInputEmail1" placeholder="Enter email" required="true" >
                                 </div>
                         </div>
 
                         <div class="form-group">
                             <label for="exampleInputPassword1">Password</label>
                             <div class="input-group input-group-lg">
-                                <span class="input-group-addon">*</span>
-                            <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
+                                <span class="input-group-addon"> * </span>
+                                <span class="label label-danger" data-ng-show="userloggedin && loginform.loginpassword.$error.required">Required!</span>
+                            <input type="password" name="loginpassword" ng-model="loginpassword" class="form-control" id="exampleInputPassword1" placeholder="Password" required="true">
                                 </div>
                         </div>
-
+                        <div class="modal-footer center-block">
+                            <button type="submit" class="btn btn-default" data-dismiss="modal" ng-click="forgotPassword();">Forgot Password</button>
+                            <button type="submit" class="btn btn-primary" data-toggle="modal" data-target="#loginview" ng-click="loguserin(loginform)" >Login</button>
+                        </div>
                         </form>
-
-
                 </div>
-                <div class="modal-footer center-block">
-                    <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="forgotPassword();">Forgot Password</button>
-                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#loginview" >Login</button>
-                </div>
+
             </div>
         </div>
     </div>
@@ -433,7 +445,7 @@ console.log(checkboxfield.checked);
 
                 </div>
 
-                <div class="form-actions navbar-right modal-body" ng-controller="samcontroller">
+                <div class="form-actions modal-body" ng-controller="samcontroller">
 
                 <!--<div id="messages" class="alert alert-success" data-ng-show="messages" data-ng-bind="messages"></div>-->
                 <div id="messages" class="alert alert-success" data-ng-show="messages" data-ng-bind="messages"></div>
@@ -474,10 +486,26 @@ console.log(checkboxfield.checked);
                                 </div>
                             </div>
 
+
+
+
+
+
                             <div class="form-group">
                                 <label>Date of Birth</label><br/>
-                                <span class="label label-danger" data-ng-show="submitted && helpForm.birthdate.$error.required">Required!</span>
-                                <input type="text" id="dob" data-provide="datepicker" name="birthdate" ng-model="birthdate" required>
+<!-- Excellent resource - Source: http://angular-ui.github.io/bootstrap/ -->
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <p class="input-group">
+                                            <span class="label label-danger" data-ng-show="submitted && helpForm.birthdate.$error.required">Required!</span>
+                                            <input type="text" id="dob" name="birthdate" ng-model="birthdate" class="form-control" datepicker-popup="{{format}}" ng-model="dt" is-open="opened" min="minDate" max="'2015-06-22'" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" />
+              <span class="input-group-btn">
+                <button class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+              </span>
+                                        </p>
+                                    </div>
+                                </div>
+                           <!--     <input type="text" id="dob" data-provide="datepicker" name="birthdate" ng-model="birthdate" required>-->
                             </div>
 
                             <hr/>
@@ -844,9 +872,7 @@ console.log(checkboxfield.checked);
                                             <input type="checkbox" id="optionsCheckbox" ng-model="subscribingforpromotionaloffers">
                                             Please select if you would like to receive promotional offers from AirFlightBooking Inc.
                                         </label>
-<?php
-echo "hahahasdasdasd";
-?>
+
                                     </div>
                                 </div>
 
@@ -999,7 +1025,7 @@ Terms And Conditions
 
                     </div>
 
-                <div class="modal-footer center-block" ng-controller="forgotpasswordcontroller">
+                <div class="modal-footer center-block" ng-controller="samcontroller">
                     <button type="button" class="btn btn-default" data-toggle="modal" ng-click="gotobackpage();" data-target="#loginview" >Back to login page</button>
                     <button type="button" class="btn btn-primary" data-toggle="modal"  >Send</button>
                 </div>

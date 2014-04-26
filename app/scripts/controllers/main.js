@@ -99,38 +99,50 @@ airlinetravelmodule.directive('loginView', function() {
 });
 
 
-airlinetravelmodule.controller('loginController',function($scope){
-    $scope.forgotPassword=function(){
-    $scope.showForgotPasswordView();
-    }
-
-
-})
-
-
-airlinetravelmodule.controller('forgotpasswordcontroller',function($scope){
-$scope.gotobackpage=function(){
-
-    $scope.dismissForgotPasswordView();
-    $scope.showLoginView();
-}
-})
 
 
 airlinetravelmodule.controller('samcontroller',function($scope, $http, $log, promiseTracker, $timeout){
 
 
+    $scope.gotobackpage=function(){
 
-//    $scope.dataclicked=function(){
+        $scope.dismissForgotPasswordView();
+        $scope.showLoginView();
+    }
 
-  //     $scope.dismissFirstPage();
-    //   $scope.showSecondPage();
+    $scope.forgotPassword=function(){
+        $scope.showForgotPasswordView();
+    }
 
-    //}
 
+    $scope.regionName="Please Select Region";
+    $scope.setRegion=function(regionname){
+        $scope.regionName=regionname;
+        console.log(regionname);
+    }
+
+
+    $scope.disabled = function(date, mode) {
+        return ( mode === 'day' && ( date.getDay() === 0 || date.getDay() === 6 ) );
+    };
+
+    $scope.dateOptions = {
+        'year-format': "'yy'",
+        'starting-day': 1
+    };
+
+    $scope.open = function($event) {
+        $event.preventDefault();
+        $event.stopPropagation();
+
+        $scope.opened = true;
+    };
+
+    $scope.formats = ['dd-MMMM-yyyy', 'yyyy/MM/dd','MM/dd/yyyy', 'shortDate'];
+    $scope.format = $scope.formats[2];
 
     $scope.subscribingforpromotionaloffers=false;
-$scope.didConditionsAccepted=true;
+    $scope.didConditionsAccepted=true;
 
     $scope.conditionschanged=function(acceptFlag){
         $scope.didConditionsAccepted=acceptFlag;
@@ -139,6 +151,47 @@ $scope.didConditionsAccepted=true;
 
     $scope.doit=function(){
         console.log("Inside Function Do It");
+    }
+
+    $scope.loguserin=function(form){
+        console.log("user clicked login button");
+        $scope.userloggedin=true;
+if(form.$invalid){
+    return;
+}
+var userLoginInfo={'emailid':$scope.loginemail,'password':$scope.loginpassword};
+        /*if(localStorage.getItem('userlogininfo')){
+            localStorage.removeItem('userregistrationinfo');
+        }
+
+        localStorage.setItem('userregistrationinfo',formData);*/
+console.log(userLoginInfo+ " info to sent to the server ");
+        $http({
+            url: 'http://jayeshkawli.com/airlinetravel/userlogin.php',
+            method: "GET",
+            cache:true,
+            params: userLoginInfo,
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+        }).success(function (data, status, headers, config) {
+                console.log(data+ "hahaha"+ status+"  "+config);
+
+                if(localStorage.getItem('userauthinfo')){
+                 localStorage.removeItem('userauthinfo');
+                 }
+
+                 localStorage.setItem('userauthinfo',userLoginInfo);
+
+                //$scope.messages = 'Your login information has been successfully sent! Congratulations...';
+                //$scope.dismissFirstPage();
+                //$scope.showSecondPage();
+
+            }).error(function (data, status, headers, config) {
+                console.log(status+"yoyoyoyo "+"  "+headers+status);
+                //$scope.messages = 'Your registration information has been unsuccessfully sent! No try again later...';
+
+            });
+
+
     }
 
     $scope.submit=function(form){
@@ -590,19 +643,7 @@ if(allFlightsDetail.length==0){
 });
 
 airlinetravelmodule.controller('upperleftbarcontroller',function($scope){
-$scope.regionName="Please Select Region";
-    $scope.setRegion=function(regionname){
-        $scope.regionName=regionname;
-        console.log(regionname);
-    }
 
-    $scope.dateOptions = {
-        'year-format': "'yy'",
-        'starting-day': 1
-    };
-
-    $scope.formats = ['dd-MMMM-yyyy', 'yyyy/MM/dd', 'shortDate'];
-    $scope.format = $scope.formats[0];
 })
 
 airlinetravelmodule.controller('flightsearchcontroller',function($scope,$http,$window){
