@@ -150,6 +150,33 @@ airlinetravelmodule.directive('registerView',function(){
 airlinetravelmodule.controller('userupdatecontroller',function($scope){
 
 
+    $scope.$on("DISMISS_UPDATE_VIEW", function(event, data){
+
+        $scope.dismissRegPage();
+
+    });
+
+    $scope.$on("SET_MESSAGE_HEADER", function(event, data){
+       console.log("child reset message");
+        $scope.messages="";
+    });
+
+    $scope.$on("SET_MESSAGE_HEADER_SUCCESS", function(event, data){
+
+        console.log("child reset message");
+        $scope.messages=data;
+
+    });
+
+    $scope.$on("SET_MESSAGE_HEADER_FAILURE", function(event, data){
+
+        console.log("child reset message");
+        $scope.messages=data;
+
+    });
+
+    console.log("Came into update");
+
 
 console.log("Update Controller appeared on the screen");
 //Pre-populate all fields from Local storage - Here, since user already create an account or logged, in we know that serverloginauthenticationsuccess
@@ -175,11 +202,13 @@ console.log("Update Controller appeared on the screen");
            $scope.telephonenumber=prestoredUserData.phonenumber;
            $scope.languagechoice=prestoredUserData.languagechoice;
             $scope.comments=prestoredUserData.comments;
-
+        console.log("Came into update hahah");
     }
 
 
 var test=function(moduleObject,formData){
+
+    console.log("This is form data -> " + formData.issubscribed);
     moduleObject.$emit("UPDATE_PARENT", formData);
 }
 
@@ -218,7 +247,7 @@ var test=function(moduleObject,formData){
             'comments':$scope.comments
         }
 
-        console.log("submit pressed");
+        console.log("submit pressed -> "+$scope.subscribingforpromotionaloffers );
 
         console.log($scope.firstname+ " asdas ");
         console.log($scope.middlename+ " adasd ");
@@ -242,6 +271,7 @@ airlinetravelmodule.controller('samcontroller',function($scope, $http, $log, pro
 
     //$scope.firstname="blah foo blaphsecue";
 
+   // $scope.messages="";
     $scope.savecredentials=false;
     $scope.userfirstnamedisplay="Guest";
 
@@ -303,6 +333,7 @@ $scope.$on("UPDATE_PARENT", function(event, message){
     $scope.viewingProfileInfoForEditing=function(isEditing){
         isEditingUserRegistrationInfo=isEditing;
         console.log("is eidting"+ isEditing);
+        $scope.$broadcast("SET_MESSAGE_HEADER","Sample message");
         //$route.location.reload();
 $scope.firstname="lah";
     }
@@ -357,28 +388,47 @@ function setUserFirstNameOnDisplay(){
     }
 
     $scope.loguserout=function(){
-        console.log("User logging out...flush all local stoarge and empty personal data");
+
+        console.log("User logging out...flush all local storage and empty personal data");
+
+        //Remove all temporary local storage from database and change name to Hello Guest on top nav bar
+        localStorage.removeItem('authTokenInfo');
+        localStorage.removeItem('serverloginauthenticationsuccess');
+
+        if(localStorage.getItem('serverloginauthenticationerror')){
+            localStorage.removeItem('serverloginauthenticationerror');
+        }
+
+        $scope.userfirstnamedisplay="Guest";
+
     }
 
     $scope.loguserin=function(form){
         console.log("user clicked login button");
         $scope.userloggedin=true;
-if(form.$invalid){
-    return;
-}
-var userLoginInfo={'emailid':$scope.loginemail,'password':$scope.loginpassword};
+        if(form.$invalid){
+            return;
+        }
+
+        var userLoginInfo={'emailid':$scope.loginemail,'password':$scope.loginpassword};
+
+
         /*if(localStorage.getItem('userlogininfo')){
             localStorage.removeItem('userregistrationinfo');
         }
 
         localStorage.setItem('userregistrationinfo',formData);*/
-console.log(userLoginInfo+ " info to sent to the server ");
+
+        console.log(userLoginInfo+ " info to sent to the server ");
+        //Sample code for testing auth token
+        var authTokenInfoFromLocalStorage=JSON.parse(localStorage.getItem('authTokenInfo'));
+
         $http({
             url: 'http://jayeshkawli.com/airlinetravel/userlogin.php',
             method: "GET",
             cache:true,
             params: userLoginInfo,
-            headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+            headers: {'Content-Type': 'application/x-www-form-urlencoded','Authorization': authTokenInfoFromLocalStorage.authtoken}
         }).success(function (data, status, headers, config) {
                 console.log(data+ "hahaha"+ status+"  "+config);
 
@@ -420,14 +470,15 @@ console.log(userLoginInfo+ " info to sent to the server ");
 
                 //$('#loginview').modal('hide')
                 $scope.dismissLoginView();
-                //$scope.messages = 'Your login information has been successfully sent! Congratulations...';
+
+                $scope.messages = 'Your login information has been successfully sent! Congratulations...';
                 //$scope.dismissFirstPage();
                 //$scope.showSecondPage();
 
             }).error(function (data, status, headers, config) {
                 console.log(status+"yoyoyoyo "+"  "+headers+status);
                 localStorage.setItem( 'serverloginerror', JSON.stringify(data));
-                //$scope.messages = 'Your registration information has been unsuccessfully sent! No try again later...';
+                $scope.messages = 'Your registration information has been unsuccessfully sent! No try again later...';
 
             });
 
@@ -485,16 +536,24 @@ function sendUserDataToServer(formData,$scope,isCreatingUser,$http){
     }
 
 console.log("Alla server la dyayla");
+
+    var authTokenInfoFromLocalStorage=JSON.parse(localStorage.getItem('authTokenInfo'));
+    //$scope.messages="";
     $http({
         url: updateUrl,
         method: "GET",
         cache:true,
         params: formData,
-        headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+        headers: {'Content-Type': 'application/x-www-form-urlencoded','Authorization': authTokenInfoFromLocalStorage.authtoken}
     }).success(function (data, status, headers, config) {
             console.log(data);
-            $scope.messages = 'Your registration information has been successfully sent! Congratulations...';
+            if(!isCreatingUser){
+                $scope.$broadcast("SET_MESSAGE_HEADER_SUCCESS","success to update");
+            }
 
+            else{
+            $scope.messages = 'Your registration information has been successfully sent! Congratulations...';
+            }
             var serverResponseData=JSON.stringify(data);
 
             if(data.success===true){
@@ -514,6 +573,8 @@ console.log("Alla server la dyayla");
                 $scope.showSecondPage();
              }
                 else{
+                 $scope.$broadcast("DISMISS_UPDATE_VIEW","dismissing");
+
                  //This is not a good practice - To be Fixed But I am getting function undefined Will look into it
                  $('#userupdateview').modal('hide');
              }
@@ -524,7 +585,14 @@ console.log("Alla server la dyayla");
                 console.log("failture with error "+data.errorinfo);
             }
         }).error(function (data, status, headers, config) {
+
+            if(!isCreatingUser){
+                $scope.$broadcast("SET_MESSAGE_HEADER_FAILURE","Failed to update");
+            }
+            else{
             $scope.messages = 'Your registration information has been unsuccessfully sent! No try again later...';
+            }
+
         });
 }
 
