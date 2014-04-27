@@ -7,6 +7,8 @@
 var numberOfDaysToRetrieveFlight=1;
 var connectionType='connection';
 var airportsDeepDetailsGlobal={};
+var isEditingUserRegistrationInfo=false;
+
 var airlinetravelmodule=angular.module('airtravelbookingappApp');
 
 airlinetravelmodule.controller('MainCtrl', function ($scope) {
@@ -34,6 +36,23 @@ airlinetravelmodule.directive('registerFirstpage', function() {
 });
 
 
+airlinetravelmodule.directive('registerUpdatepage', function() {
+    return {
+        restrict: 'A',
+        link: function(scope, element, attr) {
+            scope.dismissRegPage = function() {
+                element.modal('hide');
+            };
+            scope.showFirstPage = function() {
+                element.modal('show');
+            };
+
+        }
+    }
+});
+
+
+
 airlinetravelmodule.directive('customOnChange', function() {
     'use strict';
 
@@ -46,7 +65,22 @@ airlinetravelmodule.directive('customOnChange', function() {
     };
 });
 
+airlinetravelmodule.factory('mySharedService', function($rootScope) {
+    var sharedService = {};
 
+    sharedService.message = '';
+
+    sharedService.prepForBroadcast = function(msg) {
+        this.message = msg;
+        this.broadcastItem();
+    };
+
+    sharedService.broadcastItem = function() {
+        $rootScope.$broadcast('handleBroadcast');
+    };
+
+    return sharedService;
+});
 
 
 
@@ -98,10 +132,161 @@ airlinetravelmodule.directive('loginView', function() {
     }
 });
 
+airlinetravelmodule.directive('registerView',function(){
+   return {
+       restrict: 'A',
+       link:function(scope,element,attr){
+           scope.dismissRegisterView=function(){
+               element.model('hide');
+           };
+           scope.showRegisterView=function(){
+               element.modal('show');
+           }
+       }
+   }
+
+});
+
+airlinetravelmodule.controller('userupdatecontroller',function($scope){
 
 
 
-airlinetravelmodule.controller('samcontroller',function($scope, $http, $log, promiseTracker, $timeout){
+console.log("Update Controller appeared on the screen");
+//Pre-populate all fields from Local storage - Here, since user already create an account or logged, in we know that serverloginauthenticationsuccess
+    //Will be non-empty! If it is, either user is not logged in or it messed up local stoarge data! In the latter case - What a Douchebag!
+
+    if(localStorage.getItem('serverloginauthenticationsuccess')){
+    var prestoredUserData=JSON.parse(localStorage.getItem('serverloginauthenticationsuccess'));
+        $scope.salutation=prestoredUserData.salutation;
+            $scope.firstname=prestoredUserData.firstname;
+            $scope.middlename=prestoredUserData.middlename;
+            $scope.lastname=prestoredUserData.lastname;
+            $scope.birthdate=prestoredUserData.dateofbirth.substring(0,10);
+            $scope.country=prestoredUserData.country;
+            $scope.streetname=prestoredUserData.streetinfo;
+           $scope.streetsubname="";
+           $scope.zipcode=prestoredUserData.zipcode;
+            $scope.city=prestoredUserData.city;
+           $scope.state=prestoredUserData.state;
+           $scope.subscribingforpromotionaloffers=prestoredUserData.issubscribed;
+            $scope.email=$scope.reemail= prestoredUserData.emailaddress;
+           $scope.userid=prestoredUserData.userid;
+            $scope.password=$scope.repassword=prestoredUserData.password;
+           $scope.telephonenumber=prestoredUserData.phonenumber;
+           $scope.languagechoice=prestoredUserData.languagechoice;
+            $scope.comments=prestoredUserData.comments;
+
+    }
+
+
+var test=function(moduleObject,formData){
+    moduleObject.$emit("UPDATE_PARENT", formData);
+}
+
+    $scope.submitUpdatedInformation=function(form){
+
+        $scope.submitted = true;
+
+
+
+
+
+        // If form is invalid, return and let AngularJS show validation errors.
+        if (form.$invalid || !$scope.didConditionsAccepted) {
+            return;
+        }
+
+
+
+        var formData={
+            'salutation':$scope.salutation,
+            'firstname':$scope.firstname,
+            'middlename':$scope.middlename,
+            'lastname':$scope.lastname,
+            'dateofbirth':$scope.birthdate,
+            'country':$scope.country,
+            'streetinfo':$scope.streetname + "  "+$scope.streetsubname,
+            'zipcode':$scope.zipcode,
+            'city':$scope.city,
+            'state':$scope.state,
+            'issubscribed':$scope.subscribingforpromotionaloffers,
+            'emailaddress':$scope.email,
+            'userid':$scope.userid,
+            'password':$scope.password,
+            'phonenumber':$scope.telephonenumber,
+            'languagechoice':$scope.languagechoice,
+            'comments':$scope.comments
+        }
+
+        console.log("submit pressed");
+
+        console.log($scope.firstname+ " asdas ");
+        console.log($scope.middlename+ " adasd ");
+
+        console.log($scope.accept+" accept");
+        console.log($scope.reject+" reject");
+
+    console.log("this is all data"+formData);
+   test(this,formData);
+        $scope.sendmessage=function(){
+            this.$emit("UPDATE_PARENT", "Updated");
+            //this.$emit("UPDATE_PARENT", formData);
+        }
+
+    }
+
+    });
+
+
+airlinetravelmodule.controller('samcontroller',function($scope, $http, $log, promiseTracker, $timeout,$window){
+
+    //$scope.firstname="blah foo blaphsecue";
+
+    $scope.savecredentials=false;
+    $scope.userfirstnamedisplay="Guest";
+
+console.log(isEditingUserRegistrationInfo+ "this is value");
+
+    /*$scope.$on("UPDATE_PARENT", function(event, formData){
+       // $scope.foo = message;
+        console.log("Parent received message");
+        sendUserDataToServer(formData,$scope,false);
+/*console.log("successful"+ message);
+        //Broadcast to Child example part 1
+        $scope.$broadcast("DO_BIDDING", {
+            buttonTitle : message,
+            onButtonClick : function(){
+                $scope.foo = "HAHA this button no longer works!";
+            }
+        });*/
+    //});
+
+$scope.$on("UPDATE_PARENT", function(event, message){
+    //$scope.foo = message+ "hahah";
+    sendUserDataToServer(message,$scope,false,$http);
+
+    //Broadcast to Child example part 1
+    /*$scope.$broadcast("DO_BIDDING", {
+        buttonTitle : message,
+        onButtonClick : function(){
+            $scope.foo = "HAHA this button no longer works!";
+        }
+    });*/
+});
+
+
+
+
+    setUserFirstNameOnDisplay();
+
+    if(localStorage.getItem('userauthinfo')){
+        var storedUserAuthInfo=JSON.parse(localStorage.getItem('userauthinfo'));
+        $scope.loginemail=storedUserAuthInfo.emailid;
+        $scope.loginpassword=storedUserAuthInfo.password;
+
+    }
+
+
 
 
     $scope.gotobackpage=function(){
@@ -115,6 +300,13 @@ airlinetravelmodule.controller('samcontroller',function($scope, $http, $log, pro
     }
 
 
+    $scope.viewingProfileInfoForEditing=function(isEditing){
+        isEditingUserRegistrationInfo=isEditing;
+        console.log("is eidting"+ isEditing);
+        //$route.location.reload();
+$scope.firstname="lah";
+    }
+
     $scope.regionName="Please Select Region";
     $scope.setRegion=function(regionname){
         $scope.regionName=regionname;
@@ -123,7 +315,7 @@ airlinetravelmodule.controller('samcontroller',function($scope, $http, $log, pro
 
 
     $scope.disabled = function(date, mode) {
-        return ( mode === 'day' && ( date.getDay() === 0 || date.getDay() === 6 ) );
+      //  return ( mode === 'day' && ( date.getDay() === 0 || date.getDay() === 6 ) );
     };
 
     $scope.dateOptions = {
@@ -149,8 +341,23 @@ airlinetravelmodule.controller('samcontroller',function($scope, $http, $log, pro
         console.log($scope.didConditionsAccepted+" final value accept reject ");
     }
 
+function setUserFirstNameOnDisplay(){
+
+    if(localStorage.getItem('authTokenInfo')){
+
+        var authInfoInLocalStorage=JSON.parse(localStorage.getItem('authTokenInfo'));
+        //console.log(authInfoInLocalStorage);
+        $scope.userfirstnamedisplay=authInfoInLocalStorage.firstname;
+
+    }
+}
+
     $scope.doit=function(){
         console.log("Inside Function Do It");
+    }
+
+    $scope.loguserout=function(){
+        console.log("User logging out...flush all local stoarge and empty personal data");
     }
 
     $scope.loguserin=function(form){
@@ -175,18 +382,51 @@ console.log(userLoginInfo+ " info to sent to the server ");
         }).success(function (data, status, headers, config) {
                 console.log(data+ "hahaha"+ status+"  "+config);
 
+
+
+
+                $scope.loginemail=userLoginInfo.emailid;
+                $scope.loginpassword=userLoginInfo.password;
+
                 if(localStorage.getItem('userauthinfo')){
-                 localStorage.removeItem('userauthinfo');
-                 }
+                    localStorage.removeItem('userauthinfo');
+                }
 
-                 localStorage.setItem('userauthinfo',userLoginInfo);
+                if($scope.savecredentials===true){
+                 localStorage.setItem('userauthinfo',JSON.stringify(userLoginInfo));
+                }
 
+                var serverResponseData = JSON.stringify(data);
+                console.log(serverResponseData);
+                if(data.success===true){
+
+                    if(localStorage.getItem('serverloginauthenticationsuccess')){
+
+                        localStorage.removeItem('serverloginauthenticationsuccess');
+                        localStorage.removeItem('authTokenInfo');
+
+                    }
+
+                    localStorage.setItem( 'serverloginauthenticationsuccess', serverResponseData);
+             localStorage.setItem('authTokenInfo',JSON.stringify({'authtoken':data.authorization,'emailaddress':data.emailaddress,'firstname':data.firstname}));
+                    $scope.userfirstnamedisplay=data.firstname;
+                    console.log("scuess");
+                }
+                else if (data.success===false){
+
+                    localStorage.setItem( 'serverloginauthenticationerror', serverResponseData);
+                    console.log("failture");
+                }
+
+                //$('#loginview').modal('hide')
+                $scope.dismissLoginView();
                 //$scope.messages = 'Your login information has been successfully sent! Congratulations...';
                 //$scope.dismissFirstPage();
                 //$scope.showSecondPage();
 
             }).error(function (data, status, headers, config) {
                 console.log(status+"yoyoyoyo "+"  "+headers+status);
+                localStorage.setItem( 'serverloginerror', JSON.stringify(data));
                 //$scope.messages = 'Your registration information has been unsuccessfully sent! No try again later...';
 
             });
@@ -197,7 +437,8 @@ console.log(userLoginInfo+ " info to sent to the server ");
     $scope.submit=function(form){
 console.log("submit pressed");
 
-
+    console.log($scope.firstname+ " asdas ");
+    console.log($scope.middlename+ " adasd ");
 
         console.log($scope.accept+" accept");
         console.log($scope.reject+" reject");
@@ -233,36 +474,61 @@ console.log("submit pressed");
         }
 
 
-        if(localStorage.getItem('userregistrationinfo')){
-            localStorage.removeItem('userregistrationinfo');
-        }
+        sendUserDataToServer(formData,$scope,true,$http);
+    }
+})
 
-        localStorage.setItem('userregistrationinfo',formData);
-
-
-        $http({
-            url: 'http://jayeshkawli.com/airlinetravel/customerdetailsinsert.php',
-            method: "GET",
-            cache:true,
-            params: formData,
-            headers: {'Content-Type': 'application/x-www-form-urlencoded'}
-        }).success(function (data, status, headers, config) {
-                console.log(data);
-                $scope.messages = 'Your registration information has been successfully sent! Congratulations...';
-                $scope.dismissFirstPage();
-                $scope.showSecondPage();
-                
-            }).error(function (data, status, headers, config) {
-                $scope.messages = 'Your registration information has been unsuccessfully sent! No try again later...';
-
-            });
-
-
+function sendUserDataToServer(formData,$scope,isCreatingUser,$http){
+    var updateUrl='http://jayeshkawli.com/airlinetravel/customerdetailsinsert.php';
+    if(!isCreatingUser){
+        updateUrl='http://jayeshkawli.com/airlinetravel/customerdetailsupdate.php'
     }
 
+console.log("Alla server la dyayla");
+    $http({
+        url: updateUrl,
+        method: "GET",
+        cache:true,
+        params: formData,
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+    }).success(function (data, status, headers, config) {
+            console.log(data);
+            $scope.messages = 'Your registration information has been successfully sent! Congratulations...';
+
+            var serverResponseData=JSON.stringify(data);
+
+            if(data.success===true){
+
+                if(localStorage.getItem('serverloginauthenticationsuccess')){
+
+                    localStorage.removeItem('serverloginauthenticationsuccess');
+                    localStorage.removeItem('authTokenInfo');
+
+                }
+                localStorage.setItem( 'serverloginauthenticationsuccess', serverResponseData);
+                localStorage.setItem('authTokenInfo',JSON.stringify({'authtoken':data.authorization,'emailaddress':data.emailaddress,'firstname':data.firstname}));
+                $scope.userfirstnamedisplay=data.firstname;
+                console.log("Success");
+             if(isCreatingUser){
+                $scope.dismissRegPage();
+                $scope.showSecondPage();
+             }
+                else{
+                 //This is not a good practice - To be Fixed But I am getting function undefined Will look into it
+                 $('#userupdateview').modal('hide');
+             }
+            }
+            else if (data.success===false){
+
+                localStorage.setItem( 'serverregistrationerror', serverResponseData);
+                console.log("failture with error "+data.errorinfo);
+            }
+        }).error(function (data, status, headers, config) {
+            $scope.messages = 'Your registration information has been unsuccessfully sent! No try again later...';
+        });
+}
 
 
-})
 
 //curl -v  -X GET "https://api.flightstats.com/flex/airports/rest/v1/json/active?appId=9738bcd8&appKey=6c713890a9bf2822f783ab8870332617"
 airlinetravelmodule.config(function($httpProvider){
@@ -313,6 +579,8 @@ var travelDetails={};
 var departureDetailsGlobal=[];
 var arrivalDetailsglobal=[];
 var numberOfResultsPerPage=10;
+
+
 airlinetravelmodule.controller('DetailController',function($scope,$routeParams){
 
 
