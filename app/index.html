@@ -75,11 +75,11 @@
 
         .dropdown-menu{
 
-            cursor: hand;
+            cursor: pointer;
         }
 
         li.submenu{
-            cursor: hand;
+            cursor: pointer;
         }
 
         th.next{
@@ -387,9 +387,9 @@ console.log(checkboxfield.checked);
         <div class="col-md-6">
             <p class="input-group">
                 <span class="label label-danger" data-ng-show="submitted && helpForm.birthdate.$error.required">Required!</span>
-                <input type="text" id="dob" name="birthdate" ng-model="birthdate" class="form-control" datepicker-popup="{{format}}" ng-model="dt" is-open="opened" min="minDate" max="'2015-06-22'" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" />
+                <input type="text" id="dob" name="birthdate" ng-model="birthdate" class="form-control" datepicker-popup="{{format}}" ng-model="dt" is-open="openedUpdate" min="minDate" max="'2015-06-22'" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" />
               <span class="input-group-btn">
-                <button class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+                <button class="btn btn-default" ng-click="openUpdate($event)"><i class="glyphicon glyphicon-calendar"></i></button>
               </span>
             </p>
         </div>
@@ -638,8 +638,8 @@ Not needed for now
 <li><a>Welcome {{userfirstnamedisplay}}</a></li>
                 <li><a href="#/flightsearch" data-html="true" data-target="#" class="btn-link" data-placement="bottom"  data-original-title="Flight Search" >Flight Search</a></li>
 
-                    <li class="submenu"><a data-html="true"  ng-click="showLoginView();" >Login</a></li>
-                    <li class="submenu"><a data-html="true" data-toggle="modal" data-target="#registerview" ng-click="viewingProfileInfoForEditing(false);" class="btn-link" data-placement="bottom" data-original-title="Register for new account" >Register</a></li>
+                    <li class="submenu"><a data-html="true"  ng-click="showLoginViewOnClick();" >Login</a></li>
+                    <li class="submenu"><a data-html="true" data-toggle="modal" ng-click="viewingProfileInfoForEditing(false);" class="btn-link" data-placement="bottom" data-original-title="Register for new account" >Register</a></li>
                     <li><button class="btn" id="loginbutton" data-toggle="popover" data-placement="bottom" data-html="true" data-original-title="Click to Retrieve Reservation" data-title="<div style='width:800px'>asdasdas</div>"
                           data-content="<div><form class='form-horizontal' role='form' action='http://jayeshkawli.com/airlinetravel/retrievereservation.php' target='_blank' method='post'>
   <div class='form-group'>
@@ -678,7 +678,7 @@ Not needed for now
                     <li class="dropdown">
                         <a class="dropdown-toggle" data-toggle="dropdown">Dropdown <b class="caret"></b></a>
                         <ul class="dropdown-menu">
-                            <li><a href="#" data-html="true" data-toggle="modal" ng-click="viewingProfileInfoForEditing(true);">Update</a></li>
+                            <li class="submenu"><a data-html="true" data-toggle="modal" ng-click="viewingProfileInfoForEditing(true);">Update</a></li>
                             <li><a>Another action</a></li>
                             <li><a>Something else here</a></li>
                             <li class="divider"></li>

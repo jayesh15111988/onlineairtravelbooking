@@ -172,6 +172,12 @@ console.log("update came");
         $scope.dismissRegPage();
     });
 
+    $scope.openUpdate = function($event) {
+        $event.preventDefault();
+        $event.stopPropagation();
+
+        $scope.openedUpdate = true;
+    };
 
     var prestoredUserData=JSON.parse(localStorage.getItem('serverloginauthenticationsuccess'));
 
@@ -184,6 +190,8 @@ console.log("update came");
         //var prestoredUserData=JSON.parse(localStorage.getItem('serverloginauthenticationsuccess'));
         //$scope.country=prestoredUserData.country;
     });
+
+
 
     $scope.$on("SET_MESSAGE_HEADER_FAILURE", function(event, data){
 
@@ -305,7 +313,7 @@ airlinetravelmodule.controller('samcontroller',function($scope, $http, $log, pro
 
     console.log("parent one controller came");
 
-$scope.showLoginView=function(){
+$scope.showLoginViewOnClick=function(){
     //$scope.showLoginView(); jjj
 
     if(!localStorage.getItem('authTokenInfo')){
@@ -658,15 +666,30 @@ $scope.$on("UPDATE_PARENT", function(event, message){
         isEditingUserRegistrationInfo=isEditing;
         console.log("is eidting"+ isEditing);
 
-        if(localStorage.getItem('authTokenInfo')){
-        $("#userupdateview").modal('show');
-        $scope.$broadcast("SET_MESSAGE_HEADER","Sample message");
+        if(isEditing===true){
+
+            if(localStorage.getItem('authTokenInfo')){
+                $scope.$broadcast("SET_MESSAGE_HEADER","Sample message");
+                $("#userupdateview").modal('show');
+            }
+            else{
+                console.log("sorry, you must sign in to go this menu");
+            }
         }
-        else{
-            console.log("sorry, you must sign in to go this menu");
-        }
-        //$route.location.reload();
+            else{
+                console.log("Creating a new profile");
+                $("#registerview").modal('show');
+
+            }
+
+
+
+
+
     }
+
+        //$route.location.reload();
+
 
     $scope.regionName="Please Select Region";
     $scope.setRegion=function(regionname){
@@ -738,6 +761,7 @@ function setUserFirstNameOnDisplay(){
 
     $scope.loguserout=function(){
 
+        if(localStorage.getItem('authTokenInfo')){
         console.log("User logging out...flush all local storage and empty personal data");
 
         var storedAuthData=JSON.parse(localStorage.getItem('authTokenInfo'));
@@ -763,6 +787,10 @@ function setUserFirstNameOnDisplay(){
         console.log( "User successfully logged out: " + msg );
 
          })
+        }
+        else{
+            console.log("you are not signed in anyways");
+        }
     }
 
     $scope.loguserin=function(form){
@@ -842,11 +870,13 @@ function setUserFirstNameOnDisplay(){
                     localStorage.setItem( 'serverloginauthenticationerror', serverResponseData);
                     console.log("failture");
                 }
-                $scope.dismissLoginView();
+                $('#loginview').modal('hide');
+             //   $scope.dismissLoginView();
                 $scope.messages = 'Your login information has been successfully sent! Congratulations...';
             })
              .error(function (data, status, headers, config) {
-                $scope.dismissLoginView();
+           //     $scope.dismissLoginView();
+                $('#loginview').modal('hide');
                 console.log(status+"yoyoyoyo "+"  "+headers+status);
                 localStorage.setItem( 'serverloginerror', JSON.stringify(data));
                 $scope.messages = 'Your registration information has been unsuccessfully sent! No try again later...';
