@@ -175,12 +175,12 @@ console.log("update came");
 
     var prestoredUserData=JSON.parse(localStorage.getItem('serverloginauthenticationsuccess'));
 
-console.log(prestoredUserData.country+ " that's it ");
+//console.log(prestoredUserData.country+ " that's it ");
 
     $scope.$on("SET_MESSAGE_HEADER_SUCCESS", function(event, data){
 
         console.log("child reset message");
-        //$scope.messages=data;
+        $scope.messages=data;
         //var prestoredUserData=JSON.parse(localStorage.getItem('serverloginauthenticationsuccess'));
         //$scope.country=prestoredUserData.country;
     });
@@ -305,7 +305,16 @@ airlinetravelmodule.controller('samcontroller',function($scope, $http, $log, pro
 
     console.log("parent one controller came");
 
+$scope.showLoginView=function(){
+    //$scope.showLoginView(); jjj
 
+    if(!localStorage.getItem('authTokenInfo')){
+    $('#loginview').modal('show');
+    }
+    else{
+        console.log("You are already signed in");
+    }
+}
     //We will be using ajax request using jQuery because Angular request mechanism is a piece of shit and gives access control allow origin error
     //even though allow all headers are present in destination - Not sure what's wrong but you may say it a hack. I am gonna
     //abide by it from now on
@@ -323,7 +332,7 @@ airlinetravelmodule.controller('samcontroller',function($scope, $http, $log, pro
     $scope.savecredentials=false;
     $scope.userfirstnamedisplay="Guest";
     $scope.country="";
-
+    $scope.loginviewtarget='#loginview';
     //Not working - Don't know why
     //$scope.showSuccessfullRegistration();
 
@@ -648,7 +657,14 @@ $scope.$on("UPDATE_PARENT", function(event, message){
     $scope.viewingProfileInfoForEditing=function(isEditing){
         isEditingUserRegistrationInfo=isEditing;
         console.log("is eidting"+ isEditing);
+
+        if(localStorage.getItem('authTokenInfo')){
+        $("#userupdateview").modal('show');
         $scope.$broadcast("SET_MESSAGE_HEADER","Sample message");
+        }
+        else{
+            console.log("sorry, you must sign in to go this menu");
+        }
         //$route.location.reload();
     }
 
@@ -737,19 +753,16 @@ function setUserFirstNameOnDisplay(){
          .done(function( msg ) {
         //Remove all temporary local storage from database and change name to Hello Guest on top nav bar
         localStorage.removeItem('authTokenInfo');
-                localStorage.removeItem('serverloginauthenticationsuccess');
-         console.log( "User successfully logged out: " + msg );
-         })
-
-
-
+        localStorage.removeItem('serverloginauthenticationsuccess');
 
         if(localStorage.getItem('serverloginauthenticationerror')){
             localStorage.removeItem('serverloginauthenticationerror');
         }
 
         $scope.userfirstnamedisplay="Guest";
+        console.log( "User successfully logged out: " + msg );
 
+         })
     }
 
     $scope.loguserin=function(form){
@@ -795,9 +808,11 @@ function setUserFirstNameOnDisplay(){
             params: userLoginInfo,
             headers: {'Content-Type': 'application/x-www-form-urlencoded'}
         }).success(function (data, status, headers, config) {
+
+
                 $scope.loginemail=userLoginInfo.emailid;
                 $scope.loginpassword=userLoginInfo.password;
-
+                //User's email addres and password for local stoarge
                 if(localStorage.getItem('userauthinfo')){
                     localStorage.removeItem('userauthinfo');
                 }
@@ -889,6 +904,10 @@ console.log("submit pressed");
 })
 
 function sendUserDataToServer(formData,$scope,isCreatingUser,$http){
+
+
+
+    console.log("this is all we have"+ formData);
     var updateUrl='http://jayeshkawli.com/airlinetravel/customerdetailsinsert.php';
     if(!isCreatingUser){
         updateUrl='http://jayeshkawli.com/airlinetravel/customerdetailsupdate.php'

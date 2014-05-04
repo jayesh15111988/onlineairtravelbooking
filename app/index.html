@@ -74,7 +74,11 @@
         }
 
         .dropdown-menu{
-            cursor: pointer;
+
+            cursor: hand;
+        }
+
+        li.submenu{
             cursor: hand;
         }
 
@@ -337,7 +341,7 @@ console.log(checkboxfield.checked);
 
 <form name="helpForm" class="form-horizontal" novalidate role="form">
 <fieldset>
-<legend>Create an Account</legend>
+<legend>Update an Account</legend>
 
 <div class="form-group">
     <label class="control-label" for="select01">Title</label>
@@ -398,7 +402,9 @@ console.log(checkboxfield.checked);
 <div class="form-group">
 
 <div class="col">
-
+<div>
+    Selected Country : {{country}}
+    </div>
 <label for="selectCountry">Select Country</label><br/>
 <div class="controls">
 <span class="label label-danger" data-ng-show="submitted && helpForm.country.$error.required">Required!</span>
@@ -632,8 +638,8 @@ Not needed for now
 <li><a>Welcome {{userfirstnamedisplay}}</a></li>
                 <li><a href="#/flightsearch" data-html="true" data-target="#" class="btn-link" data-placement="bottom"  data-original-title="Flight Search" >Flight Search</a></li>
 
-                    <li><a href="#" data-html="true"  data-toggle="modal" data-target="#loginview" class="btn-link" data-placement="bottom" data-original-title="Log into account" >Login</a></li>
-                    <li><a href="#" data-html="true" data-toggle="modal" data-target="#registerview" ng-click="viewingProfileInfoForEditing(false);" class="btn-link" data-placement="bottom" data-original-title="Register for new account" >Register</a></li>
+                    <li class="submenu"><a data-html="true"  ng-click="showLoginView();" >Login</a></li>
+                    <li class="submenu"><a data-html="true" data-toggle="modal" data-target="#registerview" ng-click="viewingProfileInfoForEditing(false);" class="btn-link" data-placement="bottom" data-original-title="Register for new account" >Register</a></li>
                     <li><button class="btn" id="loginbutton" data-toggle="popover" data-placement="bottom" data-html="true" data-original-title="Click to Retrieve Reservation" data-title="<div style='width:800px'>asdasdas</div>"
                           data-content="<div><form class='form-horizontal' role='form' action='http://jayeshkawli.com/airlinetravel/retrievereservation.php' target='_blank' method='post'>
   <div class='form-group'>
@@ -672,7 +678,7 @@ Not needed for now
                     <li class="dropdown">
                         <a class="dropdown-toggle" data-toggle="dropdown">Dropdown <b class="caret"></b></a>
                         <ul class="dropdown-menu">
-                            <li><a href="#" data-html="true" data-toggle="modal" ng-click="viewingProfileInfoForEditing(true);" data-target="#userupdateview">Update</a></li>
+                            <li><a href="#" data-html="true" data-toggle="modal" ng-click="viewingProfileInfoForEditing(true);">Update</a></li>
                             <li><a>Another action</a></li>
                             <li><a>Something else here</a></li>
                             <li class="divider"></li>
