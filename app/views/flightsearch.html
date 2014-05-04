@@ -125,7 +125,9 @@ ul>li{
 
     });
 
-
+function doit(){
+    console.log("hahah");
+}
     var nowTemp = new Date();
     var now = new Date(nowTemp.getFullYear(), nowTemp.getMonth(), nowTemp.getDate(), 0, 0, 0, 0);
 
@@ -172,6 +174,7 @@ ul>li{
 
 
 </script>
+<script src="http://angular-ui.github.io/bootstrap/ui-bootstrap-tpls-0.10.0.js"></script>
 <div class="container-fluid" ng-controller="flightsearchcontroller" style="height: 100%;background-color: #000000" xmlns="http://www.w3.org/1999/html">
 <div class="mini-layout fluid" style="height:900px;background-color: darkgray">
     <div style="background-color: #808080;height: 100%;width:20%;float: left" ></div>
@@ -245,15 +248,27 @@ Type of travel:<br/>
 
 
 
-            <div class="row">
-                <div class="col-md-6">Leaving On: <label class="sr-only" for="leavingon">Leaving On</label>
-                    <input id="dpd1" type="text" ng-model="leavingOut" class="form-control" data-start-date="+d"  id="leavingon" placeholder="Leaving On (mm/dd/yyyy)" data-provide="datepicker"></div>
-                <div ng-show="isVisibleReturningDate" class="col-md-6">Reaching On:
-                    <label class="sr-only" for="reachingon">Reaching On</label>
-                    <input id="dpd2" type="text" ng-model="comingIn"  class="form-control" id="reachingon" placeholder="Reaching On (mm/dd/yyyy)" data-provide="datepicker">
+                <div class="row" class="col-md-6">
+
+                <div class="col-md-6">Leaving On:
+                    <label class="sr-only" for="leavingon">Leaving On</label>
+                    <input id="leavingon" ng-model="leavingOut" class="form-control" datepicker-popup="{{format}}" is-open="opened" min="{{mindate}}" max="{{maxdate1}}" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" />
+                    <!--<span class="input-group-btn">
+                <button class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+                </span>-->
                 </div>
+                    <!--<input id="dpd1" type="text" ng-model="leavingOut" class="form-control" data-start-date="+d"  id="leavingon" placeholder="Leaving On (mm/dd/yyyy)" data-provide="datepicker"></div>-->
+                <div class="col-md-6" ng-show="isVisibleReturningDate">Reaching On:
+                    <label class="sr-only" for="reachingon">Reaching On</label>
+                    <input  id="reachingon" ng-model="comingIn" class="form-control" datepicker-popup="{{format}}"  is-open="opened1" min-date="{{mindate23}}" max="{{maxdate2}}" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" />
+<!--
+                <span class="input-group-btn">
+                <button class="btn btn-default" ng-click="open1($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+                </span>-->
+                    <!--<input id="dpd2" type="text" ng-model="comingIn"  class="form-control" id="reachingon" placeholder="Reaching On (mm/dd/yyyy)" data-provide="datepicker">-->
                 </div>
 
+                </div>
 
 
 

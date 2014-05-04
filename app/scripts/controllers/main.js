@@ -36,6 +36,23 @@ airlinetravelmodule.directive('registerFirstpage', function() {
 });
 
 
+
+airlinetravelmodule.directive('successfullRegistration', function() {
+    return {
+        restrict: 'A',
+        link: function(scope, element, attr) {
+            scope.dismissSuccessfullRegistration = function() {
+                element.modal('hide');
+            };
+            scope.showSuccessfullRegistration = function() {
+                element.modal('show');
+            };
+
+        }
+    }
+});
+
+
 airlinetravelmodule.directive('registerUpdatepage', function() {
     return {
         restrict: 'A',
@@ -149,23 +166,23 @@ airlinetravelmodule.directive('registerView',function(){
 
 airlinetravelmodule.controller('userupdatecontroller',function($scope){
 
+console.log("update came");
 
     $scope.$on("DISMISS_UPDATE_VIEW", function(event, data){
-
         $scope.dismissRegPage();
-
     });
 
-    $scope.$on("SET_MESSAGE_HEADER", function(event, data){
-       console.log("child reset message");
-        $scope.messages="";
-    });
+
+    var prestoredUserData=JSON.parse(localStorage.getItem('serverloginauthenticationsuccess'));
+
+console.log(prestoredUserData.country+ " that's it ");
 
     $scope.$on("SET_MESSAGE_HEADER_SUCCESS", function(event, data){
 
         console.log("child reset message");
-        $scope.messages=data;
-
+        //$scope.messages=data;
+        //var prestoredUserData=JSON.parse(localStorage.getItem('serverloginauthenticationsuccess'));
+        //$scope.country=prestoredUserData.country;
     });
 
     $scope.$on("SET_MESSAGE_HEADER_FAILURE", function(event, data){
@@ -178,18 +195,23 @@ airlinetravelmodule.controller('userupdatecontroller',function($scope){
     console.log("Came into update");
 
 
+
 console.log("Update Controller appeared on the screen");
 //Pre-populate all fields from Local storage - Here, since user already create an account or logged, in we know that serverloginauthenticationsuccess
     //Will be non-empty! If it is, either user is not logged in or it messed up local stoarge data! In the latter case - What a Douchebag!
 
     if(localStorage.getItem('serverloginauthenticationsuccess')){
-    var prestoredUserData=JSON.parse(localStorage.getItem('serverloginauthenticationsuccess'));
+
         $scope.salutation=prestoredUserData.salutation;
             $scope.firstname=prestoredUserData.firstname;
             $scope.middlename=prestoredUserData.middlename;
             $scope.lastname=prestoredUserData.lastname;
             $scope.birthdate=prestoredUserData.dateofbirth.substring(0,10);
-            $scope.country=prestoredUserData.country;
+        var sam=$scope.countrynameslist.indexOf(prestoredUserData.country);
+        console.log("asdsa"+sam);
+        $scope.country=$scope.countrynameslist[sam];
+
+        //$scope.country=prestoredUserData.country;
             $scope.streetname=prestoredUserData.streetinfo;
            $scope.streetsubname="";
            $scope.zipcode=prestoredUserData.zipcode;
@@ -202,9 +224,21 @@ console.log("Update Controller appeared on the screen");
            $scope.telephonenumber=prestoredUserData.phonenumber;
            $scope.languagechoice=prestoredUserData.languagechoice;
             $scope.comments=prestoredUserData.comments;
-        console.log("Came into update hahah");
+        console.log("Came into update hahah"+ prestoredUserData.country);
     }
 
+    $scope.$on("SET_MESSAGE_HEADER", function(event, data){
+/*        var prestoredUserData=JSON.parse(localStorage.getItem('serverloginauthenticationsuccess'));
+
+        console.log("child reset message");
+        $scope.messages="";
+        console.log(typeof prestoredUserData.country);
+        console.log(prestoredUserData.country+ "this is actual country name");
+        var sam=$scope.countrynameslist.indexOf(prestoredUserData.country);
+        console.log("asdsa"+sam);
+        $scope.country=$scope.countrynameslist[sam];*/
+
+    });
 
 var test=function(moduleObject,formData){
 
@@ -267,13 +301,288 @@ var test=function(moduleObject,formData){
     });
 
 
-airlinetravelmodule.controller('samcontroller',function($scope, $http, $log, promiseTracker, $timeout,$window){
+airlinetravelmodule.controller('samcontroller',function($scope, $http, $log, promiseTracker, $timeout){
 
-    //$scope.firstname="blah foo blaphsecue";
+    console.log("parent one controller came");
 
-   // $scope.messages="";
+
+    //We will be using ajax request using jQuery because Angular request mechanism is a piece of shit and gives access control allow origin error
+    //even though allow all headers are present in destination - Not sure what's wrong but you may say it a hack. I am gonna
+    //abide by it from now on
+
+    /*$.ajax({
+        type: "POST",
+        url: "http://www.jayeshkawli.com/airlinetravel/userlogin.php",
+        cache:true,
+        data: { emailid: "adas@ada.com", password: "adas"}
+    })
+        .done(function( msg ) {
+            console.log( "Data Saved: " + msg );
+        });
+*/
     $scope.savecredentials=false;
     $scope.userfirstnamedisplay="Guest";
+    $scope.country="";
+
+    //Not working - Don't know why
+    //$scope.showSuccessfullRegistration();
+
+    //We will use this view once user registration is complete to show success
+//$('#registrationsuccessfull').modal('show');
+
+    $scope.countrynameslist=[" ",
+        "United States of America",
+        "Afganistan",
+        "Albania",
+        "Algeria",
+        "American Samoa",
+        "Andorra",
+        "Angola",
+        "Anguilla",
+        "Antigua & Barbuda",
+        "Argentina",
+        "Armenia",
+        "Aruba",
+        "Australia",
+        "Austria",
+        "Azerbaijan",
+        "Bahamas",
+        "Bahrain",
+        "Bangladesh",
+        "Barbados",
+        "Belarus",
+        "Belgium",
+        "Belize",
+        "Benin",
+        "Bermuda",
+        "Bhutan",
+        "Bolivia",
+        "Bonaire",
+        "Bosnia & Herzegovina",
+        "Botswana",
+        "Brazil",
+        "British Indian Ocean Ter",
+        "Brunei",
+        "Bulgaria",
+        "Burkina Faso",
+        "Burundi",
+        "Cambodia",
+        "Cameroon",
+        "Canada",
+        "Canary Islands",
+        "Cape Verde",
+        "Cayman Islands",
+        "Central African Republic",
+        "Chad",
+        "Channel Islands",
+        "Chile",
+        "China",
+        "Christmas Island",
+        "Cocos Island",
+        "Colombia",
+        "Comoros",
+        "Congo",
+        "Cook Islands",
+        "Costa Rica",
+        "Cote DIvoire",
+        "Croatia",
+        "Cuba",
+        "Curaco",
+        "Cyprus",
+        "Czech Republic",
+        "Denmark",
+        "Djibouti",
+        "Dominica",
+        "Dominican Republic",
+        "East Timor",
+        "Ecuador",
+        "Egypt",
+        "El Salvador",
+        "Equatorial Guinea",
+        "Eritrea",
+        "Estonia",
+        "Ethiopia",
+        "Falkland Islands",
+        "Faroe Islands",
+        "Fiji",
+        "Finland",
+        "France",
+        "French Guiana",
+        "French Polynesia",
+        "French Southern Ter",
+        "Gabon",
+        "Gambia",
+        "Georgia",
+        "Germany",
+        "Ghana",
+        "Gibraltar",
+        "Great Britain",
+        "Greece",
+        "Greenland",
+        "Grenada",
+        "Guadeloupe",
+        "Guam",
+        "Guatemala",
+        "Guinea",
+        "Guyana",
+        "Haiti",
+        "Hawaii",
+        "Honduras",
+        "Hong Kong",
+        "Hungary",
+        "Iceland",
+        "India",
+        "Indonesia",
+        "Iran",
+        "Iraq",
+        "Ireland",
+        "Isle of Man",
+        "Israel",
+        "Italy",
+        "Jamaica",
+        "Japan",
+        "Jordan",
+        "Kazakhstan",
+        "Kenya",
+        "Kiribati",
+        "Korea North",
+        "Korea Sout",
+        "Kuwait",
+        "Kyrgyzstan",
+        "Laos",
+        "Latvia",
+        "Lebanon",
+        "Lesotho",
+        "Liberia",
+        "Libya",
+        "Liechtenstein",
+        "Lithuania",
+        "Luxembourg",
+        "Macau",
+        "Macedonia",
+        "Madagascar",
+        "Malaysia",
+        "Malawi",
+        "Maldives",
+        "Mali",
+        "Malta",
+        "Marshall Islands",
+        "Martinique",
+        "Mauritania",
+        "Mauritius",
+        "Mayotte",
+        "Mexico",
+        "Midway Islands",
+        "Moldova",
+        "Monaco",
+        "Mongolia",
+        "Montserrat",
+        "Morocco",
+        "Mozambique",
+        "Myanmar",
+        "Nambia",
+        "Nauru",
+        "Nepal",
+        "Netherland Antilles",
+        "Netherlands",
+        "Nevis",
+        "New Caledonia",
+        "New Zealand",
+        "Nicaragua",
+        "Niger",
+        "Nigeria",
+        "Niue",
+        "Norfolk Island",
+        "Norway",
+        "Oman",
+        "Pakistan",
+        "Palau Island",
+        "Palestine",
+        "Panama",
+        "Papua New Guinea",
+        "Paraguay",
+        "Peru",
+        "Phillipines",
+        "Pitcairn Island",
+        "Poland",
+        "Portugal",
+        "Puerto Rico",
+        "Qatar",
+        "Republic of Montenegro",
+        "Republic of Serbia",
+        "Reunion",
+        "Romania",
+        "Russia",
+        "Rwanda",
+        "St Barthelemy",
+        "St Eustatius",
+        "St Helena",
+        "St Kitts-Nevis",
+        "St Lucia",
+        "St Maarten",
+        "St Pierre & Miquelon",
+        "St Vincent & Grenadines",
+        "Saipan",
+        "Samoa",
+        "Samoa American",
+        "San Marino",
+        "Sao Tome & Principe",
+        "Saudi Arabia",
+        "Senegal",
+        "Serbia",
+        "Seychelles",
+        "Sierra Leone",
+        "Singapore",
+        "Slovakia",
+        "Slovenia",
+        "Solomon Islands",
+        "Somalia",
+        "South Africa",
+        "Spain",
+        "Sri Lanka",
+        "Sudan",
+        "Suriname",
+        "Swaziland",
+        "Sweden",
+        "Switzerland",
+        "Syria",
+        "Tahiti",
+        "Taiwan",
+        "Tajikistan",
+        "Tanzania",
+        "Thailand",
+        "Togo",
+        "Tokelau",
+        "Tonga",
+        "Trinidad & Tobago",
+        "Tunisia",
+        "Turkey",
+        "Turkmenistan",
+        "Turks & Caicos Is",
+        "Tuvalu",
+        "Uganda",
+        "Ukraine",
+        "United Arab Erimates",
+        "United Kingdom",
+        "Uraguay",
+        "Uzbekistan",
+        "Vanuatu",
+        "Vatican City State",
+        "Venezuela",
+        "Vietnam",
+        "Virgin Islands (Brit)",
+        "Virgin Islands (USA)",
+        "Wake Island",
+        "Wallis & Futana Is",
+        "Yemen",
+        "Zaire",
+        "Zambia",
+        "Zimbabwe"
+    ];
+
+
+    //Set country names in related select-options structure
+
 
 console.log(isEditingUserRegistrationInfo+ "this is value");
 
@@ -329,13 +638,18 @@ $scope.$on("UPDATE_PARENT", function(event, message){
         $scope.showForgotPasswordView();
     }
 
+    $scope.sendpasswordtouser=function(){
+
+     $scope.messageafterpasswordsend="Send sit wait for some time";
+        console.log("Sending..");
+    }
+
 
     $scope.viewingProfileInfoForEditing=function(isEditing){
         isEditingUserRegistrationInfo=isEditing;
         console.log("is eidting"+ isEditing);
         $scope.$broadcast("SET_MESSAGE_HEADER","Sample message");
         //$route.location.reload();
-$scope.firstname="lah";
     }
 
     $scope.regionName="Please Select Region";
@@ -349,6 +663,7 @@ $scope.firstname="lah";
       //  return ( mode === 'day' && ( date.getDay() === 0 || date.getDay() === 6 ) );
     };
 
+
     $scope.dateOptions = {
         'year-format': "'yy'",
         'starting-day': 1
@@ -361,8 +676,26 @@ $scope.firstname="lah";
         $scope.opened = true;
     };
 
-    $scope.formats = ['dd-MMMM-yyyy', 'yyyy/MM/dd','MM/dd/yyyy', 'shortDate'];
-    $scope.format = $scope.formats[2];
+    //Set maximum birthdate as 0 years earlier from current date
+    var today = new Date();
+    var dd = today.getDate();
+    var mm = today.getMonth()+1; //January is 0!
+    var yyyy = today.getFullYear()-10;
+
+    if(dd<10) {
+        dd='0'+dd
+    }
+
+    if(mm<10) {
+        mm='0'+mm
+    }
+
+    today = mm+'/'+dd+'/'+yyyy;
+    $scope.maxdate='\''+today+'\'';
+
+    //$scope.formats = ['dd-MMMM-yyyy', 'yyyy/MM/dd', 'shortDate'];
+
+    $scope.format = 'MM/dd/yyyy';//$scope.formats[2];
 
     $scope.subscribingforpromotionaloffers=false;
     $scope.didConditionsAccepted=true;
@@ -391,9 +724,25 @@ function setUserFirstNameOnDisplay(){
 
         console.log("User logging out...flush all local storage and empty personal data");
 
+        var storedAuthData=JSON.parse(localStorage.getItem('authTokenInfo'));
+
+
+
+        $.ajax({
+         type: "POST",
+         url: "http://www.jayeshkawli.com/airlinetravel/userlogout.php",
+         cache:true,
+         data: { emailaddressofuser: storedAuthData.emailaddress}
+         })
+         .done(function( msg ) {
         //Remove all temporary local storage from database and change name to Hello Guest on top nav bar
         localStorage.removeItem('authTokenInfo');
-        localStorage.removeItem('serverloginauthenticationsuccess');
+                localStorage.removeItem('serverloginauthenticationsuccess');
+         console.log( "User successfully logged out: " + msg );
+         })
+
+
+
 
         if(localStorage.getItem('serverloginauthenticationerror')){
             localStorage.removeItem('serverloginauthenticationerror');
@@ -410,6 +759,9 @@ function setUserFirstNameOnDisplay(){
             return;
         }
 
+
+
+
         var userLoginInfo={'emailid':$scope.loginemail,'password':$scope.loginpassword};
 
 
@@ -419,22 +771,30 @@ function setUserFirstNameOnDisplay(){
 
         localStorage.setItem('userregistrationinfo',formData);*/
 
-        console.log(userLoginInfo+ " info to sent to the server ");
+        //console.log(userLoginInfo+ " info to sent to the server ");
         //Sample code for testing auth token
-        var authTokenInfoFromLocalStorage=JSON.parse(localStorage.getItem('authTokenInfo'));
 
+        var authTokenInfoFromLocalStorage;
+        if(localStorage.getItem('authTokenInfo')){
+            authTokenInfoFromLocalStorage=JSON.parse(localStorage.getItem('authTokenInfo'));
+        }
+
+        /*$.ajax({
+            type: "GET",
+            url: "http://www.jayeshkawli.com/airlinetravel/userlogin.php",
+            cache:true,
+            headers:{'Content-Type': 'application/x-www-form-urlencoded'},
+            data: userLoginInfo
+        })
+            .done(function( data ) {*/
+              //  console.log(data+ "hahaha"+ status+"  "+config);
         $http({
             url: 'http://jayeshkawli.com/airlinetravel/userlogin.php',
             method: "GET",
             cache:true,
             params: userLoginInfo,
-            headers: {'Content-Type': 'application/x-www-form-urlencoded','Authorization': authTokenInfoFromLocalStorage.authtoken}
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'}
         }).success(function (data, status, headers, config) {
-                console.log(data+ "hahaha"+ status+"  "+config);
-
-
-
-
                 $scope.loginemail=userLoginInfo.emailid;
                 $scope.loginpassword=userLoginInfo.password;
 
@@ -458,7 +818,7 @@ function setUserFirstNameOnDisplay(){
                     }
 
                     localStorage.setItem( 'serverloginauthenticationsuccess', serverResponseData);
-             localStorage.setItem('authTokenInfo',JSON.stringify({'authtoken':data.authorization,'emailaddress':data.emailaddress,'firstname':data.firstname}));
+                    localStorage.setItem('authTokenInfo',JSON.stringify({'authtoken':data.authorization,'emailaddress':data.emailaddress,'firstname':data.firstname}));
                     $scope.userfirstnamedisplay=data.firstname;
                     console.log("scuess");
                 }
@@ -467,15 +827,11 @@ function setUserFirstNameOnDisplay(){
                     localStorage.setItem( 'serverloginauthenticationerror', serverResponseData);
                     console.log("failture");
                 }
-
-                //$('#loginview').modal('hide')
                 $scope.dismissLoginView();
-
                 $scope.messages = 'Your login information has been successfully sent! Congratulations...';
-                //$scope.dismissFirstPage();
-                //$scope.showSecondPage();
-
-            }).error(function (data, status, headers, config) {
+            })
+             .error(function (data, status, headers, config) {
+                $scope.dismissLoginView();
                 console.log(status+"yoyoyoyo "+"  "+headers+status);
                 localStorage.setItem( 'serverloginerror', JSON.stringify(data));
                 $scope.messages = 'Your registration information has been unsuccessfully sent! No try again later...';
@@ -503,6 +859,8 @@ console.log("submit pressed");
             return;
         }
 
+        var authTokenInfoFromLocalStorage=JSON.parse(localStorage.getItem('authTokenInfo'));
+
         var formData={
             'salutation':$scope.salutation,
             'firstname':$scope.firstname,
@@ -521,7 +879,8 @@ console.log("submit pressed");
             'password':$scope.password,
             'telephonenumber':$scope.telephonenumber,
             'languagechoice':$scope.languagechoice,
-            'comments':$scope.comments
+            'comments':$scope.comments,
+            'Authorization': authTokenInfoFromLocalStorage.authtoken
         }
 
 
@@ -544,7 +903,7 @@ console.log("Alla server la dyayla");
         method: "GET",
         cache:true,
         params: formData,
-        headers: {'Content-Type': 'application/x-www-form-urlencoded','Authorization': authTokenInfoFromLocalStorage.authtoken}
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'}
     }).success(function (data, status, headers, config) {
             console.log(data);
             if(!isCreatingUser){
@@ -1010,6 +1369,91 @@ sourcecode= suggestion.data;
     var userHistorydata={};
 console.log("about to enter ")
 
+//Settings for our datepicker
+
+    var today = new Date();
+    var dd = today.getDate();
+    var mm = today.getMonth()+1; //January is 0!
+    var yyyy = today.getFullYear();
+
+    if(dd<10) {
+        dd='0'+dd
+    }
+
+    if(mm<10) {
+        mm='0'+mm
+    }
+var dd1=dd+'10';
+   var today1= mm+'/'+dd1+'/'+yyyy;
+    today = mm+'/'+dd+'/'+yyyy;
+    console.log(today);
+   $scope.mindate='\''+today+'\'';
+
+
+
+
+    $scope.format = 'MM/dd/yyyy';//$scope.formats[2];
+
+
+    $scope.disabled = function(date, mode) {
+        //  return ( mode === 'day' && ( date.getDay() === 0 || date.getDay() === 6 ) );
+    };
+
+    $scope.dateOptions = {
+        'year-format': "'yy'",
+        'starting-day': 1
+    };
+
+
+    var to = new Date();
+    to.setDate(to.getDate() + 30);
+    console.log("date  "+to);
+
+    var dd = to.getDate();
+    var mm = to.getMonth()+1; //January is 0!
+    var yyyy = to.getFullYear();
+
+    if(dd<10) {
+        dd='0'+dd
+    }
+
+    if(mm<10) {
+        mm='0'+mm
+    }
+
+
+   var today22 = mm+'/'+dd+'/'+yyyy;
+
+    console.log("Bitch -- "+today);
+
+
+
+
+    $scope.open = function($event) {
+        $event.preventDefault();
+        $event.stopPropagation();
+
+        $scope.opened = true;
+    };
+
+
+
+
+    $scope.doit1=function(){
+
+console.log(today22);
+        $scope.mindate23='\''+today22+'\'';
+$scope.opened1=true;
+
+    }
+    //$scope.mindate1='05/03/2014';
+    $scope.open1 = function($event) {
+        $event.preventDefault();
+        $event.stopPropagation();
+
+        $scope.opened1 = true;
+    };
+
 
 
     if(localStorage.getItem('historySearchData')){
@@ -1153,6 +1597,9 @@ allFlightsDetail.clear();
         userHistorydata.destinationCountry=$scope.destcodenew;
         userHistorydata.sourceCity=$scope.searchStringSource;
         userHistorydata.destinationCity=$scope.searchStringDestination;
+        //console.log("hahaha "+$scope.leavingOut);
+        //var modelDate = $filter('date')($scope.leavingOut, "YYYY-MM-DD");
+        //console.log("hahaha 100 "+modalDate);
         userHistorydata.leavingOutOn=$scope.leavingOut;
         userHistorydata.comingInOn=$scope.comingIn;
 
@@ -1199,12 +1646,30 @@ allFlightsDetail.clear();
                 'numberofresultsperpage':numberOfResultsPerPage
         };
 
+
+/*
+        $.ajax({
+            type: "GET",
+            url: "http://jayeshkawli.com/airlinetravel/flightdetailsinsert.php",
+            cache:true,
+            data: formData,
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+        })
+            .done(function( data) {
+                //console.log( "Data Saved: " + msg );
+                console.log(data);
+                $window.location.href = "#/showavailableflights/0?source="+$scope.searchStringSource+"&destination="+$scope.searchStringDestination+"&direction="+tripDirection+"&leavingdate="+$scope.leavingOut+"&comingindate="+$scope.comingIn+"&numberofdays="+numberOfDaysToRetrieveFlight;
+            });
+*/
+
+
+        // Commented out for being stubborn
         $http({
             url: 'http://jayeshkawli.com/airlinetravel/flightdetailsinsert.php',
             method: "GET",
             cache:true,
-            params: formData,
-            headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+            params: formData
         }).success(function (data, status, headers, config) {
                 console.log(data);
                 $window.location.href = "#/showavailableflights/0?source="+$scope.searchStringSource+"&destination="+$scope.searchStringDestination+"&direction="+tripDirection+"&leavingdate="+$scope.leavingOut+"&comingindate="+$scope.comingIn+"&numberofdays="+numberOfDaysToRetrieveFlight;
