@@ -16,6 +16,9 @@ padding:0em;
     border: 0;
 }
 
+.ng-invalid-date, .ng-invalid-email{
+    background-color: red;
+}
 
 
 .isFlightTypeClicked,.isWhichTypeClicked,.whichAirlineClicked,.searchByCriteria,.flighttypedesired,.numberofresults{
@@ -125,9 +128,6 @@ ul>li{
 
     });
 
-function doit(){
-    console.log("hahah");
-}
     var nowTemp = new Date();
     var now = new Date(nowTemp.getFullYear(), nowTemp.getMonth(), nowTemp.getDate(), 0, 0, 0, 0);
 
@@ -252,21 +252,27 @@ Type of travel:<br/>
 
                 <div class="col-md-6">Leaving On:
                     <label class="sr-only" for="leavingon">Leaving On</label>
-                    <input id="leavingon" ng-model="leavingOut" class="form-control" datepicker-popup="{{format}}" is-open="opened" min="{{mindate}}" max="{{maxdate1}}" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" />
-                    <!--<span class="input-group-btn">
-                <button class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
-                </span>-->
+                        <p class="input-group">
+                            <input id="leavingon" ng-model="leavingOut" ng-keypress="firstdatechanged();" class="form-control" datepicker-popup="{{format}}" is-open="opened" min="{{mindate}}" max="{{maxdate1}}" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" >
+                        <span class="input-group-btn">
+                        <button class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+                        </span>
+                        </p>
                 </div>
                     <!--<input id="dpd1" type="text" ng-model="leavingOut" class="form-control" data-start-date="+d"  id="leavingon" placeholder="Leaving On (mm/dd/yyyy)" data-provide="datepicker"></div>-->
                 <div class="col-md-6" ng-show="isVisibleReturningDate">Reaching On:
                     <label class="sr-only" for="reachingon">Reaching On</label>
-                    <input  id="reachingon" ng-model="comingIn" class="form-control" datepicker-popup="{{format}}"  is-open="opened1" min-date="{{mindate23}}" max="{{maxdate2}}" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" />
-<!--
+                    <p class="input-group">
+                    <input  id="reachingon" ng-model="comingIn" ng-keypress="seconddatechanged();" ng-blur="checkifvaliddate();" class="form-control" datepicker-popup="{{format}}"  is-open="opened1" min="{{mindate2}}" max="{{maxdate2}}" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" >
+
                 <span class="input-group-btn">
                 <button class="btn btn-default" ng-click="open1($event)"><i class="glyphicon glyphicon-calendar"></i></button>
-                </span>-->
+                </span>
+                        </p>
                     <!--<input id="dpd2" type="text" ng-model="comingIn"  class="form-control" id="reachingon" placeholder="Reaching On (mm/dd/yyyy)" data-provide="datepicker">-->
                 </div>
+
+
 
                 </div>
 

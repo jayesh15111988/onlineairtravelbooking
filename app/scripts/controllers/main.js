@@ -312,7 +312,7 @@ var test=function(moduleObject,formData){
 airlinetravelmodule.controller('samcontroller',function($scope, $http, $log, promiseTracker, $timeout){
 
     console.log("parent one controller came");
-
+    $scope.passwordsnotmatch=false;
 $scope.showLoginViewOnClick=function(){
     //$scope.showLoginView(); jjj
 
@@ -897,10 +897,13 @@ console.log("submit pressed");
         $scope.submitted = true;
 
 
+if($scope.password!==$scope.repassword){
+    $scope.passwordsnotmatch=true;
+}
 
 
         // If form is invalid, return and let AngularJS show validation errors.
-        if (form.$invalid || !$scope.didConditionsAccepted) {
+        if (form.$invalid || !$scope.didConditionsAccepted || $scope.passwordsnotmatch) {
             return;
         }
 
@@ -1414,6 +1417,51 @@ sourcecode= suggestion.data;
 
     });
 
+    $scope.$watch('comingIn', function(){
+        if($scope.comingIn < $scope.leavingOut) {
+            $scope.comingIn='';
+        }
+    });
+
+    $scope.$watch('leavingOut', function(){
+
+    });
+
+    $scope.$watch('sourcecodenew', function(){
+        $scope.sourcecodenew=$scope.sourcecodenew.substring(0,2);
+    });
+
+
+    $scope.$watch('destcodenew', function(){
+    $scope.destcodenew=$scope.destcodenew.substring(0,2);
+    });
+
+    $scope.firstdatechanged=function(){
+        $scope.leavingOut='';
+        console.log("Something has changed");
+    }
+
+    $scope.seconddatechanged=function(){
+        $scope.comingIn='';
+        console.log("Something has changed");
+    }
+
+    $scope.checkifvaliddate=function(){
+
+        console.log($scope.leavingOut+ " Two ");
+        console.log($scope.comingIn+ " One ");
+
+
+        if($scope.comingIn<$scope.leavingOut){
+            console.log("Problem");
+        }
+        else{
+            console.log("No Problem");
+        }
+
+        console.log("Done");
+    }
+
     $scope.movies = [];
     var userHistorydata={};
 console.log("about to enter ")
@@ -1425,6 +1473,7 @@ console.log("about to enter ")
     var mm = today.getMonth()+1; //January is 0!
     var yyyy = today.getFullYear();
 
+    var lastMonth=mm;
     if(dd<10) {
         dd='0'+dd
     }
@@ -1435,11 +1484,13 @@ console.log("about to enter ")
 var dd1=dd+'10';
    var today1= mm+'/'+dd1+'/'+yyyy;
     today = mm+'/'+dd+'/'+yyyy;
+    var afterThreeMonths=(lastMonth+3)+'/'+dd+'/'+yyyy;
     console.log(today);
-   $scope.mindate='\''+today+'\'';
+    $scope.mindate='\''+today+'\'';
+    $scope.maxdate1='\''+afterThreeMonths+'\'';
 
 
-
+    $scope.mindate2='\''+today+'\'';
 
     $scope.format = 'MM/dd/yyyy';//$scope.formats[2];
 
@@ -1491,7 +1542,7 @@ var dd1=dd+'10';
     $scope.doit1=function(){
 
 console.log(today22);
-        $scope.mindate23='\''+today22+'\'';
+        //$scope.mindate23='\''+today22+'\'';
 $scope.opened1=true;
 
     }
@@ -1499,7 +1550,6 @@ $scope.opened1=true;
     $scope.open1 = function($event) {
         $event.preventDefault();
         $event.stopPropagation();
-
         $scope.opened1 = true;
     };
 

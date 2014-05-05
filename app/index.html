@@ -190,7 +190,7 @@ console.log(checkboxfield.checked);
     <script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
     <script src="bower_components/angular-resource/angular-resource.js"></script>
     <script src="bower_components/angular-cookies/angular-cookies.js"></script>
-    <!--<script src="bower_components/angular-sanitize/angular-sanitize.js"></script>-->
+    <script src="bower_components/angular-sanitize/angular-sanitize.js"></script>
     <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.0rc1/angular-sanitize.js"></script>
     <script src="bower_components/angular-route/angular-route.js"></script>
     <script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
@@ -198,7 +198,7 @@ console.log(checkboxfield.checked);
     <script src="bower_components/angular/promise-tracker.js"></script>
 
     <!--For new angular JS Bootstrap Datepicker-->
-    <script src="http://angular-ui.github.io/bootstrap/ui-bootstrap-tpls-0.10.0.js"></script>
+    <!--<script src="http://angular-ui.github.io/bootstrap/ui-bootstrap-tpls-0.10.0.js"></script>-->
     <!-- endbuild -->
 
     <!-- build:js({.tmp,app}) scripts/scripts.js -->
@@ -727,7 +727,6 @@ Not needed for now
                     <h4 class="modal-title" id="myModalLabel33">User Login</h4>
                 </div>
                 <div class="modal-body">
-
                     <form role="form" name="loginform" novalidate>
                         <div class="form-group">
                             <label for="exampleInputEmail1">Email address</label>
@@ -932,6 +931,7 @@ Not needed for now
                                         <span class="label label-danger" data-ng-show="submitted && helpForm.repassword.$error.required">Required!</span>
                                         <input type="password" name="repassword" ng-model="repassword" required>
                                     </div>
+                                    <span class="label label-danger" data-ng-show="submitted && passwordsnotmatch">Passwords Must Match</span>
                                 </div>
                                 </div>
                                 <hr/>
