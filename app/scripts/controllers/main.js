@@ -309,7 +309,7 @@ var test=function(moduleObject,formData){
     });
 
 
-airlinetravelmodule.controller('samcontroller',function($scope, $http, $log, promiseTracker, $timeout){
+airlinetravelmodule.controller('samcontroller',function($scope, $http, $log, promiseTracker, $timeout,$window){
 
     console.log("parent one controller came");
     $scope.passwordsnotmatch=false;
@@ -893,8 +893,11 @@ console.log("type of")
                     localStorage.setItem( 'serverloginauthenticationerror', serverResponseData);
                     console.log("failture");
                 }
+
                 $scope.messages = 'Your login information has been successfully sent! Congratulations...';
+
                 $('#loginview').modal('hide');
+                $window.location.reload();
              //   $scope.dismissLoginView();
 
             })
@@ -909,7 +912,7 @@ console.log("type of")
 
 
 
-            setTimeout(function () {
+            /*setTimeout(function () {
 
                 if(success===true){
                     console.log("abt to exteute apply function");
@@ -923,7 +926,7 @@ console.log("type of")
                     console.log("nononono");
                 }
 
-            }, 1500);
+            }, 1500);*/
 
 
     }
