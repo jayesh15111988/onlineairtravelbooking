@@ -313,6 +313,18 @@ airlinetravelmodule.controller('samcontroller',function($scope, $http, $log, pro
 
     console.log("parent one controller came");
     $scope.passwordsnotmatch=false;
+
+
+
+
+
+    if(!localStorage.getItem('authTokenInfo')){
+        $scope.loginlogouttext="Login";
+    }
+    else{
+        $scope.loginlogouttext="Logout";
+    }
+
 $scope.showLoginViewOnClick=function(){
     //$scope.showLoginView(); jjj
 
@@ -320,6 +332,7 @@ $scope.showLoginViewOnClick=function(){
     $('#loginview').modal('show');
     }
     else{
+        loguserout();
         console.log("You are already signed in");
     }
 }
@@ -759,7 +772,7 @@ function setUserFirstNameOnDisplay(){
         console.log("Inside Function Do It");
     }
 
-    $scope.loguserout=function(){
+    var loguserout=function(){
 
         if(localStorage.getItem('authTokenInfo')){
         console.log("User logging out...flush all local storage and empty personal data");
@@ -783,8 +796,14 @@ function setUserFirstNameOnDisplay(){
             localStorage.removeItem('serverloginauthenticationerror');
         }
 
-        $scope.userfirstnamedisplay="Guest";
-        console.log( "User successfully logged out: " + msg );
+                $scope.$apply(function () {
+
+                    $scope.userfirstnamedisplay="Guest"
+                    $scope.loginlogouttext="Login";
+                });
+
+
+                console.log( "User successfully logged out: " + msg );
 
          })
         }
@@ -815,6 +834,8 @@ function setUserFirstNameOnDisplay(){
         //console.log(userLoginInfo+ " info to sent to the server ");
         //Sample code for testing auth token
 
+        var success=false;
+        $scope.usernametodisplay="Guest";
         var authTokenInfoFromLocalStorage;
         if(localStorage.getItem('authTokenInfo')){
             authTokenInfoFromLocalStorage=JSON.parse(localStorage.getItem('authTokenInfo'));
@@ -845,10 +866,11 @@ function setUserFirstNameOnDisplay(){
                     localStorage.removeItem('userauthinfo');
                 }
 
+                success=true;
                 if($scope.savecredentials===true){
                  localStorage.setItem('userauthinfo',JSON.stringify(userLoginInfo));
                 }
-
+console.log("type of")
                 var serverResponseData = JSON.stringify(data);
                 console.log(serverResponseData);
                 if(data.success===true){
@@ -863,6 +885,7 @@ function setUserFirstNameOnDisplay(){
                     localStorage.setItem( 'serverloginauthenticationsuccess', serverResponseData);
                     localStorage.setItem('authTokenInfo',JSON.stringify({'authtoken':data.authorization,'emailaddress':data.emailaddress,'firstname':data.firstname}));
                     $scope.userfirstnamedisplay=data.firstname;
+                    $scope.usernametodisplay=data.firstname;
                     console.log("scuess");
                 }
                 else if (data.success===false){
@@ -870,9 +893,10 @@ function setUserFirstNameOnDisplay(){
                     localStorage.setItem( 'serverloginauthenticationerror', serverResponseData);
                     console.log("failture");
                 }
+                $scope.messages = 'Your login information has been successfully sent! Congratulations...';
                 $('#loginview').modal('hide');
              //   $scope.dismissLoginView();
-                $scope.messages = 'Your login information has been successfully sent! Congratulations...';
+
             })
              .error(function (data, status, headers, config) {
            //     $scope.dismissLoginView();
@@ -882,6 +906,24 @@ function setUserFirstNameOnDisplay(){
                 $scope.messages = 'Your registration information has been unsuccessfully sent! No try again later...';
 
             });
+
+
+
+            setTimeout(function () {
+
+                if(success===true){
+                    console.log("abt to exteute apply function");
+                $scope.$apply(function () {
+                console.log("coming coming coming...");
+                    $scope.userfirstnamedisplay="asdasdsa";
+                    $scope.loginlogouttext="Logoutasdsadas";
+                });
+                }
+                else{
+                    console.log("nononono");
+                }
+
+            }, 1500);
 
 
     }

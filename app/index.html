@@ -5,320 +5,320 @@
 <!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
 
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title></title>
-    <meta name="description" content="">
-    <meta name="viewport" content="width=device-width,initial-scale=1">
-    <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
-    <!-- build:css styles/vendor.css -->
-    <!-- bower:css -->
-    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css" />
-    <!-- endbower -->
-    <!-- endbuild -->
-    <!-- build:css({.tmp,app}) styles/main.css -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/css/bootstrap-editable.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="styles/main.css">
-    <link rel="stylesheet" href="bower_components/adaptiveslider/dist/styles/adaptiveslider.min.css">
-    <link rel="stylesheet" href="styles/bootstrap-formhelpers.min.css">
-    <link rel="shortcut icon" href="favicon.ico">
-    <!-- endbuild -->
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title></title>
+<meta name="description" content="">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+<!-- build:css styles/vendor.css -->
+<!-- bower:css -->
+<link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css" />
+<!-- endbower -->
+<!-- endbuild -->
+<!-- build:css({.tmp,app}) styles/main.css -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/css/bootstrap-editable.css" rel="stylesheet">
+<link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
+<link rel="stylesheet" href="styles/main.css">
+<link rel="stylesheet" href="bower_components/adaptiveslider/dist/styles/adaptiveslider.min.css">
+<link rel="stylesheet" href="styles/bootstrap-formhelpers.min.css">
+<link rel="shortcut icon" href="favicon.ico">
+<!-- endbuild -->
 
-    <style type="text/css">
+<style type="text/css">
 
-        .popover{
-            max-width:350px;
-            width:350px;
-        }
-        .iteminnercarousel{
-            margin-left: 40%;
-
-        }
-        .innerimages{
-
-            height: 100px;
-        }
-        .jvFloat {
-            position: relative;
-            display: inline;
-            margin-top: 1em;
-            margin-top: 1em;
-        }
-
-        .customtooltip{
-            display: inline;
-            position: relative;
-        }
-        #input01{
-
-            margin:1em;
-            border:2px solid #ffc600;
-            font-size:14px;
-            border-radius:4px;
-            padding:.25em;
-
-        }
-
-        .customtooltip:hover:after{
-            background: #333;
-            background: rgba(0,0,0,.8);
-            border-radius: 5px;
-            bottom: 26px;
-            color: #fff;
-            content: attr(title);
-            padding: 5px 15px;
-            position: absolute;
-            z-index: 98;
-            width: 220px;
-        }
-
-        .dropdown-menu{
-
-            cursor: pointer;
-        }
-
-        li.submenu{
-            cursor: pointer;
-        }
-
-        th.next{
-            content:url("images/arrow_r.gif");
-        }
-
-        th.prev{
-            visibility:visible !important;
-            content:url("images/arrow_l.gif");
-        }
-
-
-
-        /* Start CSS3 Animations on supported browser */
-        .jvFloat .placeHolder {
-            position: absolute;
-            top: 0;
-            left: 0;
-            color: #0c61fc;
-            font-size: .8em;
-            font-weight: bold;
-            -webkit-transform: translate(0, 0);
-            -moz-transform: translate(0, 0);
-            -o-transform: translate(0, 0);
-            -ms-transform: translate(0, 0);
-            transform: translate(0, 0);
-            -webkit-transition: -webkit-transform 150ms, opacity 5s;
-            transition: transform 150ms, opacity 5s;
-            opacity: 0;
-            visibility: hidden;
-        }
-        .jvFloat .placeHolder.active {
-            display: block;
-            visibility: visible;
-            -webkit-transform: translate(0, -1.5em);
-            -moz-transform: translate(0, -1.5em);
-            -o-transform: translate(0, -1.5em);
-            -ms-transform: translate(0, -1.5em);
-            transform: translate(0, -1.5em);
-            -webkit-transition: -webkit-transform 100ms, opacity 120ms;
-            transition: transform 100ms, opacity 120ms;
-            opacity: 1;
-        }
-
-        .modal-body{
-            background-color: #add8e6;
-            opacity: 0.7;
-            width: 100%;
-            margin-left: auto;
-            margin-right: auto;
-        }
-        /* End CSS3 */
-
-        /* New classes for controlling width of select box */
-        .input-mini { width: 60px; } .input-small { width: 90px; } .input-medium { width: 150px; } .input-large { width: 210px; } .input-xlarge { width: 270px; } .input-xxlarge { width: 530px; }
-
-
-
-
-
-
-    </style>
-
-    <!-- Google Analytics: change UA-XXXXX-X to be your site's ID -->
-    <script>
-        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-                m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-
-        ga('create', 'UA-XXXXX-X');
-        ga('send', 'pageview');
-
-
-function toremember(checkboxfield){
-
-console.log(checkboxfield.checked);
-    if(!document.getElementById('recordlocator').value){
-        checkboxfield.checked=false;
+    .popover{
+        max-width:350px;
+        width:350px;
     }
-    else{
-        if(checkboxfield.checked){
-        localStorage.setItem('recordlocatorcode',document.getElementById('recordlocator').value);
+    .iteminnercarousel{
+        margin-left: 40%;
+
+    }
+    .innerimages{
+
+        height: 100px;
+    }
+    .jvFloat {
+        position: relative;
+        display: inline;
+        margin-top: 1em;
+        margin-top: 1em;
+    }
+
+    .customtooltip{
+        display: inline;
+        position: relative;
+    }
+    #input01{
+
+        margin:1em;
+        border:2px solid #ffc600;
+        font-size:14px;
+        border-radius:4px;
+        padding:.25em;
+
+    }
+
+    .customtooltip:hover:after{
+        background: #333;
+        background: rgba(0,0,0,.8);
+        border-radius: 5px;
+        bottom: 26px;
+        color: #fff;
+        content: attr(title);
+        padding: 5px 15px;
+        position: absolute;
+        z-index: 98;
+        width: 220px;
+    }
+
+    .dropdown-menu{
+
+        cursor: pointer;
+    }
+
+    li.submenu{
+        cursor: pointer;
+    }
+
+    th.next{
+        content:url("images/arrow_r.gif");
+    }
+
+    th.prev{
+        visibility:visible !important;
+        content:url("images/arrow_l.gif");
+    }
+
+
+
+    /* Start CSS3 Animations on supported browser */
+    .jvFloat .placeHolder {
+        position: absolute;
+        top: 0;
+        left: 0;
+        color: #0c61fc;
+        font-size: .8em;
+        font-weight: bold;
+        -webkit-transform: translate(0, 0);
+        -moz-transform: translate(0, 0);
+        -o-transform: translate(0, 0);
+        -ms-transform: translate(0, 0);
+        transform: translate(0, 0);
+        -webkit-transition: -webkit-transform 150ms, opacity 5s;
+        transition: transform 150ms, opacity 5s;
+        opacity: 0;
+        visibility: hidden;
+    }
+    .jvFloat .placeHolder.active {
+        display: block;
+        visibility: visible;
+        -webkit-transform: translate(0, -1.5em);
+        -moz-transform: translate(0, -1.5em);
+        -o-transform: translate(0, -1.5em);
+        -ms-transform: translate(0, -1.5em);
+        transform: translate(0, -1.5em);
+        -webkit-transition: -webkit-transform 100ms, opacity 120ms;
+        transition: transform 100ms, opacity 120ms;
+        opacity: 1;
+    }
+
+    .modal-body{
+        background-color: #add8e6;
+        opacity: 0.7;
+        width: 100%;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    /* End CSS3 */
+
+    /* New classes for controlling width of select box */
+    .input-mini { width: 60px; } .input-small { width: 90px; } .input-medium { width: 150px; } .input-large { width: 210px; } .input-xlarge { width: 270px; } .input-xxlarge { width: 530px; }
+
+
+
+
+
+
+</style>
+
+<!-- Google Analytics: change UA-XXXXX-X to be your site's ID -->
+<script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-XXXXX-X');
+    ga('send', 'pageview');
+
+
+    function toremember(checkboxfield){
+
+        console.log(checkboxfield.checked);
+        if(!document.getElementById('recordlocator').value){
+            checkboxfield.checked=false;
         }
         else{
-            localStorage.removeItem('recordlocatorcode');
+            if(checkboxfield.checked){
+                localStorage.setItem('recordlocatorcode',document.getElementById('recordlocator').value);
+            }
+            else{
+                localStorage.removeItem('recordlocatorcode');
+            }
         }
     }
-}
 
 
 
-    </script>
+</script>
 
 
 
-    <!--[if lt IE 9]>
-    <script src="bower_components/es5-shim/es5-shim.js"></script>
-    <script src="bower_components/json3/lib/json3.min.js"></script>
+<!--[if lt IE 9]>
+<script src="bower_components/es5-shim/es5-shim.js"></script>
+<script src="bower_components/json3/lib/json3.min.js"></script>
 
-    <![endif]-->
+<![endif]-->
 
-    <!-- build:js scripts/vendor.js -->
-    <!-- bower:js -->
-    <script src="bower_components/jquery/jquery.js"></script>
-    <!-- endbower -->
-    <script src="bower_components/angular/angular.js"></script>
-    <script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
-    <script src="bower_components/angular-resource/angular-resource.js"></script>
-    <script src="bower_components/angular-cookies/angular-cookies.js"></script>
-    <script src="bower_components/angular-sanitize/angular-sanitize.js"></script>
-    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.0rc1/angular-sanitize.js"></script>
-    <script src="bower_components/angular-route/angular-route.js"></script>
-    <script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
+<!-- build:js scripts/vendor.js -->
+<!-- bower:js -->
+<script src="bower_components/jquery/jquery.js"></script>
+<!-- endbower -->
+<script src="bower_components/angular/angular.js"></script>
+<script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
+<script src="bower_components/angular-resource/angular-resource.js"></script>
+<script src="bower_components/angular-cookies/angular-cookies.js"></script>
+<script src="bower_components/angular-sanitize/angular-sanitize.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.0rc1/angular-sanitize.js"></script>
+<script src="bower_components/angular-route/angular-route.js"></script>
+<script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
 
-    <script src="bower_components/angular/promise-tracker.js"></script>
+<script src="bower_components/angular/promise-tracker.js"></script>
 
-    <!--For new angular JS Bootstrap Datepicker-->
-    <!--<script src="http://angular-ui.github.io/bootstrap/ui-bootstrap-tpls-0.10.0.js"></script>-->
-    <!-- endbuild -->
+<!--For new angular JS Bootstrap Datepicker-->
+<!--<script src="http://angular-ui.github.io/bootstrap/ui-bootstrap-tpls-0.10.0.js"></script>-->
+<!-- endbuild -->
 
-    <!-- build:js({.tmp,app}) scripts/scripts.js -->
-    <script src="bower_components/jquery/autocomplete.js"></script>
-    <script src="scripts/app.js"></script>
-    <script src="scripts/controllers/main.js"></script>
-    <script src="scripts/controllers/sample.js"></script>
-    <!-- endbuild -->
+<!-- build:js({.tmp,app}) scripts/scripts.js -->
+<script src="bower_components/jquery/autocomplete.js"></script>
+<script src="scripts/app.js"></script>
+<script src="scripts/controllers/main.js"></script>
+<script src="scripts/controllers/sample.js"></script>
+<!-- endbuild -->
 
-    <!--For X-Editable plugin for popover and tooltips -->
+<!--For X-Editable plugin for popover and tooltips -->
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/js/bootstrap-editable.min.js"></script>
-    <script src="bower_components/rgbaster/rgbaster.min.js"></script>
-    <script src="bower_components/adaptiveslider/dist/js/jquery.adaptiveslider.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/x-editable/1.5.0/bootstrap3-editable/js/bootstrap-editable.min.js"></script>
+<script src="bower_components/rgbaster/rgbaster.min.js"></script>
+<script src="bower_components/adaptiveslider/dist/js/jquery.adaptiveslider.min.js"></script>
 
-    <script>
-
-
-        function setRegion(selectedRegion){
-            document.getElementById("regionname").innerHTML=selectedRegion+"<b class='caret'>";
-        }
+<script>
 
 
+    function setRegion(selectedRegion){
+        document.getElementById("regionname").innerHTML=selectedRegion+"<b class='caret'>";
+    }
 
-        $(document).ready(function() {
 
 
-            $("#submitreservationrequest").click(function(){
-                alert("button");
-            });
+    $(document).ready(function() {
+
+
+        $("#submitreservationrequest").click(function(){
+            alert("button");
+        });
 
 
 
 
 
 //To delete no longer necessary
-           // $('.datepicker').datepicker({
+        // $('.datepicker').datepicker({
 
 //            });
 
 
-  /*          var checkin = $('#dob').datepicker({
-                startDate:'+d',
-                endDate:'+90d',
-                onRender: function(date) {
-                     return date.valueOf() < now.valueOf() ? 'disabled' : '';
-                }
-            }).on('changeDate', function(ev) {
-                        console.log("changed");
-                        checkin.hide();
-                    }).data('datepicker');
-*/
+        /*          var checkin = $('#dob').datepicker({
+         startDate:'+d',
+         endDate:'+90d',
+         onRender: function(date) {
+         return date.valueOf() < now.valueOf() ? 'disabled' : '';
+         }
+         }).on('changeDate', function(ev) {
+         console.log("changed");
+         checkin.hide();
+         }).data('datepicker');
+         */
 
 
-            $('a').tooltip({
+        $('a').tooltip({
 
-            });
+        });
 
-            $('a').on('click',function(e){
+        $('a').on('click',function(e){
             $("#loginbutton").popover('hide');
-           });
-
-            $(".btn").tooltip({
-
-            });
-            $('body').on('click', function (e) {
-                $('[data-toggle="popover"]').each(function () {
-                    //the 'is' for buttons that trigger popups
-                    //the 'has' for icons within a button that triggers a popup
-                    if (!$(this).is(e.target) && $(this).has(e.target).length === 0 && $('.popover').has(e.target).length === 0) {
-                       //console.log(this+ " read now ")
-                     //   $(this).popover('hide');
-                    }
-                });
-            });
-
-            $('#loginbutton').popover({
-
-            });
-
-            $('.myCarousel').carousel({
-                interval: 2000,
-                pause: "hover",
-                wrap:true
-        });
         });
 
+        $(".btn").tooltip({
+
+        });
+        $('body').on('click', function (e) {
+            $('[data-toggle="popover"]').each(function () {
+                //the 'is' for buttons that trigger popups
+                //the 'has' for icons within a button that triggers a popup
+                if (!$(this).is(e.target) && $(this).has(e.target).length === 0 && $('.popover').has(e.target).length === 0) {
+                    //console.log(this+ " read now ")
+                    //   $(this).popover('hide');
+                }
+            });
+        });
+
+        $('#loginbutton').popover({
+
+        });
+
+        $('.myCarousel').carousel({
+            interval: 2000,
+            pause: "hover",
+            wrap:true
+        });
+    });
 
 
 
 
 
 
-    </script>
+
+</script>
 
 </head>
-  <body  ng-app="airtravelbookingappApp">
-    <!--[if lt IE 7]>
-      <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
-    <![endif]-->
+<body  ng-app="airtravelbookingappApp">
+<!--[if lt IE 7]>
+<p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+<![endif]-->
 
 <!--All dates will be used on booking page-->
-        <!-- start sliderbar -->
+<!-- start sliderbar -->
 
 
 
-    <nav class="navbar navbar-default" role="navigation">
-        <div class="container-fluid">
-            <!-- Brand and toggle get grouped for better mobile display -->
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a class="navbar-brand" href="#">Airline Reservation</a>
-            </div>
-            <!-- Collect the nav links, forms, and other content for toggling -->
-            <div class="collapse navbar-collapse" ng-controller="samcontroller" id="bs-example-navbar-collapse-1">
+<nav class="navbar navbar-default" role="navigation">
+<div class="container-fluid">
+<!-- Brand and toggle get grouped for better mobile display -->
+<div class="navbar-header">
+    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+    </button>
+    <a class="navbar-brand" href="#">Airline Reservation</a>
+</div>
+<!-- Collect the nav links, forms, and other content for toggling -->
+<div class="collapse navbar-collapse" ng-controller="samcontroller" id="bs-example-navbar-collapse-1">
 
 
 <!-- I hate to repeat whole user information form at this place, but i am not able to populate form information from previously filled value -->
@@ -401,20 +401,20 @@ console.log(checkboxfield.checked);
 
 <div class="form-group">
 
-<div class="col">
-<div>
-    Selected Country : {{country}}
+    <div class="col">
+        <div>
+            Selected Country : {{country}}
+        </div>
+        <label for="selectCountry">Select Country</label><br/>
+        <div class="controls">
+            <span class="label label-danger" data-ng-show="submitted && helpForm.country.$error.required">Required!</span>
+            <select id="selectCountry" name="country" ng-value="country" ng-model="country" required>
+
+                <option ng-repeat="country in countrynameslist"  value="{{country}}">{{country}}</option>
+
+            </select>
+        </div>
     </div>
-<label for="selectCountry">Select Country</label><br/>
-<div class="controls">
-<span class="label label-danger" data-ng-show="submitted && helpForm.country.$error.required">Required!</span>
-<select id="selectCountry" name="country" ng-value="country" ng-model="country" required>
-
-    <option ng-repeat="country in countrynameslist"  value="{{country}}">{{country}}</option>
-
-</select>
-</div>
-</div>
 </div>
 <div class="form-group">
     <div class="row">
@@ -615,33 +615,33 @@ Not needed for now
 
 
 
-                <ul class="nav navbar-nav">
+<ul class="nav navbar-nav">
 
-                    <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" id="regionname" data-toggle="dropdown">{{regionName}} <b class="caret"></b></a>
-                        <ul class="dropdown-menu">
-                            <li><a ng-click="setRegion('AMERICAS')">Americas</a></li>
-                            <li><a ng-click="setRegion('ASIA')">Asia Pacific</a></li>
-                            <li><a ng-click="setRegion('MIDDLE EAST')">Middle East</a></li>
-                            <li><a ng-click="setRegion('EUROPE')">Europe</a></li>
+    <li class="dropdown">
+        <a href="#" class="dropdown-toggle" id="regionname" data-toggle="dropdown">{{regionName}} <b class="caret"></b></a>
+        <ul class="dropdown-menu">
+            <li><a ng-click="setRegion('AMERICAS')">Americas</a></li>
+            <li><a ng-click="setRegion('ASIA')">Asia Pacific</a></li>
+            <li><a ng-click="setRegion('MIDDLE EAST')">Middle East</a></li>
+            <li><a ng-click="setRegion('EUROPE')">Europe</a></li>
 
-                        </ul>
-                    </li>
-                </ul>
-                <form class="navbar-form navbar-left" role="search" >
-                    <div class="form-group">
-                        <input type="text" class="form-control" placeholder="Search">
-                    </div>
-                    <button type="submit" class="btn btn-default">Submit</button>
-                </form>
-                <ul class="nav navbar-nav navbar-right">
-<li><a>Welcome {{userfirstnamedisplay}}</a></li>
-                <li><a href="#/flightsearch" data-html="true" data-target="#" class="btn-link" data-placement="bottom"  data-original-title="Flight Search" >Flight Search</a></li>
+        </ul>
+    </li>
+</ul>
+<form class="navbar-form navbar-left" role="search" >
+    <div class="form-group">
+        <input type="text" class="form-control" placeholder="Search">
+    </div>
+    <button type="submit" class="btn btn-default">Submit</button>
+</form>
+<ul class="nav navbar-nav navbar-right">
+    <li><a>Welcome {{userfirstnamedisplay}}</a></li>
+    <li><a href="#/flightsearch" data-html="true" data-target="#" class="btn-link" data-placement="bottom"  data-original-title="Flight Search" >Flight Search</a></li>
 
-                    <li class="submenu"><a data-html="true"  ng-click="showLoginViewOnClick();" >Login</a></li>
-                    <li class="submenu"><a data-html="true" data-toggle="modal" ng-click="viewingProfileInfoForEditing(false);" class="btn-link" data-placement="bottom" data-original-title="Register for new account" >Register</a></li>
-                    <li><button class="btn" id="loginbutton" data-toggle="popover" data-placement="bottom" data-html="true" data-original-title="Click to Retrieve Reservation" data-title="<div style='width:800px'>asdasdas</div>"
-                          data-content="<div><form class='form-horizontal' role='form' action='http://jayeshkawli.com/airlinetravel/retrievereservation.php' target='_blank' method='post'>
+    <li class="submenu"><a data-html="true"  ng-click="showLoginViewOnClick();" >{{loginlogouttext}}</a></li>
+    <li class="submenu"><a data-html="true" data-toggle="modal" ng-click="viewingProfileInfoForEditing(false);" class="btn-link" data-placement="bottom" data-original-title="Register for new account" >Register</a></li>
+    <li><button class="btn" id="loginbutton" data-toggle="popover" data-placement="bottom" data-html="true" data-original-title="Click to Retrieve Reservation" data-title="<div style='width:800px'>asdasdas</div>"
+                data-content="<div><form class='form-horizontal' role='form' action='http://jayeshkawli.com/airlinetravel/retrievereservation.php' target='_blank' method='post'>
   <div class='form-group'>
     <label for='inputEmail3' class='col-sm-2 control-label'>Confirmation Code</label>
     <div class='col-sm-9' style='margin-left:10px'>
@@ -675,362 +675,360 @@ Not needed for now
   </div>
 </form>" style="margin-top:10px;">Reservation</button></li>
 
-                    <li class="dropdown">
-                        <a class="dropdown-toggle" data-toggle="dropdown">Dropdown <b class="caret"></b></a>
-                        <ul class="dropdown-menu">
-                            <li class="submenu"><a data-html="true" data-toggle="modal" ng-click="viewingProfileInfoForEditing(true);">Update</a></li>
-                            <li><a>Another action</a></li>
-                            <li><a>Something else here</a></li>
-                            <li class="divider"></li>
-                            <li><a data-ng-click="loguserout();">Logout</a></li>
-                        </ul>
-                    </li>
-                </ul>
-            </div><!-- /.navbar-collapse -->
-        </div><!-- /.container-fluid -->
-    </nav>
+    <li class="dropdown">
+        <a class="dropdown-toggle" data-toggle="dropdown">Dropdown <b class="caret"></b></a>
+        <ul class="dropdown-menu">
+            <li class="submenu"><a data-html="true" data-toggle="modal" ng-click="viewingProfileInfoForEditing(true);">Update</a></li>
+            <li><a>Another action</a></li>
+            <li><a>Something else here</a></li>
+            <li class="divider"></li>
+            <li><a data-ng-click="samplefunction()">Logout - Deprecated</a></li>
+        </ul>
+    </li>
+</ul>
+</div><!-- /.navbar-collapse -->
+</div><!-- /.container-fluid -->
+</nav>
 
-    <!-- Modal -->
+<!-- Modal -->
 
-    <!--For registration successful event-->
-    <div>
+<!--For registration successful event-->
+<div>
     <div class="modal fade" ng-controller="samcontroller" successfull-registration id="registrationsuccessfull">
-    <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-    <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-        <h4 class="modal-title" id="">User Login</h4>
-    </div>
-    <div class="modal-body">
-
-    <form role="form" name="loginform" novalidate>
-    <div class="form-group">
-    <label for="exampleInputEmail1">Email address</label>
-    <div class="input-group input-group-lg">
-    </div>
-    </div>
-    </form>
-    </div>
-    </div>
-    </div>
-    </div>
-    </div>
-
-
-
-    <!-- For Login purpose -->
-    <div class="modal fade" login-view ng-controller="samcontroller" id="loginview" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    <h4 class="modal-title" id="myModalLabel33">User Login</h4>
+                    <h4 class="modal-title" id="">User Login</h4>
                 </div>
                 <div class="modal-body">
+
                     <form role="form" name="loginform" novalidate>
                         <div class="form-group">
                             <label for="exampleInputEmail1">Email address</label>
                             <div class="input-group input-group-lg">
-                                <span class="input-group-addon">@</span>
-                                <span class="label label-danger" data-ng-show="userloggedin && loginform.loginemail.$error.required">Required!</span>
-                            <span class="label label-danger" ng-show="loginform.loginemail.$error.email">
-      Not valid email!</span>
-                                <input type="email" name="loginemail" ng-model="loginemail" class="form-control" id="exampleInputEmail1" placeholder="Enter email" required="true" >
-                                </div>
+                            </div>
                         </div>
-
-                        <div class="form-group">
-                            <label for="exampleInputPassword1">Password</label>
-                            <div class="input-group input-group-lg">
-                                <span class="input-group-addon"> * </span>
-                                <span class="label label-danger" data-ng-show="userloggedin && loginform.loginpassword.$error.required">Required!</span>
-                            <input type="password" name="loginpassword" ng-model="loginpassword" class="form-control" id="exampleInputPassword1" placeholder="Password" required="true">
-                                </div>
-                        </div>
-                        <input type="checkbox" ng-model="savecredentials">  Do you want to save your credentials? <br/>
-                        <div class="modal-footer center-block">
-                            <button type="submit" class="btn btn-default" data-dismiss="modal" ng-click="forgotPassword();">Forgot Password</button>
-                            <button type="submit" class="btn btn-primary" data-toggle="modal" data-target="#loginview" ng-click="loguserin(loginform)" >Login</button>
-                        </div>
-                        </form>
+                    </form>
                 </div>
-
             </div>
         </div>
     </div>
+</div>
 
 
-    <!-- For registration purpose -->
-    <div class="modal fade" ng-controller="samcontroller" register-view register-firstpage id="registerview" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
 
+<!-- For Login purpose -->
+<div class="modal fade" login-view ng-controller="samcontroller" id="loginview" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
             <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel33">User Login</h4>
+            </div>
+            <div class="modal-body">
+                <form role="form" name="loginform" novalidate>
+                    <div class="form-group">
+                        <label for="exampleInputEmail1">Email address</label>
+                        <div class="input-group input-group-lg">
+                            <span class="input-group-addon">@</span>
+                            <span class="label label-danger" data-ng-show="userloggedin && loginform.loginemail.$error.required">Required!</span>
+                            <span class="label label-danger" ng-show="loginform.loginemail.$error.email">
+      Not valid email!</span>
+                            <input type="email" name="loginemail" ng-model="loginemail" class="form-control" id="exampleInputEmail1" placeholder="Enter email" required="true" >
+                        </div>
+                    </div>
 
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    <h4 class="modal-title" id="myModalLabel11">User Registration</h4>
+                    <div class="form-group">
+                        <label for="exampleInputPassword1">Password</label>
+                        <div class="input-group input-group-lg">
+                            <span class="input-group-addon"> * </span>
+                            <span class="label label-danger" data-ng-show="userloggedin && loginform.loginpassword.$error.required">Required!</span>
+                            <input type="password" name="loginpassword" ng-model="loginpassword" class="form-control" id="exampleInputPassword1" placeholder="Password" required="true">
+                        </div>
+                    </div>
+                    <input type="checkbox" ng-model="savecredentials">  Do you want to save your credentials? <br/>
+                    <div class="modal-footer center-block">
+                        <button type="submit" class="btn btn-default" data-dismiss="modal" ng-click="forgotPassword();">Forgot Password</button>
+                        <button type="submit" class="btn btn-primary" data-toggle="modal" data-target="#loginview" ng-click="loguserin(loginform)" >Login</button>
+                    </div>
+                </form>
+            </div>
 
-                </div>
-
-                <div class="form-actions modal-body">
-
-                <!--<div id="messages" class="alert alert-success" data-ng-show="messages" data-ng-bind="messages"></div>-->
-                <div id="messages" class="alert alert-success" data-ng-show="messages" data-ng-bind="messages"></div>
-                <div data-ng-show="progress.active()" style="color: red; font-size: 50px;">Sending&hellip;</div>
-
-                    <form name="helpForm" class="form-horizontal" novalidate role="form">
-                        <fieldset>
-                            <legend>Create an Account</legend>
-
-                            <div class="form-group">
-                                <label class="control-label" for="select01">Title</label>
-                                <div class="controls">
-                                    <select id="select03" ng-model="salutation">
-
-                                        <option>Mr.</option>
-                                        <option>Mrs.</option>
-                                        <option>Ms.</option>
-                                        <option>Dear</option>
-                                    </select>
-                                </div>
-                            </div>
-
-
-                            <div class="form-group">
-
-                                <div class="row">
-
-
-                                    <div class="col-md-4"> <label>First Name:</label>
-                                        <span class="label label-danger" data-ng-show="submitted && helpForm.firstname.$error.required">Required!</span>
-
-                                        <input type="text"  name="firstname" ng-model="firstname" required="true"/></div>
-                                    <div class="col-md-4"> <label> Middle Name:</label>
-                                        <span class="label label-danger" data-ng-show="submitted && helpForm.middlename.$error.required">Required!</span>
-                                        <input type="text" name="middlename" ng-model="middlename" required></div>
-                                    <div class="col-md-4"> <label>Last Name:</label>
-                                        <span class="label label-danger" data-ng-show="submitted && helpForm.lastname.$error.required">Required!</span>
-                                        <input type="text" name="lastname" ng-model="lastname" required></div>
-                                </div>
-                            </div>
+        </div>
+    </div>
+</div>
 
 
+<!-- For registration purpose -->
+<div class="modal fade" ng-controller="samcontroller" register-view register-firstpage id="registerview" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal-dialog modal-lg">
+<div class="modal-content">
+
+<div class="modal-header">
+
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <h4 class="modal-title" id="myModalLabel11">User Registration</h4>
+
+</div>
+
+<div class="form-actions modal-body">
+
+<!--<div id="messages" class="alert alert-success" data-ng-show="messages" data-ng-bind="messages"></div>-->
+<div id="messages" class="alert alert-success" data-ng-show="messages" data-ng-bind="messages"></div>
+<div data-ng-show="progress.active()" style="color: red; font-size: 50px;">Sending&hellip;</div>
+
+<form name="helpForm" class="form-horizontal" novalidate role="form">
+<fieldset>
+<legend>Create an Account</legend>
+
+<div class="form-group">
+    <label class="control-label" for="select01">Title</label>
+    <div class="controls">
+        <select id="select03" ng-model="salutation">
+
+            <option>Mr.</option>
+            <option>Mrs.</option>
+            <option>Ms.</option>
+            <option>Dear</option>
+        </select>
+    </div>
+</div>
+
+
+<div class="form-group">
+
+    <div class="row">
+
+
+        <div class="col-md-4"> <label>First Name:</label>
+            <span class="label label-danger" data-ng-show="submitted && helpForm.firstname.$error.required">Required!</span>
+
+            <input type="text"  name="firstname" ng-model="firstname" required="true"/></div>
+        <div class="col-md-4"> <label> Middle Name:</label>
+            <span class="label label-danger" data-ng-show="submitted && helpForm.middlename.$error.required">Required!</span>
+            <input type="text" name="middlename" ng-model="middlename" required></div>
+        <div class="col-md-4"> <label>Last Name:</label>
+            <span class="label label-danger" data-ng-show="submitted && helpForm.lastname.$error.required">Required!</span>
+            <input type="text" name="lastname" ng-model="lastname" required></div>
+    </div>
+</div>
 
 
 
 
-                            <div class="form-group">
-                                <label>Date of Birth</label><br/>
-<!-- Excellent resource - Source: http://angular-ui.github.io/bootstrap/ -->
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <p class="input-group">
-                                            <span class="label label-danger" data-ng-show="submitted && helpForm.birthdate.$error.required">Required!</span>
-                                            <input type="text" id="dob" name="birthdate" ng-model="birthdate" class="form-control" datepicker-popup="{{format}}" is-open="opened" min="{{mindate}}" max="{{maxdate}}" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" />
+
+
+<div class="form-group">
+    <label>Date of Birth</label><br/>
+    <!-- Excellent resource - Source: http://angular-ui.github.io/bootstrap/ -->
+    <div class="row">
+        <div class="col-md-6">
+            <p class="input-group">
+                <span class="label label-danger" data-ng-show="submitted && helpForm.birthdate.$error.required">Required!</span>
+                <input type="text" id="dob" name="birthdate" ng-model="birthdate" class="form-control" datepicker-popup="{{format}}" is-open="opened" min="{{mindate}}" max="{{maxdate}}" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" />
               <span class="input-group-btn">
                 <button class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
               </span>
-                                        </p>
-                                    </div>
-                                </div>
-                           <!--     <input type="text" id="dob" data-provide="datepicker" name="birthdate" ng-model="birthdate" required>-->
-                            </div>
+            </p>
+        </div>
+    </div>
+    <!--     <input type="text" id="dob" data-provide="datepicker" name="birthdate" ng-model="birthdate" required>-->
+</div>
 
-                            <hr/>
+<hr/>
 
-                            <div class="form-group">
+<div class="form-group">
 
-                                <div class="col">
+    <div class="col">
 
-                                <label for="selectCountry">Select Country</label><br/>
-                                        <div class="controls">
-                                        <span class="label label-danger" data-ng-show="submitted && helpForm.country.$error.required">Required!</span>
+        <label for="selectCountry">Select Country</label><br/>
+        <div class="controls">
+            <span class="label label-danger" data-ng-show="submitted && helpForm.country.$error.required">Required!</span>
 
 
-                                            <select id="selectCountry" name="country" ng-model="country" required>
+            <select id="selectCountry" name="country" ng-model="country" required>
 
-                                            <option ng-repeat="country in countrynameslist" value="{{country}}">{{country}}</option>
+                <option ng-repeat="country in countrynameslist" value="{{country}}">{{country}}</option>
 
-                                        </select>
-                                    </div>
-                                </div>
-                                </div>
-                    <div class="form-group">
-                    <div class="row">
-                        <div class="col-md-4"><label>Street:</label>
-                            <span class="label label-danger" data-ng-show="submitted && helpForm.streetname.$error.required">Required!</span>
-                            <input type="text" name="streetname" ng-model="streetname" class="input-lg glyphicon-search" required><br/>
-                        Street Information <input type="text" ng-model="streetsubname" class="input-lg glyphicon-search"></div>
+            </select>
+        </div>
+    </div>
+</div>
+<div class="form-group">
+    <div class="row">
+        <div class="col-md-4"><label>Street:</label>
+            <span class="label label-danger" data-ng-show="submitted && helpForm.streetname.$error.required">Required!</span>
+            <input type="text" name="streetname" ng-model="streetname" class="input-lg glyphicon-search" required><br/>
+            Street Information <input type="text" ng-model="streetsubname" class="input-lg glyphicon-search"></div>
 
     </div>
 
-                    <div class="row">
+    <div class="row">
 
-                    <div class="col-md-4">Zip Code:
-                                 <span class="label label-danger" data-ng-show="submitted && helpForm.zipcode.$error.required">Required!</span>
-                                 <input type="number" name="zipcode" ng-model="zipcode" maxlength="5" required>
-                    </div>
+        <div class="col-md-4">Zip Code:
+            <span class="label label-danger" data-ng-show="submitted && helpForm.zipcode.$error.required">Required!</span>
+            <input type="number" name="zipcode" ng-model="zipcode" maxlength="5" required>
+        </div>
 
-                    <div class="col-md-4">City:
-                            <span class="label label-danger" data-ng-show="submitted && helpForm.city.$error.required">Required!</span>
-                            <input type="text" name="city" ng-model="city" required>
-                    </div>
+        <div class="col-md-4">City:
+            <span class="label label-danger" data-ng-show="submitted && helpForm.city.$error.required">Required!</span>
+            <input type="text" name="city" ng-model="city" required>
+        </div>
 
-                    <div class="col-md-4">State:
-                            <span class="label label-danger" data-ng-show="submitted && helpForm.state.$error.required">Required!</span>
-                            <input type="text" name="state" ng-model="state" required>
-                    </div>
-                    </div>
+        <div class="col-md-4">State:
+            <span class="label label-danger" data-ng-show="submitted && helpForm.state.$error.required">Required!</span>
+            <input type="text" name="state" ng-model="state" required>
+        </div>
+    </div>
 
-                    Enter you email address
-                                <div class="row">
-                                    <div class="col-lg-6">
-                                        <div class="input-group">
+    Enter you email address
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="input-group">
 
                                             <span class="input-group-addon">
                                             <input type="radio">
                                             </span>
-                                            <label></label>
-                                            <span class="label label-danger" data-ng-show="submitted && helpForm.email.$error.required">Required!</span>
-                                            <input type="email" name="email" ng-model="email" class="form-control" placeholder="Email Address" required>
-                                        </div>
-                                    </div>
+                <label></label>
+                <span class="label label-danger" data-ng-show="submitted && helpForm.email.$error.required">Required!</span>
+                <input type="email" name="email" ng-model="email" class="form-control" placeholder="Email Address" required>
+            </div>
+        </div>
 
-                                    <div class="col-lg-6">
-                                        <div class="input-group">
+        <div class="col-lg-6">
+            <div class="input-group">
                                             <span class="input-group-addon">
                                         <input type="radio">
                                     </span>
-                                            <label></label>
-                                            <span class="label label-danger" data-ng-show="submitted && helpForm.reemail.$error.required">Required!</span>
-                                    <input type="email" name="reemail" ng-model="reemail" class="form-control" placeholder="Re-enter Email address" required>
-                                        </div><!-- /input-group -->
-                                    </div><!-- /.col-lg-6 -->
-                                </div><!-- /.row -->
+                <label></label>
+                <span class="label label-danger" data-ng-show="submitted && helpForm.reemail.$error.required">Required!</span>
+                <input type="email" name="reemail" ng-model="reemail" class="form-control" placeholder="Re-enter Email address" required>
+            </div><!-- /input-group -->
+        </div><!-- /.col-lg-6 -->
+    </div><!-- /.row -->
 
 
-                                </div>
+</div>
 <hr/>
 
 
 
 
-                            <div class="control-group">
-                                <div class="row">
-                                    <div class="col-md-4">User Id:
-                                        <span class="label label-danger" data-ng-show="submitted && helpForm.userid.$error.required">Required!</span>
-                                        <input type="text" name="userid" ng-model="userid" required>
-                                    </div>
+<div class="control-group">
+    <div class="row">
+        <div class="col-md-4">User Id:
+            <span class="label label-danger" data-ng-show="submitted && helpForm.userid.$error.required">Required!</span>
+            <input type="text" name="userid" ng-model="userid" required>
+        </div>
 
-                                    <div class="col-md-4">Password:
-                                        <span class="label label-danger" data-ng-show="submitted && helpForm.password.$error.required">Required!</span>
-                                        <input type="password" name="password" ng-model="password" required>
-                                    </div>
+        <div class="col-md-4">Password:
+            <span class="label label-danger" data-ng-show="submitted && helpForm.password.$error.required">Required!</span>
+            <input type="password" name="password" ng-model="password" required>
+        </div>
 
-                                    <div class="col-md-4">Re-enter Password:
-                                        <span class="label label-danger" data-ng-show="submitted && helpForm.repassword.$error.required">Required!</span>
-                                        <input type="password" name="repassword" ng-model="repassword" required>
-                                    </div>
-                                    <span class="label label-danger" data-ng-show="submitted && passwordsnotmatch">Passwords Must Match</span>
-                                </div>
-                                </div>
-                                <hr/>
-
-
-
-
-
-                                <div class="control-group">
-                                    <label class="control-label">Please enter you phone number</label>
-                                    <div class="controls">
-                                        <span class="label label-danger" data-ng-show="submitted && helpForm.telephonenumber.$error.required">Required!</span>
-                                        <input type="text" class="input-xlarge" id="input01" name="telephonenumber" ng-model="telephonenumber" required>
-
-
-                                    </div>
-                                </div>
-
-                                <div class="control-group">
-                                    <label class="control-label" for="optionsCheckbox">Promotional Offers</label>
-                                    <div class="controls">
-                                        <label class="checkbox">
-                                            <input type="checkbox" id="optionsCheckbox" ng-model="subscribingforpromotionaloffers">
-                                            Please select if you would like to receive promotional offers from AirFlightBooking Inc.
-                                        </label>
-
-                                    </div>
-                                </div>
-
-                                <div class="control-group">
-                                    <label class="control-label">Please enlist your choice of languages</label>
-                                    <div class="controls">
-                                        <span class="label label-danger" data-ng-show="submitted && helpForm.languagechoice.$error.required">Required!</span>
-                                        <select id="select01" name="languagechoice" ng-model="languagechoice" required>
-                                            <option></option>
-                                            <option>English</option>
-                                            <option>Hindi</option>
-                                            <option>Spanish</option>
-                                            <option>French</option>
-                                        </select>
-                                    </div>
-                                </div>
-
-
-                                <div class="control-group">
-                                    <label class="control-label" for="multiSelect">Please select why would you want to use airline commercial</label>
-                                    <div class="controls">
-                                        <select multiple="multiple" id="multiSelect">
-                                            <option>Personal</option>
-                                            <option>Family</option>
-                                            <option>Meet Friends</option>
-                                            <option>Travel</option>
-                                            <option>Business</option>
-                                        </select>
-                                    </div>
-                                </div>
-
-
-                            Terms And Conditions
-                            <textarea class="form-control" rows="4">  Payment
-                                All payments are due upon receipt. If a payment is not received or payment method is declined, the buyer forfeits the ownership of any items purchased. If no payment is received, no items will be shipped.
-
-                                Shipping Policies
-                                Shipping will be paid for by the buyer in the amount agreed upon by the seller at the time of purchase. If an item is lost during shipping, the total cost of item, including shipping, will be refunded to the buyer by the seller. Shipping costs may double if shipping internationally. If an item is damaged during shipping, seller will not be held responsible.
-
-                                Refund/Return Policy
-                                Items are entitled to be refunded or returned based on complaint. If an item is damaged during shipping, a replacement item will be sent free of charge. If an item is unsatisfactory, a written explanation is needed before the item may be considered for a refund. Buyer must take into account the description of the item before requesting a refund. If the item matches the description by the seller and the buyer is unsatisfied, seller is not responsible for refund. Exchanges are granted on a case-by-case basis.
-
-                                Cancellation
-                                An item may be cancelled up until payment has been processed. Once payment has been processed, the buyer is responsible for payment.
-
-                                Complaints
-                                Any complaints about items or sellers may be sent to our support team: support@wesellyourstuff.com or (888) 555-0198. There is no guarantee of a resolution. Each case will be looked at individually, and the seller will be in contact as well.
-
-                                Legalities
-                                The seller is not responsible for any health or safety concerns once the buyer has received the item. If any harm is incurred from the items purchased by the buyer, the seller shares no responsibility.
-                                These terms and conditions are subject to change.</textarea>
-
-                            <div class="btn-group col-sm-offset-1" data-toggle="buttons">
-
-
-                                <label class="btn btn-primary active col-md-6" style="margin-left: -50px" ng-click="conditionschanged(1)">
-                                    <input type="radio" checked name="options" name="accept" ng-model="tandc" id="option1"> I Read Terms and Conditions
-                                </label>
+        <div class="col-md-4">Re-enter Password:
+            <span class="label label-danger" data-ng-show="submitted && helpForm.repassword.$error.required">Required!</span>
+            <input type="password" name="repassword" ng-model="repassword" required>
+        </div>
+        <span class="label label-danger" data-ng-show="submitted && passwordsnotmatch">Passwords Must Match</span>
+    </div>
+</div>
+<hr/>
 
 
 
 
-                                <label class="btn btn-primary" style="width: 270px" ng-click="conditionschanged(0)" >
-                                    <input type="radio" name="options" id="option2" name="reject" ng-model="tandc">I Didn't read Terms and Conditions
-                                </label>
+
+<div class="control-group">
+    <label class="control-label">Please enter you phone number</label>
+    <div class="controls">
+        <span class="label label-danger" data-ng-show="submitted && helpForm.telephonenumber.$error.required">Required!</span>
+        <input type="text" class="input-xlarge" id="input01" name="telephonenumber" ng-model="telephonenumber" required>
+
+
+    </div>
+</div>
+
+<div class="control-group">
+    <label class="control-label" for="optionsCheckbox">Promotional Offers</label>
+    <div class="controls">
+        <label class="checkbox">
+            <input type="checkbox" id="optionsCheckbox" ng-model="subscribingforpromotionaloffers">
+            Please select if you would like to receive promotional offers from AirFlightBooking Inc.
+        </label>
+
+    </div>
+</div>
+
+<div class="control-group">
+    <label class="control-label">Please enlist your choice of languages</label>
+    <div class="controls">
+        <span class="label label-danger" data-ng-show="submitted && helpForm.languagechoice.$error.required">Required!</span>
+        <select id="select01" name="languagechoice" ng-model="languagechoice" required>
+            <option></option>
+            <option>English</option>
+            <option>Hindi</option>
+            <option>Spanish</option>
+            <option>French</option>
+        </select>
+    </div>
+</div>
+
+
+<div class="control-group">
+    <label class="control-label" for="multiSelect">Please select why would you want to use airline commercial</label>
+    <div class="controls">
+        <select multiple="multiple" id="multiSelect">
+            <option>Personal</option>
+            <option>Family</option>
+            <option>Meet Friends</option>
+            <option>Travel</option>
+            <option>Business</option>
+        </select>
+    </div>
+</div>
+
+
+Terms And Conditions
+<textarea class="form-control" rows="4">  Payment
+    All payments are due upon receipt. If a payment is not received or payment method is declined, the buyer forfeits the ownership of any items purchased. If no payment is received, no items will be shipped.
+
+    Shipping Policies
+    Shipping will be paid for by the buyer in the amount agreed upon by the seller at the time of purchase. If an item is lost during shipping, the total cost of item, including shipping, will be refunded to the buyer by the seller. Shipping costs may double if shipping internationally. If an item is damaged during shipping, seller will not be held responsible.
+
+    Refund/Return Policy
+    Items are entitled to be refunded or returned based on complaint. If an item is damaged during shipping, a replacement item will be sent free of charge. If an item is unsatisfactory, a written explanation is needed before the item may be considered for a refund. Buyer must take into account the description of the item before requesting a refund. If the item matches the description by the seller and the buyer is unsatisfied, seller is not responsible for refund. Exchanges are granted on a case-by-case basis.
+
+    Cancellation
+    An item may be cancelled up until payment has been processed. Once payment has been processed, the buyer is responsible for payment.
+
+    Complaints
+    Any complaints about items or sellers may be sent to our support team: support@wesellyourstuff.com or (888) 555-0198. There is no guarantee of a resolution. Each case will be looked at individually, and the seller will be in contact as well.
+
+    Legalities
+    The seller is not responsible for any health or safety concerns once the buyer has received the item. If any harm is incurred from the items purchased by the buyer, the seller shares no responsibility.
+    These terms and conditions are subject to change.</textarea>
+
+<div class="btn-group col-sm-offset-1" data-toggle="buttons">
+
+
+    <label class="btn btn-primary active col-md-6" style="margin-left: -50px" ng-click="conditionschanged(1)">
+        <input type="radio" checked name="options" name="accept" ng-model="tandc" id="option1"> I Read Terms and Conditions
+    </label>
 
 
 
-                            </div>
 
-                            <span class="label label-danger" data-ng-show="!didConditionsAccepted">Please accept terms and conditions!</span>
+    <label class="btn btn-primary" style="width: 270px" ng-click="conditionschanged(0)" >
+        <input type="radio" name="options" id="option2" name="reject" ng-model="tandc">I Didn't read Terms and Conditions
+    </label>
 
 
+
+</div>
+
+<span class="label label-danger" data-ng-show="!didConditionsAccepted">Please accept terms and conditions!</span>
 
 
 
@@ -1038,22 +1036,24 @@ Not needed for now
 
 
 
-                            <!--
-                            Not needed for now
 
-                            <div class="control-group">
-                                <label class="control-label" for="fileInput">File ddddinput</label>
-                                <div class="controls">
-                                    <input class="input-file" id="fileInput" type="file">
-                                </div>
-                            </div>-->
 
-                                <div class="control-group">
-                                    <label class="control-label" for="textarea">Comments and Suggestions</label>
-                                    <div class="controls">
-                                        <textarea class="input-xlarge" id="textarea" rows="3" ng-model="comments" value="Please put any suggestions and/or comments you may have in this box"></textarea>
-                                    </div>
-                                </div>
+<!--
+Not needed for now
+
+<div class="control-group">
+    <label class="control-label" for="fileInput">File ddddinput</label>
+    <div class="controls">
+        <input class="input-file" id="fileInput" type="file">
+    </div>
+</div>-->
+
+<div class="control-group">
+    <label class="control-label" for="textarea">Comments and Suggestions</label>
+    <div class="controls">
+        <textarea class="input-xlarge" id="textarea" rows="3" ng-model="comments" value="Please put any suggestions and/or comments you may have in this box"></textarea>
+    </div>
+</div>
 
 
 
@@ -1076,118 +1076,124 @@ Not needed for now
 
 
 
-                                <button type="button" class="btn btn-default" data-dismiss="modal">Cancel And Close</button>
-                                <button class="btn btn-primary" data-ng-disabled="progress.active()" ng-click="submit(helpForm)" data-title="go to next page" data-html="true" data-toggle="modal"  data-dismiss="var1">Next</button>
+<button type="button" class="btn btn-default" data-dismiss="modal">Cancel And Close</button>
+<button class="btn btn-primary" data-ng-disabled="progress.active()" ng-click="submit(helpForm)" data-title="go to next page" data-html="true" data-toggle="modal"  data-dismiss="var1">Next</button>
 
 
 
-                    </form>
+</form>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<!--<div class="modal-footer center-block">
+
+    <button type="button" class="btn btn-primary">Save changes</button>
+</div>-->
+</div>
+</div>
+</div>
+
+<div class="modal fade" forgot-password   id="fogrgotpasswordpage" tabindex="-1" role="dialog" aria-hidden="true" >
+    <div class="modal-dialog modal-lg"  >
+        <div class="modal-content" ng-controller="samcontroller">
+
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel45">User Registration</h4>
+            </div>
+            <div class="modal-body">
+                <div ng-bind="messageafterpasswordsend"></div>
+                <div class="input-group input-group-lg">
+                    <span class="input-group-addon">@</span>
+                    <input type="text" class="form-control" placeholder="Username">
                 </div>
+
+
             </div>
+
+            <div class="modal-footer center-block">
+                <button type="button" class="btn btn-default" data-toggle="modal" ng-click="gotobackpage();" data-target="#loginview" >Back to login page</button>
+                <button type="button" class="btn btn-primary" data-toggle="modal" ng-click="sendpasswordtouser()"  >Send</button>
             </div>
-            </div>
-                </div>
         </div>
+    </div>
+</div>
 
-                <!--<div class="modal-footer center-block">
 
-                    <button type="button" class="btn btn-primary">Save changes</button>
-                </div>-->
+<!-- Modal view for second page of registration -->
+<div class="modal fade" register-secondpage  id="gotoregistrationsecondpage" tabindex="-1" role="dialog" aria-labelledby="myModalLabelsecond view" aria-hidden="true" >
+    <div class="modal-dialog modal-lg"  >
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel">User Registration</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal">
+                    <fieldset>
+                        <legend>Crate an account</legend>
+
+
+                        <hr>
+                        <br/>
+                        <div class="form-actions navbar-right">
+                            <button type="submit"  class="btn btn-primary" data-title="go to next page" data-html="true" data-toggle="modal" data-dismiss="modal" data-target="#registerview">Back</button>
+                            <button type="submit"  class="btn btn-primary" data-title="go to next page" data-html="true" data-toggle="modal" data-target="#gotoregistrationsecondpage">Next</button>
+
+                        </div>
+                    </fieldset>
+                </form>
+            </div>
+            <div class="modal-footer center-block">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save changes</button>
             </div>
         </div>
     </div>
 
-    <div class="modal fade" forgot-password   id="fogrgotpasswordpage" tabindex="-1" role="dialog" aria-hidden="true" >
-        <div class="modal-dialog modal-lg"  >
-            <div class="modal-content" ng-controller="samcontroller">
+    <!-- /.row -->
 
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    <h4 class="modal-title" id="myModalLabel45">User Registration</h4>
-                </div>
-                <div class="modal-body">
-                    <div ng-bind="messageafterpasswordsend"></div>
-                    <div class="input-group input-group-lg">
-                        <span class="input-group-addon">@</span>
-                        <input type="text" class="form-control" placeholder="Username">
-                    </div>
+</div>
 
 
-                    </div>
 
-                <div class="modal-footer center-block">
-                    <button type="button" class="btn btn-default" data-toggle="modal" ng-click="gotobackpage();" data-target="#loginview" >Back to login page</button>
-                    <button type="button" class="btn btn-primary" data-toggle="modal" ng-click="sendpasswordtouser()"  >Send</button>
-                </div>
-        </div>
-     </div>
-  </div>
-
-
-    <!-- Modal view for second page of registration -->
-    <div class="modal fade" register-secondpage  id="gotoregistrationsecondpage" tabindex="-1" role="dialog" aria-labelledby="myModalLabelsecond view" aria-hidden="true" >
-        <div class="modal-dialog modal-lg"  >
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    <h4 class="modal-title" id="myModalLabel">User Registration</h4>
-                </div>
-                <div class="modal-body">
-                    <form class="form-horizontal">
-                        <fieldset>
-                            <legend>Crate an account</legend>
-
-
-                            <hr>
-                            <br/>
-                            <div class="form-actions navbar-right">
-                                <button type="submit"  class="btn btn-primary" data-title="go to next page" data-html="true" data-toggle="modal" data-dismiss="modal" data-target="#registerview">Back</button>
-                                <button type="submit"  class="btn btn-primary" data-title="go to next page" data-html="true" data-toggle="modal" data-target="#gotoregistrationsecondpage">Next</button>
-
-                            </div>
-                        </fieldset>
-                    </form>
-                </div>
-                <div class="modal-footer center-block">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Save changes</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- /.row -->
-
+<!--
+Bottom menu bar - Maybe wont be much useful for now
+<div class="row">
+    <div class="col-lg-4 col-md-4">
+        <h3><i class="fa fa-check-circle"></i> Bootstrap 3 Built</h3>
+        <p>The 'Modern Business' website template by <a href="http://startbootstrap.com">Start Bootstrap</a> is built with <a href="http://getbootstrap.com">Bootstrap 3</a>. Make sure you're up to date with latest Bootstrap documentation!</p>
     </div>
-
-
-
-    <!--
-    Bottom menu bar - Maybe wont be much useful for now
-    <div class="row">
-        <div class="col-lg-4 col-md-4">
-            <h3><i class="fa fa-check-circle"></i> Bootstrap 3 Built</h3>
-            <p>The 'Modern Business' website template by <a href="http://startbootstrap.com">Start Bootstrap</a> is built with <a href="http://getbootstrap.com">Bootstrap 3</a>. Make sure you're up to date with latest Bootstrap documentation!</p>
-        </div>
-        <div class="col-lg-4 col-md-4">
-            <h3><i class="fa fa-pencil"></i> Ready to Style &amp; Edit</h3>
-            <p>You're ready to go with this pre-built page structure, now all you need to do is add your own custom stylings! You can see some free themes over at <a href="http://bootswatch.com">Bootswatch</a>, or come up with your own using <a href="http://getbootstrap.com/customize/">the Bootstrap customizer</a>!</p>
-        </div>
-        <div class="col-lg-4 col-md-4">
-            <h3><i class="fa fa-folder-open"></i> Many Page Options</h3>
-            <p>This template features many common pages that you might see on a business website. Pages include: about, contact, portfolio variations, blog, pricing, FAQ, 404, services, and general multi-purpose pages.</p>
-        </div>
-    </div>-->
-
-
-
-
-
-    <!-- Add your site or application content here -->
-    <div class="container-fluid" ng-view>
-
-
+    <div class="col-lg-4 col-md-4">
+        <h3><i class="fa fa-pencil"></i> Ready to Style &amp; Edit</h3>
+        <p>You're ready to go with this pre-built page structure, now all you need to do is add your own custom stylings! You can see some free themes over at <a href="http://bootswatch.com">Bootswatch</a>, or come up with your own using <a href="http://getbootstrap.com/customize/">the Bootstrap customizer</a>!</p>
     </div>
+    <div class="col-lg-4 col-md-4">
+        <h3><i class="fa fa-folder-open"></i> Many Page Options</h3>
+        <p>This template features many common pages that you might see on a business website. Pages include: about, contact, portfolio variations, blog, pricing, FAQ, 404, services, and general multi-purpose pages.</p>
+    </div>
+</div>-->
 
 
-  </body>
+
+
+
+<!-- Add your site or application content here -->
+<div class="container-fluid" ng-view>
+
+
+</div>
+
+
+</body>
 </html>
+
+
+
+
+
+
