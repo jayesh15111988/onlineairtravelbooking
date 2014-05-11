@@ -1214,35 +1214,95 @@ airlinetravelmodule.controller('showflightscontroller',function($scope,$http,$ro
     var airlines=Array();//[{"name":"abs","iata":"xyz","icao":"asda"}];
     $scope.airportsDeepDetails={};
 
+    var sortParamsEnum = {
+
+        DEPTIME: "Departure Time",
+        ARRTIME: "Arrival Time",
+        DISTMILES:"Distance Miles",
+        FLIGHTDURATION:"Flight Duration Minutes"
+
+    };
+
+
+    $scope.sortparamterscontainer=[{displayName:"Departure Time",backGroundName:"departureTime"},{displayName:"Arrival Time",backGroundName:"arrivalTime"},{displayName:"Distance Miles",backGroundName:"distanceMiles"},{displayName:"Flight Duration Minutes",backGroundName:"flightDurationMinutes"}];
+    $scope.backgroundsortparamters=["1","2","3","4","5","6","7"];
+    $scope.orderParametersArray=[{displayName:"Ascending",backGroundName:1},{displayName:"Descending",backGroundName:-1}];
+    $scope.orderTypeForOptions=1;
    // console.log("New Page Arrived");
-    $scope.filterWithAirline=function(airlineName){
-   airlineName==='clearall'?(isFilteringBasedOnAirline=false):(isFilteringBasedOnAirline=true);
-        filteredArrayAfterAirlineSelection.clear();
+    $scope.filterWithAirline=function(airlineName,searchType,isFilterParameter){
+   console.log(airlineName+ "actual name");
+        airlineName==='clearall'?(isFilteringBasedOnAirline=false):(isFilteringBasedOnAirline=true);
+
         if(isFilteringBasedOnAirline){
+
             if(tempHolderForAllFlights.length==0){
-            tempHolderForAllFlights=allFlightsDetail;
+
+                    tempHolderForAllFlights=allFlightsDetail;
+
             }
+//Filter all connections based on a airline name
+if(searchType==2 && isFilterParameter!==false){
 
+        console.log(tempHolderForAllFlights.length+ "   Number of Flights ");
+        console.log("Ok search type is 2 now length of array is "+ airlineName);
 
+        filteredArrayAfterAirlineSelection.clear();
 
         var numberOfFlights = tempHolderForAllFlights.length;
         var flightLegsFromSavedData=[];
         var connectionDetailObject={};
+        var individualFlightsRecord={};
         var connections={};
+
         for (var i = 0; i < numberOfFlights; i++) {
-            flightLegsFromSavedData=tempHolderForAllFlights[i].flightLegs;
+    individualFlightsRecord=tempHolderForAllFlights[i];
+            if(isFilterParameter=='airlineName'){
+            flightLegsFromSavedData=individualFlightsRecord.flightLegs;
             var connectionLength=flightLegsFromSavedData.length;
             for(var connections=0;connections<connectionLength;connections++){
                 connectionDetailObject= flightLegsFromSavedData[connections];
+
                 if(connectionDetailObject.carrierFsCode===airlineName){
-                    filteredArrayAfterAirlineSelection.push(tempHolderForAllFlights[i]);
+                    filteredArrayAfterAirlineSelection.push(individualFlightsRecord);
                     break;
                 }
             }
+           }
+            else if (isFilterParameter=='flightType'){
+
+                console.log("flighttype"+airlineName+ "  "+isFilterParameter+" last "+individualFlightsRecord.flightType);
+                if(individualFlightsRecord.flightType==airlineName){
+
+                    filteredArrayAfterAirlineSelection.push(individualFlightsRecord);
+                }
+            }
+            else if(isFilterParameter=='arrivalDateAdjustment'){
+                if(individualFlightsRecord.arrivalDateAdjustment==airlineName){
+                    filteredArrayAfterAirlineSelection.push(individualFlightsRecord);
+                }
+            }
+
         }
-            console.log(tempHolderForAllFlights.length+ "length of holder first one");
-        }
+
+
+
+
+
+
+        console.log(tempHolderForAllFlights.length+ "length of holder first one and second one in "+ filteredArrayAfterAirlineSelection.length);
+}
+            else if(searchType==0){
+
+        //Sort by specific parameter check if filetred array contains any data first
+        var arrayToOperateOn=filteredArrayAfterAirlineSelection.length?filteredArrayAfterAirlineSelection.slice(0):tempHolderForAllFlights.slice(0);
+        console.log("Came here"+ airlineName);
+       filteredArrayAfterAirlineSelection=arrayToOperateOn.sort(dynamicSort(airlineName,$scope.orderTypeForOptions));
+
+            }
+
+}
         else{
+            filteredArrayAfterAirlineSelection.clear();
             console.log(tempHolderForAllFlights.length+ "length of holder last one");
             //filteredArrayAfterAirlineSelection.concat(tempHolderForAllFlights);
             filteredArrayAfterAirlineSelection.push.apply(filteredArrayAfterAirlineSelection, tempHolderForAllFlights);
@@ -1253,6 +1313,16 @@ airlinetravelmodule.controller('showflightscontroller',function($scope,$http,$ro
         $scope.loadingToDisplay=false;
         console.log(filteredArrayAfterAirlineSelection.length);
         //console.log("hahhhaha");
+    }
+
+    function dynamicSort(property,sortOrder) {
+
+        console.log(property+ " 1 ");
+        console.log(sortOrder+ " 2 ");
+        return function (a,b) {
+            var result = (a[property] < b[property]) ? -1 : (a[property] > b[property]) ? 1 : 0;
+            return result * sortOrder;
+        }
     }
 
     $scope.bookorgotoreturingflights=function(index){

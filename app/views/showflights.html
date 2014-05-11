@@ -100,24 +100,36 @@ a {
         <img src="../images/loading.gif" ng-show="loadingToDisplay" class="loadinganimation">
     </div>
     <div class="row">
-
-
         </div>
-
-
         <div class="col-xs-3 moveleft">
-
-
-
             <table>
+                <tr><th><button id="sortparameter"><h6>Sort By</h6></button></th><th>Order
+                    <select ng-model="orderTypeForOptions">
+                        <option ng-repeat="orderParameter in orderParametersArray"
+                                value="{{orderParameter.backGroundName}}">
+                            {{orderParameter.displayName}}
+                        </option>
+                    </select><br>
+                </th></tr>
+
+                <tr  ng-repeat="sortparameter in sortparamterscontainer" >
+                    <td class="filterparameter"><div ><a ng-click="filterWithAirline(sortparameter.backGroundName,0,false);">{{sortparameter.displayName}}</a></div><br/></td>
+                </tr>
+
+
+
                 <tr><th><button id="airlines"><h6>Available Airlines</h6></button></th></tr>
 
 
                 <tr  ng-repeat="airline in airlines" >
 
-    <td class="airlinesDetails"><div id='{{airline.iata}}'><a ng-click="filterWithAirline(airline.iata);">{{airline.name}}</a><br/>{{airline.phoneNumber?airline.phoneNumber:""}}</div><br/></td>
+    <td class="airlinesDetails"><div id='{{airline.iata}}'><a ng-click="filterWithAirline(airline.iata,2,'airlineName');">{{airline.name}}</a><br/>{{airline.phoneNumber?airline.phoneNumber:""}}</div><br/></td>
     </tr>
-<tr><td class="airlinesDetails"><div><a ng-click="filterWithAirline('clearall');">Clear All</a><br/><br/></div></td></tr>
+
+                <tr><th><button id="othersearchparameters"><h6>Other Parameter</h6></button></th></tr>
+                <tr><td ng-click="filterWithAirline('CONNECTION',2,'flightType');"><a>With Stops</a></td><td  ng-click="filterWithAirline('NON_STOP',2,'flightType');"><a>Non Stop</a></td><td  ng-click="filterWithAirline('DIRECT',2,'flightType');"><a>Direct</a></td></tr>
+    <tr><td ng-click="filterWithAirline(0,2,'arrivalDateAdjustment');"><a>0 Day</a></td><td ng-click="filterWithAirline(1,2,'arrivalDateAdjustment');"><a>1 Day</a></td></tr>
+    <tr><td class="airlinesDetails"><div><a ng-click="filterWithAirline('clearall',2);">Clear All</a><br/><br/></div></td></tr>
                 </table>
             <table>
                 <tr><th><button id="airports"><h6>Available Airports</h6></button></th></tr>
@@ -135,22 +147,11 @@ a {
 
                     <td class="airplanesDetails"><div id="{{equipment.iata}}">{{equipment.name}}</div><br/></td>
                 </tr>
-
             </table>
-
-
-
-
-
         </div>
         <div class="col-xs-9">
 
             <div class="col-md-4 col-md-push-9 col-sm-4 col-sm-push-8 moveleftmiddle">
-
-
-
-
-
                 <div ng-repeat="flightDetail in flightDetails">
                         <div class="tableMain" style="background-color: lightgray">
 
