@@ -96,6 +96,14 @@ a{
     font-weight: bold;
 }
 
+.loadinganimation{
+    position: absolute;
+    z-index: 100;
+    margin-top: 10px;
+    margin-left: 350px;
+
+}
+
 a:hover{
     color: #b15;
     transition: 0.1s all ease-in-out;
@@ -176,7 +184,12 @@ ul>li{
 </script>
 <script src="http://angular-ui.github.io/bootstrap/ui-bootstrap-tpls-0.10.0.js"></script>
 <div class="container-fluid" ng-controller="flightsearchcontroller" style="height: 100%;background-color: #000000" xmlns="http://www.w3.org/1999/html">
-<div class="mini-layout fluid" style="height:900px;background-color: darkgray">
+
+    <div>
+        <img src="../images/loading.gif" ng-show="toshowloadinganimation" class="loadinganimation">
+    </div>
+
+    <div class="mini-layout fluid" style="height:900px;background-color: darkgray">
     <div style="background-color: #808080;height: 100%;width:20%;float: left" ></div>
     <div class="mini-layout-sidebar" style="margin-left: 0%;width: 60%;background-color: lightgrey;height: 100%;float: left">
 
