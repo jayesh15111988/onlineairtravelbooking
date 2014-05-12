@@ -311,11 +311,53 @@ var test=function(moduleObject,formData){
 
 airlinetravelmodule.controller('samcontroller',function($scope, $http, $log, promiseTracker, $timeout,$window){
 
-    console.log("parent one controller came");
+    //console.log("parent one controller came");
     $scope.passwordsnotmatch=false;
+    if(localStorage.getItem('authTokenInfo')){
+
+    var expiryTime = new Date(JSON.parse(localStorage.getItem('authTokenInfo')).tokenexpirytime);
+    var currentTime = new Date();
+
+    if(currentTime>expiryTime){
+
+        //Send server request to generate new token
+        console.log("your session expired");
+
+        var storedAuthData=JSON.parse(localStorage.getItem('authTokenInfo'));
 
 
+        var prevAuthData={"email":storedAuthData.emailaddress,"currentauthtoken": storedAuthData.authtoken};
+alert("Session ended requestting new auth token from server");
+        localStorage.removeItem('authTokenInfo');
 
+            $http({
+                url: "http://jayeshkawli.com/airlinetravel/generatenewtoken.php",
+                method: "GET",
+                cache:true,
+                params: prevAuthData,
+                headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+            }).success(function (data, status, headers, config) {
+
+                    console.log(data);
+
+            if(data.success==true){
+                    localStorage.setItem('authTokenInfo',JSON.stringify(data));
+            }
+                    else if(data.success==false){
+                $('#loginview').modal('show');
+            }
+                }).error(function (data, status, headers, config) {});
+
+
+        }
+        else{
+        console.log("Sesion in progress");
+    }
+
+    }
+    else{
+        console.log("no session exists");
+    }
 
 
     if(!localStorage.getItem('authTokenInfo')){
@@ -326,7 +368,7 @@ airlinetravelmodule.controller('samcontroller',function($scope, $http, $log, pro
     }
 
 $scope.showLoginViewOnClick=function(){
-    //$scope.showLoginView(); jjj
+
 
     if(!localStorage.getItem('authTokenInfo')){
     $('#loginview').modal('show');
@@ -614,7 +656,7 @@ $scope.showLoginViewOnClick=function(){
     //Set country names in related select-options structure
 
 
-console.log(isEditingUserRegistrationInfo+ "this is value");
+//console.log(isEditingUserRegistrationInfo+ "this is value");
 
     /*$scope.$on("UPDATE_PARENT", function(event, formData){
        // $scope.foo = message;
@@ -677,7 +719,7 @@ $scope.$on("UPDATE_PARENT", function(event, message){
 
     $scope.viewingProfileInfoForEditing=function(isEditing){
         isEditingUserRegistrationInfo=isEditing;
-        console.log("is eidting"+ isEditing);
+       // console.log("is eidting"+ isEditing);
 
         if(isEditing===true){
 
@@ -707,7 +749,7 @@ $scope.$on("UPDATE_PARENT", function(event, message){
     $scope.regionName="Please Select Region";
     $scope.setRegion=function(regionname){
         $scope.regionName=regionname;
-        console.log(regionname);
+      //  console.log(regionname);
     }
 
 
@@ -754,7 +796,7 @@ $scope.$on("UPDATE_PARENT", function(event, message){
 
     $scope.conditionschanged=function(acceptFlag){
         $scope.didConditionsAccepted=acceptFlag;
-        console.log($scope.didConditionsAccepted+" final value accept reject ");
+       // console.log($scope.didConditionsAccepted+" final value accept reject ");
     }
 
 function setUserFirstNameOnDisplay(){
@@ -769,7 +811,7 @@ function setUserFirstNameOnDisplay(){
 }
 
     $scope.doit=function(){
-        console.log("Inside Function Do It");
+       // console.log("Inside Function Do It");
     }
 
     var loguserout=function(){
@@ -812,8 +854,15 @@ function setUserFirstNameOnDisplay(){
         }
     }
 
+
+
+
+    function addMinutes(date, minutes) {
+        return new Date(date.getTime() + minutes*60000);
+    }
+
     $scope.loguserin=function(form){
-        console.log("user clicked login button");
+      //  console.log("user clicked login button");
         $scope.userloggedin=true;
         if(form.$invalid){
             return;
@@ -870,9 +919,9 @@ function setUserFirstNameOnDisplay(){
                 if($scope.savecredentials===true){
                  localStorage.setItem('userauthinfo',JSON.stringify(userLoginInfo));
                 }
-console.log("type of")
+//console.log("type of")
                 var serverResponseData = JSON.stringify(data);
-                console.log(serverResponseData);
+             //   console.log(serverResponseData);
                 if(data.success===true){
 
                     if(localStorage.getItem('serverloginauthenticationsuccess')){
@@ -883,15 +932,25 @@ console.log("type of")
                     }
 
                     localStorage.setItem( 'serverloginauthenticationsuccess', serverResponseData);
-                    localStorage.setItem('authTokenInfo',JSON.stringify({'authtoken':data.authorization,'emailaddress':data.emailaddress,'firstname':data.firstname}));
+
+                    localStorage.setItem('authTokenInfo',JSON.stringify({'authtoken':data.authorization,'emailaddress':data.emailaddress,'firstname':data.firstname,'tokenexpirytime':addMinutes(new Date(),30)}));
+
+
+
+
+
                     $scope.userfirstnamedisplay=data.firstname;
                     $scope.usernametodisplay=data.firstname;
-                    console.log("scuess");
+
+
+
+
+                //    console.log("scuess");
                 }
                 else if (data.success===false){
 
                     localStorage.setItem( 'serverloginauthenticationerror', serverResponseData);
-                    console.log("failture");
+                    console.log("failture ************ Abort Failure while logging user in");
                 }
 
                 $scope.messages = 'Your login information has been successfully sent! Congratulations...';
@@ -904,7 +963,7 @@ console.log("type of")
              .error(function (data, status, headers, config) {
            //     $scope.dismissLoginView();
                 $('#loginview').modal('hide');
-                console.log(status+"yoyoyoyo "+"  "+headers+status);
+               // console.log(status+"yoyoyoyo "+"  "+headers+status);
                 localStorage.setItem( 'serverloginerror', JSON.stringify(data));
                 $scope.messages = 'Your registration information has been unsuccessfully sent! No try again later...';
 
@@ -1195,6 +1254,17 @@ console.log(departureDetailsGlobal.departureDateFrom+" first");
 
 })
 
+function clone(obj){
+    if(obj == null || typeof(obj) != 'object')
+        return obj;
+
+    var temp = obj.constructor(); // changed
+
+    for(var key in obj)
+        temp[key] = clone(obj[key]);
+    return temp;
+}
+
 Array.prototype.clear = function() {
     while (this.length > 0) {
         this.pop();
@@ -1255,7 +1325,7 @@ if(searchType==2 && isFilterParameter!==false){
         var connections={};
 
         for (var i = 0; i < numberOfFlights; i++) {
-    individualFlightsRecord=tempHolderForAllFlights[i];
+    individualFlightsRecord=clone(tempHolderForAllFlights[i]);
             if(isFilterParameter=='airlineName'){
             flightLegsFromSavedData=individualFlightsRecord.flightLegs;
             var connectionLength=flightLegsFromSavedData.length;
@@ -1486,11 +1556,12 @@ airlinetravelmodule.controller('upperleftbarcontroller',function($scope){
 
 })
 
-airlinetravelmodule.controller('flightsearchcontroller',function($scope,$http,$window){
+airlinetravelmodule.controller('flightsearchcontroller',function($scope,$http,$window,$timeout){
 
     $scope.sample=function(){
         console.log("hahahah");
     }
+
 
 
     $scope.toshowloadinganimation=false;
