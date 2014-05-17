@@ -103,6 +103,7 @@ a {
         </div>
         <div class="col-xs-3 moveleft">
             <table>
+
                 <tr><th><button id="sortparameter"><h6>Sort By</h6></button></th><th>Order
                     <select ng-model="orderTypeForOptions">
                         <option ng-repeat="orderParameter in orderParametersArray"
@@ -131,6 +132,9 @@ a {
     <tr><td ng-click="filterWithAirline(0,2,'arrivalDateAdjustment');"><a>0 Day</a></td><td ng-click="filterWithAirline(1,2,'arrivalDateAdjustment');"><a>1 Day</a></td></tr>
     <tr><td class="airlinesDetails"><div><a ng-click="filterWithAirline('clearall',2);">Clear All</a><br/><br/></div></td></tr>
                 </table>
+
+
+
             <table>
                 <tr><th><button id="airports"><h6>Available Airports</h6></button></th></tr>
 
@@ -170,8 +174,8 @@ a {
                             <!-- changing popover with tooltip, as former would not allow any html elements in it will change if
                             requires in the future -->
 
-                            <div>Departing From:<span class="pop"   tooltip-html-unsafe="{{getairportsindi(flightDetail.departureAirportFsCode,0)}}" tooltip-trigger="mouseenter : mouseleave" tooltip-popup-delay="0" tooltip-placement="right"> {{flightDetail.departureAirportFsCode}}</span> At {{flightDetail.departureTime}} </div>
-                            <div>Arriving To:<span  tooltip-html-unsafe="{{getairportsindi(flightDetail.arrivalAirportFsCode,0)}}" tooltip-trigger="mouseenter : click" tooltip-popup-delay="0" tooltip-placement="right" > {{flightDetail.arrivalAirportFsCode}}</span> At {{flightDetail.arrivalTime}}</div>
+                            <div>Departing From:<span class="pop"   tooltip-html-unsafe="{{getairportsindi(flightDetail.departureAirportFsCode,0)}}" popover-trigger="mouseenter" popover-placement="right"> {{flightDetail.departureAirportFsCode}}</span> At {{flightDetail.departureTime}} </div>
+                            <div>Arriving To:<span  tooltip-html-unsafe="{{getairportsindi(flightDetail.arrivalAirportFsCode,0)}}" popover-trigger="mouseenter" popover-placement="right" > {{flightDetail.arrivalAirportFsCode}}</span> At {{flightDetail.arrivalTime}}</div>
 
 
                             <!--<div>Deparing On: {{flightDetail.departureDaysOfWeek[0]}}</div>-->

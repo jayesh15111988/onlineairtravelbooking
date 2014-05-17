@@ -5,7 +5,7 @@
 
 
 var numberOfDaysToRetrieveFlight=1;
-var connectionType='connection';
+var connectionType='';//'connection';
 var airportsDeepDetailsGlobal={};
 var isEditingUserRegistrationInfo=false;
 
@@ -1144,6 +1144,7 @@ var numberOfResultsPerPage=10;
 
 airlinetravelmodule.controller('DetailController',function($scope,$routeParams){
 
+    //Put logic to check if user has valid auth token or not
 
     var numberOfKeys=Object.keys(arrivalDetailsglobal).length;
     console.log("&&"+tripDirection+"***");
