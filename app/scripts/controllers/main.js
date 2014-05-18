@@ -318,10 +318,11 @@ airlinetravelmodule.controller('samcontroller',function($scope, $http, $log, pro
     var expiryTime = new Date(JSON.parse(localStorage.getItem('authTokenInfo')).tokenexpirytime);
     var currentTime = new Date();
 
+    //console.log("now time"+currentTime+ "Furture time"+ expiryTime);
     if(currentTime>expiryTime){
 
         //Send server request to generate new token
-        console.log("your session expired");
+        //console.log("your session expired");
 
         var storedAuthData=JSON.parse(localStorage.getItem('authTokenInfo'));
 
@@ -341,7 +342,9 @@ alert("Session ended requestting new auth token from server");
                     console.log(data);
 
             if(data.success==true){
+                data.tokenexpirytime=addMinutes(new Date(),30);
                     localStorage.setItem('authTokenInfo',JSON.stringify(data));
+
             }
                     else if(data.success==false){
                 $('#loginview').modal('show');
@@ -1278,6 +1281,10 @@ airlinetravelmodule.controller('showflightscontroller',function($scope,$http,$ro
 
     var tempStorageForFlightDetailsAfterFilteringOnAirlines=[];
 
+
+
+
+
     $scope.availableflightparameters="";
     $scope.departureDate='';
     $scope.loadingToDisplay=true;
@@ -1295,44 +1302,79 @@ airlinetravelmodule.controller('showflightscontroller',function($scope,$http,$ro
     };
 
 
+$scope.connectionTypeParameters=[
+    {backgroundName:"CONNECTION",displayName:"With Stops"},
+    {backgroundName:"NON_STOP",displayName:"Non Stop"},
+    {backgroundName:"DIRECT",displayName:"Direct"}
+];
+
+    $scope.daysAdjustmentParameters=[{backgroundName:0,displayName:"0 Day"},{backgroundName:1,displayName:"1 Day"}];
+
+
     $scope.sortparamterscontainer=[{displayName:"Departure Time",backGroundName:"departureTime"},{displayName:"Arrival Time",backGroundName:"arrivalTime"},{displayName:"Distance Miles",backGroundName:"distanceMiles"},{displayName:"Flight Duration Minutes",backGroundName:"flightDurationMinutes"}];
     $scope.backgroundsortparamters=["1","2","3","4","5","6","7"];
     $scope.orderParametersArray=[{displayName:"Ascending",backGroundName:1},{displayName:"Descending",backGroundName:-1}];
     $scope.orderTypeForOptions=1;
-   // console.log("New Page Arrived");
+
+
+    $scope.testFunction=function(){
+
+
+            console.log("lolerr");
+            console.log(" hahah ");
+             var lastSortParameter=localStorage.getItem('lastUsedSortParameter')?localStorage.getItem('lastUsedSortParameter'):"departureTime";
+            $scope.filterWithAirline(lastSortParameter,0,false);
+
+    }
+
+
+
     $scope.filterWithAirline=function(airlineName,searchType,isFilterParameter){
-   console.log(airlineName+ "actual name");
+    console.log(airlineName+ "actual name");
+
+
+
         airlineName==='clearall'?(isFilteringBasedOnAirline=false):(isFilteringBasedOnAirline=true);
+
+        console.log(allFlightsDetail.length+ "this was the orifginal length");
 
         if(isFilteringBasedOnAirline){
 
             if(tempHolderForAllFlights.length==0){
 
                     tempHolderForAllFlights=allFlightsDetail;
-
+            console.log("This is temp holder's length"+tempHolderForAllFlights.length);
             }
-//Filter all connections based on a airline name
-if(searchType==2 && isFilterParameter!==false){
+            console.log(tempHolderForAllFlights[1]+ " high level scrutiny ");
+            //Filter all connections based on a airline name
+        if(searchType==2 && isFilterParameter!==false){
 
         console.log(tempHolderForAllFlights.length+ "   Number of Flights ");
-        console.log("Ok search type is 2 now length of array is "+ airlineName);
+        console.log("Ok search type is 2 now and search parameter is "+ airlineName+ "An filter parameter is "+ isFilterParameter);
 
-        filteredArrayAfterAirlineSelection.clear();
+
 
         var numberOfFlights = tempHolderForAllFlights.length;
         var flightLegsFromSavedData=[];
         var connectionDetailObject={};
         var individualFlightsRecord={};
         var connections={};
+    console.log(tempHolderForAllFlights[1]+ "object under scrutiny 11")
+            console.log("sizeo f filtered "+ filteredArrayAfterAirlineSelection.length);
+    if(filteredArrayAfterAirlineSelection.length>0){
+    filteredArrayAfterAirlineSelection.clear();
+    }
 
-        for (var i = 0; i < numberOfFlights; i++) {
+            console.log(tempHolderForAllFlights[1]+ " high level scrutiny part 2");
+    for (var i = 0; i < numberOfFlights; i++) {
     individualFlightsRecord=clone(tempHolderForAllFlights[i]);
             if(isFilterParameter=='airlineName'){
             flightLegsFromSavedData=individualFlightsRecord.flightLegs;
             var connectionLength=flightLegsFromSavedData.length;
-            for(var connections=0;connections<connectionLength;connections++){
+            console.log("this is ugly, but is required "+flightLegsFromSavedData);
+                for(var connections=0;connections<connectionLength;connections++){
                 connectionDetailObject= flightLegsFromSavedData[connections];
-
+console.log("Verification actual "+connectionDetailObject.carrierFsCode+ "And parameter given to function "+ airlineName);
                 if(connectionDetailObject.carrierFsCode===airlineName){
                     filteredArrayAfterAirlineSelection.push(individualFlightsRecord);
                     break;
@@ -1356,14 +1398,10 @@ if(searchType==2 && isFilterParameter!==false){
         }
 
 
-
-
-
-
         console.log(tempHolderForAllFlights.length+ "length of holder first one and second one in "+ filteredArrayAfterAirlineSelection.length);
 }
             else if(searchType==0){
-
+    localStorage.setItem('lastUsedSortParameter',airlineName);
         //Sort by specific parameter check if filetred array contains any data first
         var arrayToOperateOn=filteredArrayAfterAirlineSelection.length?filteredArrayAfterAirlineSelection.slice(0):tempHolderForAllFlights.slice(0);
         console.log("Came here"+ airlineName);
@@ -1373,14 +1411,31 @@ if(searchType==2 && isFilterParameter!==false){
 
 }
         else{
+
+            //Come here only if user has previously sorted flight search results
+
+            if(tempHolderForAllFlights.length>0)
+            {
             filteredArrayAfterAirlineSelection.clear();
             console.log(tempHolderForAllFlights.length+ "length of holder last one");
             //filteredArrayAfterAirlineSelection.concat(tempHolderForAllFlights);
             filteredArrayAfterAirlineSelection.push.apply(filteredArrayAfterAirlineSelection, tempHolderForAllFlights);
             console.log(filteredArrayAfterAirlineSelection.length+ "length of holder last one");
             tempHolderForAllFlights.clear();
+            tempHolderForAllFlights= clone(filteredArrayAfterAirlineSelection);
+            console.log("Verification for temp holder"+ tempHolderForAllFlights[1]);
         }
+        }
+
+
+
         setupPageWithAllFlightDetails(filteredArrayAfterAirlineSelection);
+
+
+
+
+
+
         $scope.loadingToDisplay=false;
         console.log(filteredArrayAfterAirlineSelection.length);
         //console.log("hahhhaha");
@@ -1388,8 +1443,8 @@ if(searchType==2 && isFilterParameter!==false){
 
     function dynamicSort(property,sortOrder) {
 
-        console.log(property+ " 1 ");
-        console.log(sortOrder+ " 2 ");
+        //console.log(property+ " 1 ");
+        //console.log(sortOrder+ " 2 ");
         return function (a,b) {
             var result = (a[property] < b[property]) ? -1 : (a[property] > b[property]) ? 1 : 0;
             return result * sortOrder;
@@ -1481,7 +1536,7 @@ var airportCode=airportsArray[i].iata;
 $scope.getairportsindi=function(iatacode,isTitle){
     $scope.airportTitle=iatacode;
     //console.log(iatacode+ "iata code");
-    ///console.log($scope.airportsDeepDetails[iatacode]+ "airport details");
+    //console.log($scope.airportsDeepDetails[iatacode]+ "airport details");
     //console.log("airprot length"+ Object.keys($scope.airportsDeepDetails).length);
     //console.log("airprot dummy length"+ Object.keys(airportsDeepDetailsGlobal).length);
 
@@ -1523,6 +1578,14 @@ if(isTitle==1){
                     }
                 }
                    setupPageWithAllFlightDetails(flightslist.flights);
+
+                    if(!localStorage.getItem("recentlyReturnedFlightData")){
+                        localStorage.setItem('recentlyReturnedFlightData',JSON.stringify(flightslist.flights));
+                        localStorage.setItem('airlines',JSON.stringify(appendixDictionary.airlines));
+                        localStorage.setItem('airports',JSON.stringify(appendixDictionary.airports));
+                        localStorage.setItem('equipments',JSON.stringify(appendixDictionary.equipments));
+                    }
+
                 }
                 else{
                     if(flightslist.error){
@@ -1546,11 +1609,24 @@ $scope.servermessage="hahha";
 
 
     getParameteresDictionary=$location.search();
+
+    if(localStorage.getItem("recentlyReturnedFlightData")){
+       allFlightsDetail=JSON.parse(localStorage.getItem("recentlyReturnedFlightData"));
+
+        $scope.airlines=JSON.parse(localStorage.getItem('airlines'))
+        $scope.airports	=JSON.parse(localStorage.getItem('airports'))
+        addToAirportDetails($scope.airports);
+        $scope.equipments=JSON.parse(localStorage.getItem('equipments'))
+
+        setupPageWithAllFlightDetails(allFlightsDetail);
+    }
+else{
 if(allFlightsDetail.length==0){
     console.log("cont type"+ connectionType);
     console.log("number of days "+ numberOfDaysToRetrieveFlight);
     getFlightFromGivenParameters(getParameteresDictionary.source,getParameteresDictionary.destination,getParameteresDictionary.leavingdate,getParameteresDictionary.comingindate,connectionType,numberOfDaysToRetrieveFlight);
 }
+    }
 });
 
 airlinetravelmodule.controller('upperleftbarcontroller',function($scope){
@@ -1563,6 +1639,10 @@ airlinetravelmodule.controller('flightsearchcontroller',function($scope,$http,$w
         console.log("hahahah");
     }
 
+
+    if(localStorage.getItem('recentlyReturnedFlightData')){
+        localStorage.removeItem('recentlyReturnedFlightData');
+    }
 
 
     $scope.toshowloadinganimation=false;

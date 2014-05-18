@@ -105,32 +105,105 @@ a {
             <table>
 
                 <tr><th><button id="sortparameter"><h6>Sort By</h6></button></th><th>Order
-                    <select ng-model="orderTypeForOptions">
+                    <select ng-model="orderTypeForOptions" ng-change="testFunction()">
                         <option ng-repeat="orderParameter in orderParametersArray"
                                 value="{{orderParameter.backGroundName}}">
                             {{orderParameter.displayName}}
                         </option>
-                    </select><br>
+                    </select>
+                    <br>
                 </th></tr>
-
-                <tr  ng-repeat="sortparameter in sortparamterscontainer" >
-                    <td class="filterparameter"><div ><a ng-click="filterWithAirline(sortparameter.backGroundName,0,false);">{{sortparameter.displayName}}</a></div><br/></td>
-                </tr>
+<tr>
+    <td>
 
 
+
+
+
+
+        <select class="filterparameter" ng-model="sortparameter" ng-change="filterWithAirline(sortparameter.backGroundName,0,false);"
+                ng-options="sortparameter as sortparameter.displayName for sortparameter in sortparamterscontainer"></select>
+        <!--        <select>
+
+
+
+                    <option class="filterparameter"  ng-repeat="sortparameter in sortparamterscontainer" ng-change="filterWithAirline(sortparameter.backGroundName,0,false);" value="{{sortparameter.displayName}}">
+                        {{sortparameter.displayName}}-->
+                        <!-- <td ><div ><a ng-click="filterWithAirline(sortparameter.backGroundName,0,false);">{{sortparameter.displayName}}</a></div><br/></td>-->
+<!--
+                    </option>
+                    </select>-->
+
+    </td>
+            </tr>
+
+Filter By Airline
 
                 <tr><th><button id="airlines"><h6>Available Airlines</h6></button></th></tr>
 
+<!--
+<select class="filterparameter" ng-model="sortparameter" ng-change="filterWithAirline(sortparameter.backGroundName,0,false);"
+                ng-options="sortparameter as sortparameter.displayName for sortparameter in sortparamterscontainer"></select>
 
-                <tr  ng-repeat="airline in airlines" >
+-->
+
+                <tr><td>
+
+                <select ng-model="airline" ng-change="filterWithAirline(airline.iata,2,'airlineName');"
+                        ng-options="airline as airline.name for airline in airlines" ></select>
+</td>
+                    </tr>
+
+
+                <!--<tr  ng-repeat="airline in airlines" >
 
     <td class="airlinesDetails"><div id='{{airline.iata}}'><a ng-click="filterWithAirline(airline.iata,2,'airlineName');">{{airline.name}}</a><br/>{{airline.phoneNumber?airline.phoneNumber:""}}</div><br/></td>
+
+
+                </tr>-->
+
+
+
+
+
+
+                <tr><th><button id="othersearchparameters"><h6>Other Parameters</h6></button></th></tr>
+
+    <tr>
+
+        <td>
+
+
+
+            <select ng-model="connectionTypeParameter" ng-change="filterWithAirline(connectionTypeParameter.backgroundName,2,'flightType');"
+                    ng-options="connectionTypeParameter as connectionTypeParameter.displayName for connectionTypeParameter in connectionTypeParameters"></select>
+
+            <!--<option data-ng-click="filterWithAirline('CONNECTION',2,'flightType');"><a>With Stops</a></option>
+            <option  data-ng-change="filterWithAirline('NON_STOP',2,'flightType');"><a>Non Stop</a></option>
+            <option  data-ng-change="filterWithAirline('DIRECT',2,'flightType');"><a>Direct</a></option>-->
+
+
+
+
+
+
+        </td>
+
     </tr>
 
-                <tr><th><button id="othersearchparameters"><h6>Other Parameter</h6></button></th></tr>
-                <tr><td ng-click="filterWithAirline('CONNECTION',2,'flightType');"><a>With Stops</a></td><td  ng-click="filterWithAirline('NON_STOP',2,'flightType');"><a>Non Stop</a></td><td  ng-click="filterWithAirline('DIRECT',2,'flightType');"><a>Direct</a></td></tr>
-    <tr><td ng-click="filterWithAirline(0,2,'arrivalDateAdjustment');"><a>0 Day</a></td><td ng-click="filterWithAirline(1,2,'arrivalDateAdjustment');"><a>1 Day</a></td></tr>
-    <tr><td class="airlinesDetails"><div><a ng-click="filterWithAirline('clearall',2);">Clear All</a><br/><br/></div></td></tr>
+    <tr>
+
+<td>
+        <select ng-model="daysAdjustmentParameter" ng-change="filterWithAirline(daysAdjustmentParameter.backgroundName,2,'arrivalDateAdjustment');"
+                ng-options="daysAdjustmentParameter as daysAdjustmentParameter.displayName for daysAdjustmentParameter in daysAdjustmentParameters"></select>
+</td>
+
+        <!--<td ng-click="filterWithAirline(0,2,'arrivalDateAdjustment');"><a>0 Day</a></td>
+        <td ng-click="filterWithAirline(1,2,'arrivalDateAdjustment');"><a>1 Day</a></td>-->
+
+    </tr>
+
+    <tr><td class="airlinesDetails"><div><button ng-click="filterWithAirline('clearall',2);">Clear All<br/><br/></button><br/><br/></div></td></tr>
                 </table>
 
 
@@ -138,19 +211,49 @@ a {
             <table>
                 <tr><th><button id="airports"><h6>Available Airports</h6></button></th></tr>
 
-                <tr ng-repeat="airport in airports">
+            <!--    <tr ng-repeat="airport in airports">
 
                     <td class="airportsDetails"><div><h4>{{airport.name}}</h4>{{airport.city}}<br/>{{airport.countryName}}</br> {{airport.regionName}}</div><br/></td>
-                </tr>
+                </tr>-->
+
+                <tr><td>
+                <select style="width:250px;">
+
+
+
+                    <option ng-repeat="airport in airports"  value="{{airport.name}}" title="{{airport.name}} {{airport.city}} {{airport.countryName}} {{airport.regionName}}">
+                        {{airport.name}}  -  {{airport.city}} &nbsp;&nbsp;
+
+                                            </option>
+                                            </select>
+
+
+                </td></tr>
+
 
             </table>
             <table>
                 <tr><th><button id="airplanes"><h6>Available Airplanes</h6></button></th></tr>
 
-                <tr ng-repeat="equipment in equipments">
+                <!--<tr ng-repeat="equipment in equipments">
 
                     <td class="airplanesDetails"><div id="{{equipment.iata}}">{{equipment.name}}</div><br/></td>
-                </tr>
+                </tr>-->
+
+                <tr><td>
+                    <select style="width:250px;">
+
+
+
+                        <option ng-repeat="equipment in equipments"  value="{{equipment.name}}" title="">
+                            IATA Code : {{equipment.iata}} : {{equipment.name}} &nbsp;&nbsp;
+
+                        </option>
+                    </select>
+
+
+                </td></tr>
+
             </table>
         </div>
         <div class="col-xs-9">
