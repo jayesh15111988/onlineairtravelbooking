@@ -318,7 +318,7 @@ airlinetravelmodule.controller('samcontroller',function($scope, $http, $log, pro
     var expiryTime = new Date(JSON.parse(localStorage.getItem('authTokenInfo')).tokenexpirytime);
     var currentTime = new Date();
 
-    //console.log("now time"+currentTime+ "Furture time"+ expiryTime);
+    console.log("now time"+currentTime+ "Future time"+ expiryTime);
     if(currentTime>expiryTime){
 
         //Send server request to generate new token
@@ -327,8 +327,9 @@ airlinetravelmodule.controller('samcontroller',function($scope, $http, $log, pro
         var storedAuthData=JSON.parse(localStorage.getItem('authTokenInfo'));
 
 
+        var previousFirstName=storedAuthData.firstname;
         var prevAuthData={"email":storedAuthData.emailaddress,"currentauthtoken": storedAuthData.authtoken};
-alert("Session ended requestting new auth token from server");
+alert("Session ended requesting new authorization token from server");
         localStorage.removeItem('authTokenInfo');
 
             $http({
@@ -343,6 +344,7 @@ alert("Session ended requestting new auth token from server");
 
             if(data.success==true){
                 data.tokenexpirytime=addMinutes(new Date(),30);
+                data.firstname=previousFirstName;
                     localStorage.setItem('authTokenInfo',JSON.stringify(data));
 
             }
@@ -675,6 +677,18 @@ $scope.showLoginViewOnClick=function(){
         });*/
     //});
 
+    function setUserFirstNameOnDisplay(){
+
+        if(localStorage.getItem('authTokenInfo')){
+
+            var authInfoInLocalStorage=JSON.parse(localStorage.getItem('authTokenInfo'));
+            //console.log(authInfoInLocalStorage);
+            $scope.userfirstnamedisplay=authInfoInLocalStorage.firstname;
+
+        }
+    }
+
+
 $scope.$on("UPDATE_PARENT", function(event, message){
     //$scope.foo = message+ "hahah";
     sendUserDataToServer(message,$scope,false,$http);
@@ -803,7 +817,7 @@ $scope.$on("UPDATE_PARENT", function(event, message){
     }
 
 function setUserFirstNameOnDisplay(){
-
+console.log("I love Archana");
     if(localStorage.getItem('authTokenInfo')){
 
         var authInfoInLocalStorage=JSON.parse(localStorage.getItem('authTokenInfo'));
@@ -825,16 +839,18 @@ function setUserFirstNameOnDisplay(){
         var storedAuthData=JSON.parse(localStorage.getItem('authTokenInfo'));
 
 
-
+//To add code to send Auth token along with user email address for extra verification
         $.ajax({
          type: "POST",
          url: "http://www.jayeshkawli.com/airlinetravel/userlogout.php",
          cache:true,
-         data: { emailaddressofuser: storedAuthData.emailaddress}
+         data: { emailaddressofuser: storedAuthData.emailaddress,'Authorization':storedAuthData.authtoken}
          })
          .done(function( msg ) {
         //Remove all temporary local storage from database and change name to Hello Guest on top nav bar
-        localStorage.removeItem('authTokenInfo');
+
+                console.log(msg + " Message from the server ");
+                localStorage.removeItem('authTokenInfo');
         localStorage.removeItem('serverloginauthenticationsuccess');
 
         if(localStorage.getItem('serverloginauthenticationerror')){
@@ -1510,7 +1526,15 @@ console.log("Verification actual "+connectionDetailObject.carrierFsCode+ "And pa
         }
         $scope.bookbuttontitle=bookbuttontitletext;
         totalPagesCount=$scope.totalPages;
-        $scope.departureDate=getParameteresDictionary.leavingdate;
+
+
+        if(getParameteresDictionary.leavingdate){
+            $scope.departureDate=getParameteresDictionary.leavingdate;
+        }
+        else{
+            var travelDate = new Date(JSON.parse(localStorage.getItem('historySearchData')).leavingOutOn);
+            $scope.departureDate=((travelDate.getMonth()+1)+"/ "+travelDate.getDate()+ "/"+travelDate.getFullYear());
+        }
         allFlightsDetail=flightDetails;
         console.log("should refresh page with new result");
         $scope.flightDetails = allFlightsDetail.slice(0,numberOfResultsPerPage);
