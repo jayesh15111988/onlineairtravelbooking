@@ -5,6 +5,7 @@
 
 
 var numberOfDaysToRetrieveFlight=1;
+var preferredAirlinesName="";
 var connectionType='';//'connection';
 var airportsDeepDetailsGlobal={};
 var isEditingUserRegistrationInfo=false;
@@ -351,7 +352,10 @@ alert("Session ended requesting new authorization token from server");
                     else if(data.success==false){
                 $('#loginview').modal('show');
             }
-                }).error(function (data, status, headers, config) {});
+                }).error(function (data, status, headers, config) {
+                    console.log("Token regenration failer with response: "+ data+ "And status code "+status);
+
+                });
 
 
         }
@@ -817,7 +821,7 @@ $scope.$on("UPDATE_PARENT", function(event, message){
     }
 
 function setUserFirstNameOnDisplay(){
-console.log("I love Archana");
+
     if(localStorage.getItem('authTokenInfo')){
 
         var authInfoInLocalStorage=JSON.parse(localStorage.getItem('authTokenInfo'));
@@ -1159,7 +1163,7 @@ var travelDetails={};
 var departureDetailsGlobal=[];
 var arrivalDetailsglobal=[];
 var numberOfResultsPerPage=10;
-
+var showSchedulesOnlyForAirline="";
 
 airlinetravelmodule.controller('DetailController',function($scope,$routeParams){
 
@@ -1295,12 +1299,60 @@ airlinetravelmodule.controller('showflightscontroller',function($scope,$http,$ro
     //var baseUrl='http://jayeshkawli.com/airlinetravel/airportsapi.php?';
    // baseUrl=baseUrl+'searchString='+searchStringToPass;
 
+    var preStoredDate=JSON.parse(localStorage.getItem('historySearchData')).leavingOutOn;
+    var originalDepartureDate;
+    if(preStoredDate){
+    originalDepartureDate=preStoredDate;
+    }
+    else{
+        originalDepartureDate=$scope.departureDate;
+    }
+
+    console.log(originalDepartureDate+ "ooo riginal");
     var tempStorageForFlightDetailsAfterFilteringOnAirlines=[];
 
 
+var getStandardDate=function(originalDate,numberOfDaysOffset){
+    var pattern = /(\d{4})-(\d{2})-(\d{2})/;
+    var dt = new Date(originalDate.replace(pattern,'$1-$2-$3'));
+    return  new Date(dt.addDays(numberOfDaysOffset)).toISOString();
+}
+
+$scope.daysRange=[{displayDay:'-2 Days',backgroundDay:-2},{displayDay:'-1 Day',backgroundDay:-1},{displayDay:'Current Day',backgroundDay:0},{displayDay:'+1 Day',backgroundDay:1},{displayDay:'+2 days',backgroundDay:2}];
+
+    $scope.dayOfBookingChanged=function(backgroundDay){
 
 
+console.log(originalDepartureDate+ "Original date");
+        var previouslySelectedDate = originalDepartureDate;
 
+
+        $scope.departureDate=getStandardDate(previouslySelectedDate,backgroundDay);
+        //after updating date send another request with new departure Date
+        console.log(getParameteresDictionary.source+ " hahaha ");
+        $scope.loadingToDisplay=true;
+        getParameteresDictionary.leavingdate=$scope.departureDate;
+
+
+        //Store Updated date in a Local Storage of Web Browser
+        //var userHistorydata={};
+        //userHistorydata.leavingOutOn=isoDate;
+
+        //localStorage.setItem('historySearchData',JSON.stringify(userHistorydata));
+
+        getFlightFromGivenParameters(getParameteresDictionary.source,getParameteresDictionary.destination,$scope.departureDate,getParameteresDictionary.comingindate,connectionType,numberOfDaysToRetrieveFlight);
+        console.log(isoDate);
+    }
+
+
+    Date.prototype.addDays = function(days)
+    {
+        var dat = new Date(this.valueOf());
+        dat.setDate(dat.getDate() + days);
+        return dat;
+    }
+
+    $scope.day=$scope.daysRange[2];
     $scope.availableflightparameters="";
     $scope.departureDate='';
     $scope.loadingToDisplay=true;
@@ -1330,19 +1382,28 @@ $scope.connectionTypeParameters=[
     $scope.sortparamterscontainer=[{displayName:"Departure Time",backGroundName:"departureTime"},{displayName:"Arrival Time",backGroundName:"arrivalTime"},{displayName:"Distance Miles",backGroundName:"distanceMiles"},{displayName:"Flight Duration Minutes",backGroundName:"flightDurationMinutes"}];
     $scope.backgroundsortparamters=["1","2","3","4","5","6","7"];
     $scope.orderParametersArray=[{displayName:"Ascending",backGroundName:1},{displayName:"Descending",backGroundName:-1}];
-    $scope.orderTypeForOptions=1;
+    $scope.sortparameter=$scope.sortparamterscontainer[0];
+    $scope.orderTypeForOptions=$scope.orderParametersArray[0];
+
+    $scope.connectionTypeParameter=$scope.connectionTypeParameters[0];
+    $scope.daysAdjustmentParameter=$scope.daysAdjustmentParameters[0];
+
+    $scope.ascendingDescendingOptionChose=function(){
 
 
-    $scope.testFunction=function(){
 
-
-            console.log("lolerr");
-            console.log(" hahah ");
              var lastSortParameter=localStorage.getItem('lastUsedSortParameter')?localStorage.getItem('lastUsedSortParameter'):"departureTime";
+console.log(lastSortParameter+"Is this sensible enough?");
             $scope.filterWithAirline(lastSortParameter,0,false);
 
     }
 
+
+
+
+    var getSampleAllAirlinesObject=function(){
+        return {iata:"clearall", name:'All Airlines'};
+    }
 
 
     $scope.filterWithAirline=function(airlineName,searchType,isFilterParameter){
@@ -1420,15 +1481,16 @@ console.log("Verification actual "+connectionDetailObject.carrierFsCode+ "And pa
     localStorage.setItem('lastUsedSortParameter',airlineName);
         //Sort by specific parameter check if filetred array contains any data first
         var arrayToOperateOn=filteredArrayAfterAirlineSelection.length?filteredArrayAfterAirlineSelection.slice(0):tempHolderForAllFlights.slice(0);
-        console.log("Came here"+ airlineName);
-       filteredArrayAfterAirlineSelection=arrayToOperateOn.sort(dynamicSort(airlineName,$scope.orderTypeForOptions));
+        console.log("Problem creator"+ $scope.orderTypeForOptions.backGroundName);
+       filteredArrayAfterAirlineSelection=arrayToOperateOn.sort(dynamicSort(airlineName,$scope.orderTypeForOptions.backGroundName));
 
             }
 
 }
         else{
 
-            //Come here only if user has previously sorted flight search results
+            //Come here only if user has previously sorted flight search results now we want to clear ALL previous search filters
+            //And return all flights from original list - There is reason for not putting any filters on home screen
 
             if(tempHolderForAllFlights.length>0)
             {
@@ -1506,6 +1568,7 @@ console.log("Verification actual "+connectionDetailObject.carrierFsCode+ "And pa
     $scope.bookbuttontitle=bookbuttontitletext;
         $scope.totalPages=totalPagesCount;
     $scope.airlines=appendixDictionary.airlines;
+      //  $scope.airline=$scope.airlines[0];
     $scope.airports=appendixDictionary.airports;
     $scope.equipments=appendixDictionary.equipments;
         $scope.loadingToDisplay=false;
@@ -1527,18 +1590,25 @@ console.log("Verification actual "+connectionDetailObject.carrierFsCode+ "And pa
         $scope.bookbuttontitle=bookbuttontitletext;
         totalPagesCount=$scope.totalPages;
 
+        var travelDate;
 
         if(getParameteresDictionary.leavingdate){
-            $scope.departureDate=getParameteresDictionary.leavingdate;
+            travelDate=new Date(getParameteresDictionary.leavingdate);
+
         }
         else{
-            var travelDate = new Date(JSON.parse(localStorage.getItem('historySearchData')).leavingOutOn);
-            $scope.departureDate=((travelDate.getMonth()+1)+"/ "+travelDate.getDate()+ "/"+travelDate.getFullYear());
+
+            travelDate = new Date(JSON.parse(localStorage.getItem('historySearchData')).leavingOutOn);
+
         }
+
+        $scope.departureDate=((travelDate.getMonth()+1)+"/"+travelDate.getDate()+ "/"+travelDate.getFullYear());
         allFlightsDetail=flightDetails;
         console.log("should refresh page with new result");
         $scope.flightDetails = allFlightsDetail.slice(0,numberOfResultsPerPage);
         $scope.loadingToDisplay=false;
+
+
     }
 
 function addToAirportDetails(airportsArray){
@@ -1580,8 +1650,8 @@ if(isTitle==1){
 
     var getFlightFromGivenParameters=function(source,destination,leavingdate,comingindate,contype,numberofdays){
 
-
-        $http({method: 'GET', url: 'http://jayeshkawli.com/airlinetravel/flightsearchapi.php?source='+source+"&destination="+destination+"&leavingdate="+leavingdate+"&comingindate="+comingindate+"&numberofdays="+numberofdays+"&connectiontype="+contype,
+console.log(leavingdate+ "*******************");
+        $http({method: 'GET', url: 'http://jayeshkawli.com/airlinetravel/flightsearchapi.php?source='+source+"&destination="+destination+"&leavingdate="+leavingdate+"&comingindate="+comingindate+"&numberofdays="+numberofdays+"&connectiontype="+contype+"&airlinepreferred="+preferredAirlinesName,
             params: {}
         }).
             success(function(flightslist, status, headers, config) {
@@ -1591,7 +1661,9 @@ if(isTitle==1){
                 // console.log(appendixDictionary);
                 if(typeof appendixDictionary !='undefined' && appendixDictionary!=null){
                     if(appendixDictionary.airlines.length>0){
+                        appendixDictionary.airlines.unshift(getSampleAllAirlinesObject());
                         $scope.airlines=appendixDictionary.airlines;
+                        $scope.airline=$scope.airlines[0];
                     }
                     if(appendixDictionary.airports.length>0){
                         $scope.airports=appendixDictionary.airports;
@@ -1602,13 +1674,13 @@ if(isTitle==1){
                     }
                 }
                    setupPageWithAllFlightDetails(flightslist.flights);
-
-                    if(!localStorage.getItem("recentlyReturnedFlightData")){
+                    //We are doing it only once for each web request - New web request mean flushing of previous data and overlapping it with new one
+                   // if(!localStorage.getItem("recentlyReturnedFlightData")){
                         localStorage.setItem('recentlyReturnedFlightData',JSON.stringify(flightslist.flights));
                         localStorage.setItem('airlines',JSON.stringify(appendixDictionary.airlines));
                         localStorage.setItem('airports',JSON.stringify(appendixDictionary.airports));
                         localStorage.setItem('equipments',JSON.stringify(appendixDictionary.equipments));
-                    }
+                    //}
 
                 }
                 else{
@@ -1637,10 +1709,14 @@ $scope.servermessage="hahha";
     if(localStorage.getItem("recentlyReturnedFlightData")){
        allFlightsDetail=JSON.parse(localStorage.getItem("recentlyReturnedFlightData"));
 
-        $scope.airlines=JSON.parse(localStorage.getItem('airlines'))
-        $scope.airports	=JSON.parse(localStorage.getItem('airports'))
+        $scope.airlines=JSON.parse(localStorage.getItem('airlines'));
+
+        //to remove - We are adding all airlines twice just to be safe because we already have cached data in we didnt propogate changes to it
+        $scope.airlines.unshift(getSampleAllAirlinesObject());
+        $scope.airline=$scope.airlines[0];
+        $scope.airports	=JSON.parse(localStorage.getItem('airports'));
         addToAirportDetails($scope.airports);
-        $scope.equipments=JSON.parse(localStorage.getItem('equipments'))
+        $scope.equipments=JSON.parse(localStorage.getItem('equipments'));
 
         setupPageWithAllFlightDetails(allFlightsDetail);
     }
@@ -1660,9 +1736,28 @@ airlinetravelmodule.controller('upperleftbarcontroller',function($scope){
 airlinetravelmodule.controller('flightsearchcontroller',function($scope,$http,$window,$timeout){
 
     $scope.sample=function(){
-        console.log("hahahah");
+
+        preferredAirlinesName=$scope.preferredairline.iata?$scope.preferredairline.iata:""
+
     }
 
+
+        //Get list of all active airports and populate it in a $scope array variable
+    $http({
+        url: 'http://jayeshkawli.com/airlinetravel/getallactiveairports.php',
+        method: "GET",
+        cache:true,
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+        params: ""
+    }).success(function (data, status, headers, config) {
+            $scope.preferredairlineslist=data;
+            $scope.preferredairlineslist.unshift({'name':"All Airlines","iata":"","icao":""});
+            $scope.preferredairline=$scope.preferredairlineslist[0];
+           // console.log("Received data "+ data);
+
+        }).error(function (data, status, headers, config) {
+
+        });
 
     if(localStorage.getItem('recentlyReturnedFlightData')){
         localStorage.removeItem('recentlyReturnedFlightData');
@@ -2177,26 +2272,12 @@ if(typeof countryCode ==="undefined"){
 
                 $scope.movies=airportslist;
                 $scope.sam="";
-                if (airportslist instanceof Array){
-               // for(var airports in airportslist){
-                  //  console.log(airportslist[airports]);
-               // }
-                }
-                else{
-                    console.log("No Suggestions");
-                }
 
-              //  for(var indiairports in airportsList){
-                //    console.log(airportsList[indiairports]+"<br/>");
-                //}
-                // this callback will be called asynchronously
-                // when the response is available
             }).
             error(function(data, status, headers, config) {
 
+               console.log("Error Occurred With response "+data+"And status message"+ status);
                 // called asynchronously if an error occurs
                 // or server returns response with an error status.
             });
-
-
 }});

@@ -319,7 +319,15 @@ Type of travel:<br/>
      <div>
                 <span>Airline</span></br>
             <div class="btn-group btn-group-md">
-                <button type="button" ng-click="airlineSelection();" ng-class="{'whichAirlineClicked':whichAirline}" class="btn btn-default">My Airline</button>
+
+
+                <!--<button type="button" ng-click="airlineSelection();" ng-class="{'whichAirlineClicked':whichAirline}" class="btn btn-default">My Airline</button>-->
+
+
+                <select ng-model="preferredairline" data-ng-change="sample();"
+                        ng-options="preferredairline as preferredairline.name for preferredairline in preferredairlineslist" ></select>
+
+
             </div>
 </div>
 

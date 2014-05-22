@@ -105,12 +105,19 @@ a {
             <table>
 
                 <tr><th><button id="sortparameter"><h6>Sort By</h6></button></th><th>Order
-                    <select ng-model="orderTypeForOptions" ng-change="testFunction()">
+
+                    <!--<select ng-model="orderTypeForOptions" ng-change="ascendingDescendingOptionChose()">
                         <option ng-repeat="orderParameter in orderParametersArray"
                                 value="{{orderParameter.backGroundName}}">
                             {{orderParameter.displayName}}
                         </option>
-                    </select>
+                    </select>-->
+
+       <select data-ng-change="ascendingDescendingOptionChose();" ng-model="orderTypeForOptions" ng-options="orderParameter as orderParameter.displayName for orderParameter in orderParametersArray">
+                  </select>
+
+
+
                     <br>
                 </th></tr>
 <tr>
@@ -139,7 +146,7 @@ a {
 
 Filter By Airline
 
-                <tr><th><button id="airlines"><h6>Available Airlines</h6></button></th></tr>
+                <tr><th><button id="airlines"><h6>Available Airlines For this Booking</h6></button></th></tr>
 
 <!--
 <select class="filterparameter" ng-model="sortparameter" ng-change="filterWithAirline(sortparameter.backGroundName,0,false);"
@@ -256,7 +263,13 @@ Filter By Airline
 
             </table>
         </div>
+
+    <select data-ng-change="dayOfBookingChanged(day.backgroundDay);" ng-model="day" ng-options="day as day.displayDay for day in daysRange">
+    </select>
         <div class="col-xs-9">
+
+
+
 
             <div class="col-md-4 col-md-push-9 col-sm-4 col-sm-push-8 moveleftmiddle">
                 <div ng-repeat="flightDetail in flightDetails">
