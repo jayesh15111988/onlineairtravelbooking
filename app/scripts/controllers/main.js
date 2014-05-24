@@ -1228,6 +1228,13 @@ console.log(airportsDeepDetailsGlobal+ "Total aiport entrie");
         ////$scope.fullTravelDetails.departure=arrivalDetailsglobal;
 
 
+        if(JSON.parse(localStorage.getItem('updatedgoingoutdetail'))){
+            $scope.updateDeparture=JSON.parse(localStorage.getItem('updatedgoingoutdetail')).updatedgoingoutdetail;
+        }
+        else{
+            $scope.updateDeparture=$scope.fullTravelDetails.departure.departureDateFrom;
+        }
+
 
         console.log(JSON.parse(localStorage.getItem('goingoutdetails')) + "these are total entries from local storage ");
         $scope.bottomarrivalstatus="Have a nice flight1";
@@ -1252,9 +1259,11 @@ console.log(departureDetailsGlobal.departureDateFrom+" first");
         }
 
 //Departure section comes first and then arrives arrival - I mean name of identifier which displays airline booking info
-            $scope.fullTravelDetails.departure=JSON.parse(localStorage.getItem('goingoutdetails'));
-            $scope.fullTravelDetails.arrival=JSON.parse(localStorage.getItem('comingindetails'));
-
+        $scope.fullTravelDetails.departure=JSON.parse(localStorage.getItem('goingoutdetails'));
+        $scope.fullTravelDetails.arrival=JSON.parse(localStorage.getItem('comingindetails'));
+if(JSON.parse(localStorage.getItem('updatedgoingoutdetail'))){
+$scope.fullTravelDetails.departure.departureDateFrom=JSON.parse(localStorage.getItem('updatedgoingoutdetail')).updatedgoingoutdetail;
+}
         //$scope.fullTravelDetails.arrival=arrivalDetailsglobal;
         $scope.arrivalstatus="Have a nice flight2";
     }
@@ -1308,6 +1317,7 @@ airlinetravelmodule.controller('showflightscontroller',function($scope,$http,$ro
         originalDepartureDate=$scope.departureDate;
     }
 
+    localStorage.setItem('updatedgoingoutdetail',JSON.stringify({updatedgoingoutdetail:originalDepartureDate}));
     console.log(originalDepartureDate+ "ooo riginal");
     var tempStorageForFlightDetailsAfterFilteringOnAirlines=[];
 
@@ -1333,15 +1343,18 @@ console.log(originalDepartureDate+ "Original date");
         $scope.loadingToDisplay=true;
         getParameteresDictionary.leavingdate=$scope.departureDate;
 
-
+        //$scope.fullTravelDetails.departure.departureDateFrom=$scope.departureDate;
         //Store Updated date in a Local Storage of Web Browser
         //var userHistorydata={};
         //userHistorydata.leavingOutOn=isoDate;
+    var updatedeparturedate={updatedgoingoutdetail:$scope.departureDate};
 
-        //localStorage.setItem('historySearchData',JSON.stringify(userHistorydata));
+
+console.log("Son of a bitch"+ updatedeparturedate.updatedgoingoutdetail);
+        localStorage.setItem('updatedgoingoutdetail',JSON.stringify(updatedeparturedate));
 
         getFlightFromGivenParameters(getParameteresDictionary.source,getParameteresDictionary.destination,$scope.departureDate,getParameteresDictionary.comingindate,connectionType,numberOfDaysToRetrieveFlight);
-        console.log(isoDate);
+        //console.log(isoDate);
     }
 
 
@@ -1442,7 +1455,7 @@ console.log(lastSortParameter+"Is this sensible enough?");
     filteredArrayAfterAirlineSelection.clear();
     }
 
-            console.log(tempHolderForAllFlights[1]+ " high level scrutiny part 2");
+
     for (var i = 0; i < numberOfFlights; i++) {
     individualFlightsRecord=clone(tempHolderForAllFlights[i]);
             if(isFilterParameter=='airlineName'){
@@ -1534,7 +1547,7 @@ console.log("Verification actual "+connectionDetailObject.carrierFsCode+ "And pa
         if($scope.bookbuttontitle=="Book Now"){
             arrivalDetailsglobal=allFlightsDetail[index];
             var numberOfKeys=Object.keys(arrivalDetailsglobal).length;
-            console.log("&&&&"+arrivalDetailsglobal.flightDurationMinutes+"*******");
+            console.log("&&&&"+arrivalDetailsglobal.flightDurationMinutes);
 
             if(tripDirection=="Round Trip"){
                 console.log("two way flight")
@@ -1583,6 +1596,8 @@ console.log("Verification actual "+connectionDetailObject.carrierFsCode+ "And pa
         else{
             totalP=Math.ceil(flightDetails.length/numberOfResultsPerPage);
         }
+
+        console.log("*******"+JSON.stringify(flightDetails[20].flightLegs[0].arrivalTerminal));
         $scope.totalPages=Array();
         for(var i=0;i<totalP;i++){
             $scope.totalPages.push(i);
@@ -1735,6 +1750,7 @@ airlinetravelmodule.controller('upperleftbarcontroller',function($scope){
 
 airlinetravelmodule.controller('flightsearchcontroller',function($scope,$http,$window,$timeout){
 
+    $scope.defaultValue="N/A";
     $scope.sample=function(){
 
         preferredAirlinesName=$scope.preferredairline.iata?$scope.preferredairline.iata:""

@@ -301,7 +301,7 @@ Filter By Airline
                             <div>Flight Type: {{flightDetail.flightType}}</div>
                             <div>Connection Details</div><br/>
                             <div ng-repeat="connectionDetail in flightDetail.flightLegs">
-                                <div>Departing From: <span  tooltip-html-unsafe="{{getairportsindi(connectionDetail.departureAirportFsCode,0)}}"  popover-placement="right">{{connectionDetail.departureAirportFsCode}}</span> At {{connectionDetail.departureTime}} </div>
+                                <div>Departing From: <span  tooltip-html-unsafe="{{getairportsindi(connectionDetail.departureAirportFsCode,0)}}" popover-trigger="mouseenter"  popover-placement="right">{{connectionDetail.departureAirportFsCode}}</span> At {{connectionDetail.departureTime}} </div>
                                 <div>Terminal {{connectionDetail.departureTerminal}}</div>
                                 <div>Arriving To:<span tooltip-html-unsafe="{{getairportsindi(connectionDetail.arrivalAirportFsCode,0)}}" popover-trigger="mouseenter" popover-placement="right"> {{connectionDetail.arrivalAirportFsCode}}</span> At {{connectionDetail.arrivalTime}}</div>
                                 <div>Terminal {{connectionDetail.arrivalTerminal}}</div>
