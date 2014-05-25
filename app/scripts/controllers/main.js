@@ -1169,27 +1169,36 @@ airlinetravelmodule.controller('DetailController',function($scope,$routeParams){
 
     //Put logic to check if user has valid auth token or not
 
+
+
+    var storedUserHistorydata=JSON.parse(localStorage.getItem('historySearchData'));
+    //tripDirection=storedUserHistorydata.tripDirection;
+    tripDirection=storedUserHistorydata.travelDirection;
+
     var numberOfKeys=Object.keys(arrivalDetailsglobal).length;
-    console.log("&&"+tripDirection+"***");
 
     $scope.fullTravelDetails=[];
     $scope.fullTravelDetails.arrival=[];
     $scope.fullTravelDetails.departure=[];
 
-    /* Function to check if browser gives html5 support */
 
-    function supports_html5_storage() {
-        try {
-            return 'localStorage' in window && window['localStorage'] !== null;
-        } catch (e) {
-            return false;
-        }
+    Date.prototype.addDays = function(days)
+    {
+        var dat = new Date(this.valueOf());
+        dat.setDate(dat.getDate() + days);
+        return dat;
+    }
+
+    var getStandardDate=function(originalDate,numberOfDaysOffset){
+
+        var pattern = /(\d{4})-(\d{2})-(\d{2})/;
+        var dt = new Date(originalDate.replace(pattern,'$1-$2-$3'));
+        return  new Date(dt.addDays(numberOfDaysOffset)).toISOString();
+
     }
 
 
-    console.log(arrivalDetailsglobal.distanceMiles);
-    console.log(departureDetailsGlobal.distanceMiles);
-
+console.log("tripdirection "+ tripDirection);
 
     if(Object.keys(airportsDeepDetailsGlobal).length>0){
         console.log("***non empty");
@@ -1201,12 +1210,13 @@ airlinetravelmodule.controller('DetailController',function($scope,$routeParams){
         localStorage.setItem( 'allAvailableAirportDetailsWithFullNames', JSON.stringify(airportsDeepDetailsGlobal) );
 
     }
+
     airportsDeepDetailsGlobal=JSON.parse(localStorage.getItem('allAvailableAirportDetailsWithFullNames'));
-console.log(airportsDeepDetailsGlobal+ "Total aiport entrie");
+    console.log(airportsDeepDetailsGlobal+ " Total aiport entry ");
     if(tripDirection=="OneWay"){
         console.log("still one");
-        $scope.showsecondpartofflightbooking=false;
 
+        $scope.showsecondpartofflightbooking=false;
         $scope.showreturningflights=true;
         $scope.flightDetailsSecondPart="One way flight details";
 
@@ -1217,24 +1227,33 @@ console.log(airportsDeepDetailsGlobal+ "Total aiport entrie");
         //Storing our details in the local storage
     console.log("Length of dictionary with airport name in it"+Object.keys(arrivalDetailsglobal).length);
         if(Object.keys(arrivalDetailsglobal).length>0){
-            console.log("**non empty");
 
-        localStorage.setItem( 'goingoutdetails', JSON.stringify(arrivalDetailsglobal) );
+            localStorage.setItem( 'goingoutdetails', JSON.stringify(arrivalDetailsglobal) );
+
         }
         else{
+
             console.log("***Empty");
+
         }
+
         $scope.fullTravelDetails.departure=JSON.parse(localStorage.getItem('goingoutdetails'));
-        ////$scope.fullTravelDetails.departure=arrivalDetailsglobal;
+
 
 
         if(JSON.parse(localStorage.getItem('updatedgoingoutdetail'))){
+
             $scope.updateDeparture=JSON.parse(localStorage.getItem('updatedgoingoutdetail')).updatedgoingoutdetail;
+
         }
         else{
+
             $scope.updateDeparture=$scope.fullTravelDetails.departure.departureDateFrom;
+
         }
 
+        console.log($scope.updateDeparture+ "Date"+"and this "+$scope.fullTravelDetails.departure.arrivalDateAdjustment);
+$scope.updateDeparture1=getStandardDate($scope.updateDeparture,$scope.fullTravelDetails.departure.arrivalDateAdjustment);
 
         console.log(JSON.parse(localStorage.getItem('goingoutdetails')) + "these are total entries from local storage ");
         $scope.bottomarrivalstatus="Have a nice flight1";
@@ -1246,26 +1265,53 @@ $scope.showsecondpartofflightbooking=true;
 $scope.showreturningflights=true;
         $scope.flightDetailsFirstPart="Two way flight details - First Part";
         $scope.flightDetailsSecondPart="Two way flight details - Second Part";
-console.log(departureDetailsGlobal.departureDateFrom+" first");
-        console.log(arrivalDetailsglobal.distanceMiles+" second");
+        console.log(JSON.stringify($scope.fullTravelDetails.departure)+" Object full description ");
+        console.log(JSON.parse(localStorage.getItem('updatedcomingindetail')).updatedcomingindetail+" Departure date returning");
+
+
+        if(JSON.parse(localStorage.getItem('updatedgoingoutdetail'))){
+            $scope.updateDeparture=JSON.parse(localStorage.getItem('updatedgoingoutdetail')).updatedgoingoutdetail;
+        }
+        else{
+            $scope.updateDeparture=$scope.fullTravelDetails.departure.departureDateFrom;
+        }
+
+
+        if(JSON.parse(localStorage.getItem('updatedcomingindetail'))){
+            $scope.departureDate2=JSON.parse(localStorage.getItem('updatedcomingindetail')).updatedcomingindetail;
+        }
+        else{
+            $scope.departureDate2=$scope.fullTravelDetails.arrival.departureDateFrom;
+        }
+
+
 //Going two way first part
 
         //We are removing any stale entries that might be lingering in local storage
 
         if(Object.keys(departureDetailsGlobal).length>0 || Object.keys(arrivalDetailsglobal).length>0){
         localStorage.setItem( 'goingoutdetails', JSON.stringify(departureDetailsGlobal) );
-//Going two way second part
-            localStorage.setItem( 'comingindetails', JSON.stringify(arrivalDetailsglobal) );
+        localStorage.setItem( 'comingindetails', JSON.stringify(arrivalDetailsglobal) );
         }
 
 //Departure section comes first and then arrives arrival - I mean name of identifier which displays airline booking info
         $scope.fullTravelDetails.departure=JSON.parse(localStorage.getItem('goingoutdetails'));
         $scope.fullTravelDetails.arrival=JSON.parse(localStorage.getItem('comingindetails'));
-if(JSON.parse(localStorage.getItem('updatedgoingoutdetail'))){
-$scope.fullTravelDetails.departure.departureDateFrom=JSON.parse(localStorage.getItem('updatedgoingoutdetail')).updatedgoingoutdetail;
-}
+
+
+        //Set going and coming out detail
+        $scope.updateDeparture1=getStandardDate( $scope.updateDeparture,$scope.fullTravelDetails.departure.arrivalDateAdjustment);
+        $scope.departureDate3=getStandardDate($scope.departureDate2,$scope.fullTravelDetails.arrival.arrivalDateAdjustment);
+
+
+
+        if(JSON.parse(localStorage.getItem('updatedgoingoutdetail'))){
+            $scope.fullTravelDetails.departure.departureDateFrom=JSON.parse(localStorage.getItem('updatedgoingoutdetail')).updatedgoingoutdetail;
+        }
+
         //$scope.fullTravelDetails.arrival=arrivalDetailsglobal;
         $scope.arrivalstatus="Have a nice flight2";
+
     }
 
     $scope.getairportsindi=function(iatacode){
@@ -1308,16 +1354,37 @@ airlinetravelmodule.controller('showflightscontroller',function($scope,$http,$ro
     //var baseUrl='http://jayeshkawli.com/airlinetravel/airportsapi.php?';
    // baseUrl=baseUrl+'searchString='+searchStringToPass;
 
-    var preStoredDate=JSON.parse(localStorage.getItem('historySearchData')).leavingOutOn;
+
+    //Remove all previous entries for departure and arrival date
+    if(localStorage.getItem('updatedcomingindetail')){
+        localStorage.removeItem('updatedcomingindetail');
+    }
+
+    if(localStorage.getItem('updatedgoingoutdetail')){
+        localStorage.removeItem('updatedgoingoutdetail');
+    }
+
+
+    var isBookingReturnFlight=0;
+    var preStoredGoingOutDate=JSON.parse(localStorage.getItem('historySearchData')).leavingOutOn;
+
+
     var originalDepartureDate;
-    if(preStoredDate){
-    originalDepartureDate=preStoredDate;
+console.log("Returning date flag ****"+isBookingReturnFlight);
+    if(!isBookingReturnFlight){
+    if(preStoredGoingOutDate){
+    originalDepartureDate=preStoredGoingOutDate;
     }
     else{
         originalDepartureDate=$scope.departureDate;
     }
+        localStorage.setItem('updatedgoingoutdetail',JSON.stringify({updatedgoingoutdetail:originalDepartureDate}));
+    }
+    //else{
 
-    localStorage.setItem('updatedgoingoutdetail',JSON.stringify({updatedgoingoutdetail:originalDepartureDate}));
+    //}
+
+
     console.log(originalDepartureDate+ "ooo riginal");
     var tempStorageForFlightDetailsAfterFilteringOnAirlines=[];
 
@@ -1341,19 +1408,40 @@ console.log(originalDepartureDate+ "Original date");
         //after updating date send another request with new departure Date
         console.log(getParameteresDictionary.source+ " hahaha ");
         $scope.loadingToDisplay=true;
+        if(!isBookingReturnFlight){
         getParameteresDictionary.leavingdate=$scope.departureDate;
+        }
+        else{
+            getParameteresDictionary.comingindate=$scope.departureDate;
+        }
 
         //$scope.fullTravelDetails.departure.departureDateFrom=$scope.departureDate;
         //Store Updated date in a Local Storage of Web Browser
         //var userHistorydata={};
         //userHistorydata.leavingOutOn=isoDate;
-    var updatedeparturedate={updatedgoingoutdetail:$scope.departureDate};
+        var updatedate;
+        if(!isBookingReturnFlight){
 
+            updatedate={updatedgoingoutdetail:$scope.departureDate};
+            localStorage.setItem('updatedgoingoutdetail',JSON.stringify(updatedate));
 
-console.log("Son of a bitch"+ updatedeparturedate.updatedgoingoutdetail);
-        localStorage.setItem('updatedgoingoutdetail',JSON.stringify(updatedeparturedate));
+        }
+        else{
 
-        getFlightFromGivenParameters(getParameteresDictionary.source,getParameteresDictionary.destination,$scope.departureDate,getParameteresDictionary.comingindate,connectionType,numberOfDaysToRetrieveFlight);
+            updatedate={updatedcomingindetail:$scope.departureDate};
+            localStorage.setItem('updatedcomingindetail',JSON.stringify(updatedate));
+
+        }
+
+//console.log("Son of a bitch"+ updatedeparturedate.updatedgoingoutdetail);
+
+if(isBookingReturnFlight){
+    getFlightFromGivenParameters(getParameteresDictionary.destination,getParameteresDictionary.source,$scope.departureDate,getParameteresDictionary.comingindate,connectionType,numberOfDaysToRetrieveFlight);
+}
+        else{
+    getFlightFromGivenParameters(getParameteresDictionary.source,getParameteresDictionary.destination,$scope.departureDate,getParameteresDictionary.comingindate,connectionType,numberOfDaysToRetrieveFlight);
+}
+
         //console.log(isoDate);
     }
 
@@ -1534,8 +1622,7 @@ console.log("Verification actual "+connectionDetailObject.carrierFsCode+ "And pa
 
     function dynamicSort(property,sortOrder) {
 
-        //console.log(property+ " 1 ");
-        //console.log(sortOrder+ " 2 ");
+
         return function (a,b) {
             var result = (a[property] < b[property]) ? -1 : (a[property] > b[property]) ? 1 : 0;
             return result * sortOrder;
@@ -1560,12 +1647,28 @@ console.log("Verification actual "+connectionDetailObject.carrierFsCode+ "And pa
             //console.log(Object.keys(travelDetails).length+ " aaarrival");
         }
         else if($scope.bookbuttontitle=="Select Returning Flight"){
+            isBookingReturnFlight=1;
+            $scope.day=$scope.daysRange[2];
             bookbuttontitletext="Book Now";
             console.log(index +"departure");
             departureDetailsGlobal=allFlightsDetail[index];
             console.log(departureDetailsGlobal.flightType+ "departure");
             allFlightsDetail.clear();
             $scope.loadingToDisplay=true;
+
+            var prestoredComingIndate=JSON.parse(localStorage.getItem('historySearchData')).comingInOn;
+
+            if(prestoredComingIndate){
+                originalDepartureDate=prestoredComingIndate;
+            }
+            else{
+                originalDepartureDate=$scope.departureDate;
+            }
+
+            $scope.departuredate=originalDepartureDate;
+            console.log(originalDepartureDate+ "///");
+            localStorage.setItem('updatedcomingindetail',JSON.stringify({updatedcomingindetail:originalDepartureDate}));
+
             getFlightFromGivenParameters(getParameteresDictionary.destination,getParameteresDictionary.source,getParameteresDictionary.comingindate,getParameteresDictionary.leavingdate,connectionType,numberOfDaysToRetrieveFlight);
 
         }
@@ -1606,7 +1709,7 @@ console.log("Verification actual "+connectionDetailObject.carrierFsCode+ "And pa
         totalPagesCount=$scope.totalPages;
 
         var travelDate;
-
+if(!isBookingReturnFlight){
         if(getParameteresDictionary.leavingdate){
             travelDate=new Date(getParameteresDictionary.leavingdate);
 
@@ -1616,7 +1719,23 @@ console.log("Verification actual "+connectionDetailObject.carrierFsCode+ "And pa
             travelDate = new Date(JSON.parse(localStorage.getItem('historySearchData')).leavingOutOn);
 
         }
+}
+        else{
 
+    ///
+    if(getParameteresDictionary.comingindate){
+        travelDate=new Date(getParameteresDictionary.comingindate);
+
+    }
+    else{
+
+        travelDate = new Date(JSON.parse(localStorage.getItem('historySearchData')).comingInOn);
+
+    }
+
+    ////
+}
+        console.log("should not come here");
         $scope.departureDate=((travelDate.getMonth()+1)+"/"+travelDate.getDate()+ "/"+travelDate.getFullYear());
         allFlightsDetail=flightDetails;
         console.log("should refresh page with new result");
@@ -1664,8 +1783,8 @@ if(isTitle==1){
     }
 
     var getFlightFromGivenParameters=function(source,destination,leavingdate,comingindate,contype,numberofdays){
+console.log("Another Web Request");
 
-console.log(leavingdate+ "*******************");
         $http({method: 'GET', url: 'http://jayeshkawli.com/airlinetravel/flightsearchapi.php?source='+source+"&destination="+destination+"&leavingdate="+leavingdate+"&comingindate="+comingindate+"&numberofdays="+numberofdays+"&connectiontype="+contype+"&airlinepreferred="+preferredAirlinesName,
             params: {}
         }).
@@ -1674,6 +1793,7 @@ console.log(leavingdate+ "*******************");
                 if(flightslist.flights){
                 appendixDictionary=flightslist.appendix;
                 // console.log(appendixDictionary);
+                    console.log("Verification of date Important ---->"+flightlist.request.date.interpreted);
                 if(typeof appendixDictionary !='undefined' && appendixDictionary!=null){
                     if(appendixDictionary.airlines.length>0){
                         appendixDictionary.airlines.unshift(getSampleAllAirlinesObject());
@@ -1959,9 +2079,19 @@ console.log(userHistorydata +" this is previously stored user data");
         $scope.searchStringDestination=userHistorydata.destinationCity;
         $scope.leavingOut=userHistorydata.leavingOutOn;
         $scope.comingIn=userHistorydata.comingInOn;
+        tripDirection==userHistorydata.travelDirection;
+
+        console.log("Travel direction correct "+tripDirection);
+
         if(userHistorydata.travelDirection==='Round Trip'){
             $scope.isOneWayFlight=false;
             $scope.isVisibleReturningDate=true;
+
+            bookbuttontitletext="Select Returning Flight";
+        }
+        else{
+            $scope.isOneWayFlight=true;
+            bookbuttontitletext="Book Now";
         }
 
         if(userHistorydata.travelType==='International'){
@@ -2016,12 +2146,14 @@ console.log(userHistorydata +" this is previously stored user data");
     }
 
     $scope.isRoundTrip=function(val){
-        if(val==0){
+
+        console.log("Lolll --- >");
+        if(!val){
             tripDirection="OneWay";
             bookbuttontitletext="Book Now";
             $scope.isVisibleReturningDate=false;
         }
-        else if(val==1){
+        else{
             tripDirection="Round Trip";
             bookbuttontitletext="Select Returning Flight";
             $scope.isVisibleReturningDate=true;
@@ -2103,6 +2235,7 @@ allFlightsDetail.clear();
         userHistorydata.sourceCity=$scope.searchStringSource;
         userHistorydata.destinationCity=$scope.searchStringDestination;
         userHistorydata.travelDirection=tripDirection;
+        console.log("Expected travel direction"+tripDirection);
         userHistorydata.travelType=travelType;
         //console.log("hahaha "+$scope.leavingOut);
         //var modelDate = $filter('date')($scope.leavingOut, "YYYY-MM-DD");
