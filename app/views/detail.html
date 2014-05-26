@@ -1,4 +1,6 @@
 <div ng-controller="DetailController">
+
+
     <!-- We are hiding this table when user has requested one way flight. If it's two way flight,we are
     shwoing outbound flight details in this space -->
 
@@ -72,6 +74,7 @@
 
     <button data-ng-click="showconfirmationorloginwindow();" data-ng-show="toshowfirst">{{bookingbuttontitle}}</button>
     <button data-ng-click="checkoutguest();" data-ng-show="toshowsecond">Checkout As Guest/Register</button>
+    <button data-ng-show="toshowconfirmbutton" data-ng-click="finalconfirmbooking()">Confirm Booking </button>
 <div>{{bottomarrivalstatus}}</div>
 
 

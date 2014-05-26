@@ -83,23 +83,15 @@ airlinetravelmodule.directive('customOnChange', function() {
     };
 });
 
-airlinetravelmodule.factory('mySharedService', function($rootScope) {
-    var sharedService = {};
-
-    sharedService.message = '';
-
-    sharedService.prepForBroadcast = function(msg) {
-        this.message = msg;
-        this.broadcastItem();
-    };
-
-    sharedService.broadcastItem = function() {
-        $rootScope.$broadcast('handleBroadcast');
-    };
-
-    return sharedService;
+airlinetravelmodule.run(function($rootScope) {
+    /*
+     Receive emitted message and broadcast it.
+     Event names must be distinct or browser will blow up!
+     */
+    $rootScope.$on('handleEmit', function(event, args) {
+        $rootScope.$broadcast('handleBroadcast', args);
+    });
 });
-
 
 
 airlinetravelmodule.directive('registerSecondpage', function() {
@@ -869,6 +861,8 @@ function setUserFirstNameOnDisplay(){
 
                     $scope.userfirstnamedisplay="Guest"
                     $scope.loginlogouttext="Login";
+                    $scope.$emit('handleEmit', {message: -1});
+
                 });
 
 
@@ -957,6 +951,12 @@ function setUserFirstNameOnDisplay(){
                         localStorage.removeItem('authTokenInfo');
 
                     }
+                    //Emit the message that user is successfully logged in this is useful on details controller where user
+                    // is ready to finalize his selection
+
+                    isLoggedInOnConfirmationScreen=true;
+                        //$scope.$emit('handleEmit', {message: 0});
+
 
                     localStorage.setItem( 'serverloginauthenticationsuccess', serverResponseData);
 
@@ -1106,6 +1106,13 @@ console.log("Alla server la dyayla");
                     localStorage.removeItem('authTokenInfo');
 
                 }
+
+
+
+                    $scope.$emit('handleEmit', {message: isCreatingUser?1:2});
+
+
+
                 localStorage.setItem( 'serverloginauthenticationsuccess', serverResponseData);
                 localStorage.setItem('authTokenInfo',JSON.stringify({'authtoken':data.authorization,'emailaddress':data.emailaddress,'firstname':data.firstname}));
                 $scope.userfirstnamedisplay=data.firstname;
@@ -1153,6 +1160,8 @@ airlinetravelmodule.controller('MyCtrl1', function($scope){
 });
 
 /* real global variable */
+
+var isLoggedInOnConfirmationScreen=false;
 var tripDirection="OneWay";
 var allFlightsDetail=Array();
 var appendixDictionary={};
@@ -1175,6 +1184,10 @@ airlinetravelmodule.controller('DetailController',function($scope,$routeParams){
 
 
 
+$scope.toshowconfirmbutton=false;
+
+
+
     var storedUserHistorydata=JSON.parse(localStorage.getItem('historySearchData'));
     //tripDirection=storedUserHistorydata.tripDirection;
     tripDirection=storedUserHistorydata.travelDirection;
@@ -1185,6 +1198,7 @@ airlinetravelmodule.controller('DetailController',function($scope,$routeParams){
     $scope.fullTravelDetails.arrival=[];
     $scope.fullTravelDetails.departure=[];
 
+    var isUserLoggedIn=localStorage.getItem('authTokenInfo');
 
     Date.prototype.addDays = function(days)
     {
@@ -1205,7 +1219,7 @@ airlinetravelmodule.controller('DetailController',function($scope,$routeParams){
 console.log("tripdirection "+ tripDirection);
 
     if(Object.keys(airportsDeepDetailsGlobal).length>0){
-        console.log("***non empty");
+        //console.log("***non empty");
         if(localStorage.getItem('allAvailableAirportDetailsWithFullNames')){
             localStorage.removeItem('allAvailableAirportDetailsWithFullNames');
         }
@@ -1220,7 +1234,7 @@ console.log("tripdirection "+ tripDirection);
 
 
 
-    var isUserLoggedIn=localStorage.getItem('authTokenInfo')
+
 
 
     $scope.toshowfirst=true;
@@ -1232,11 +1246,39 @@ console.log("tripdirection "+ tripDirection);
     }
     else{
         $scope.bookingbuttontitle="Login"
-    $scope.toshowfirst=false;
+    //$scope.toshowfirst=false;
     }
 
     $scope.checkoutguest=function(){
         $("#registerview").modal('show');
+    }
+
+    //User has either logged in/Updated information/created new registration account
+    //Unfortunately we cannot use it when user logs in as page refreshes, we are not really able to catch the boradcast right
+    //after user logs in. So we are using global variable 'isLoggedInOnConfirmationScreen' to check if credentials are valid and
+    //We are ok to confirm booking on final screen
+
+    //This block is appliable only when user creates new account or updates account details
+
+    $scope.$on('handleBroadcast', function(event, args) {
+
+      if(args.message==-1){
+
+          console.log("this is message *** "+args.message);
+          $scope.bookingbuttontitle="Login"
+          $scope.toshowsecond=true;
+          isUserLoggedIn=localStorage.getItem('authTokenInfo');
+      }
+      else{
+          $scope.toshowconfirmbutton=true;
+        console.log("aaya tohfaa aaya "+args.message);
+      }
+    });
+
+    //This block applicable only when user logs in on cofirmation page, waiting to finalize booking
+
+    if(isLoggedInOnConfirmationScreen){
+        $scope.toshowconfirmbutton=true;
     }
 
     $scope.showconfirmationorloginwindow=function(){
@@ -1254,6 +1296,10 @@ console.log("tripdirection "+ tripDirection);
             $('#loginview').modal('show');
             //
         }
+    }
+
+    $scope.finalconfirmbooking=function(){
+        console.log("Confirm Booking");
     }
 
     if(tripDirection=="OneWay"){
@@ -1276,7 +1322,7 @@ console.log("tripdirection "+ tripDirection);
         }
         else{
 
-            console.log("***Empty");
+            //console.log("***Empty");
 
         }
 
@@ -1362,11 +1408,11 @@ $scope.showreturningflights=true;
 
        // console.log(airportsDeepDetailsGlobal[iatacode].name+ " sad "+iatacode);
         if(airportsDeepDetailsGlobal.hasOwnProperty(iatacode)){
-            console.log("NON EMPTY");
+            //console.log("NON EMPTY");
         return airportsDeepDetailsGlobal[iatacode].name;
         }
         else{
-            console.log("EMPTY");
+            //console.log("EMPTY");
             return "";
         }
     }
@@ -1868,6 +1914,12 @@ console.log("Another Web Request with URL "+"http://jayeshkawli.com/airlinetrave
                     }
                 }
                    setupPageWithAllFlightDetails(flightslist.flights);
+
+                    $timeout(function () {
+
+                        $('div[id^="connectiondetails-"]').hide();
+
+                    },0.0);
                     //We are doing it only once for each web request - New web request mean flushing of previous data and overlapping it with new one
                    // if(!localStorage.getItem("recentlyReturnedFlightData")){
                         localStorage.setItem('recentlyReturnedFlightData',JSON.stringify(flightslist.flights));
@@ -1929,7 +1981,7 @@ if(allFlightsDetail.length==0){
 
         $('div[id^="connectiondetails-"]').hide();
 
-    },0);
+    },0.0);
     //hideDivs();
     console.log("****///");
 });
