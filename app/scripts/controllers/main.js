@@ -737,7 +737,6 @@ $scope.$on("UPDATE_PARENT", function(event, message){
         console.log("Sending..");
     }
 
-
     $scope.viewingProfileInfoForEditing=function(isEditing){
         isEditingUserRegistrationInfo=isEditing;
        // console.log("is eidting"+ isEditing);
@@ -764,10 +763,15 @@ $scope.$on("UPDATE_PARENT", function(event, message){
 
     }
 
+    $scope.hideloginshowregistration=function(){
+        $('#loginview').modal('hide');
+        $("#registerview").modal('show');
+    }
+
         //$route.location.reload();
 
 
-    $scope.regionName="Please Select Region";
+    $scope.regionName="Select Region";
     $scope.setRegion=function(regionname){
         $scope.regionName=regionname;
       //  console.log(regionname);
@@ -1213,6 +1217,45 @@ console.log("tripdirection "+ tripDirection);
 
     airportsDeepDetailsGlobal=JSON.parse(localStorage.getItem('allAvailableAirportDetailsWithFullNames'));
     console.log(airportsDeepDetailsGlobal+ " Total aiport entry ");
+
+
+
+    var isUserLoggedIn=localStorage.getItem('authTokenInfo')
+
+
+    $scope.toshowfirst=true;
+    $scope.toshowsecond=true;
+
+    if(isUserLoggedIn){
+        $scope.bookingbuttontitle="Update Booking Info and Book";
+        $scope.toshowsecond=false;
+    }
+    else{
+        $scope.bookingbuttontitle="Login"
+    $scope.toshowfirst=false;
+    }
+
+    $scope.checkoutguest=function(){
+        $("#registerview").modal('show');
+    }
+
+    $scope.showconfirmationorloginwindow=function(){
+
+        //
+        if(isUserLoggedIn){
+            //User is already logged in
+            console.log("Please update any info in the window");
+            $scope.$broadcast("SET_MESSAGE_HEADER","Sample message");
+            $("#userupdateview").modal('show');
+        }
+        else{
+            //User is not logged in - Give change to either act as a guest or allow them to create new register
+            console.log("Please create or log in with existing account");
+            $('#loginview').modal('show');
+            //
+        }
+    }
+
     if(tripDirection=="OneWay"){
         console.log("still one");
 
@@ -1350,7 +1393,7 @@ Array.prototype.clear = function() {
     }
 };
 
-airlinetravelmodule.controller('showflightscontroller',function($scope,$http,$routeParams,$location,$window){
+airlinetravelmodule.controller('showflightscontroller',function($scope,$http,$routeParams,$location,$window,$timeout){
     //var baseUrl='http://jayeshkawli.com/airlinetravel/airportsapi.php?';
    // baseUrl=baseUrl+'searchString='+searchStringToPass;
 
@@ -1368,6 +1411,9 @@ airlinetravelmodule.controller('showflightscontroller',function($scope,$http,$ro
     var isBookingReturnFlight=0;
     var preStoredGoingOutDate=JSON.parse(localStorage.getItem('historySearchData')).leavingOutOn;
 
+
+
+//
 
     var originalDepartureDate;
 console.log("Returning date flag ****"+isBookingReturnFlight);
@@ -1388,6 +1434,12 @@ console.log("Returning date flag ****"+isBookingReturnFlight);
     console.log(originalDepartureDate+ "ooo riginal");
     var tempStorageForFlightDetailsAfterFilteringOnAirlines=[];
 
+
+
+    $scope.hideConnectionDetails=function(divIdentifier){
+        console.log(divIdentifier+ "This is relevant div identifier");
+        $("#connectiondetails-"+divIdentifier).fadeToggle();
+    }
 
 var getStandardDate=function(originalDate,numberOfDaysOffset){
     var pattern = /(\d{4})-(\d{2})-(\d{2})/;
@@ -1743,6 +1795,13 @@ if(!isBookingReturnFlight){
         $scope.loadingToDisplay=false;
 
 
+
+
+
+        //$timeout(function () {
+
+       // }, 3000);
+
     }
 
 function addToAirportDetails(airportsArray){
@@ -1783,8 +1842,8 @@ if(isTitle==1){
     }
 
     var getFlightFromGivenParameters=function(source,destination,leavingdate,comingindate,contype,numberofdays){
-console.log("Another Web Request");
-
+console.log("Another Web Request with URL "+"http://jayeshkawli.com/airlinetravel/flightsearchapi.php?source="+source+"&destination="+destination+"&leavingdate="+leavingdate+"&comingindate="+comingindate+"&numberofdays="+numberofdays+"&connectiontype="+contype+"&airlinepreferred="+preferredAirlinesName);
+        var start = new Date().getTime();
         $http({method: 'GET', url: 'http://jayeshkawli.com/airlinetravel/flightsearchapi.php?source='+source+"&destination="+destination+"&leavingdate="+leavingdate+"&comingindate="+comingindate+"&numberofdays="+numberofdays+"&connectiontype="+contype+"&airlinepreferred="+preferredAirlinesName,
             params: {}
         }).
@@ -1793,7 +1852,7 @@ console.log("Another Web Request");
                 if(flightslist.flights){
                 appendixDictionary=flightslist.appendix;
                 // console.log(appendixDictionary);
-                    console.log("Verification of date Important ---->"+flightlist.request.date.interpreted);
+                    console.log("Verification of date Important ---->"+flightslist.request.date.interpreted);
                 if(typeof appendixDictionary !='undefined' && appendixDictionary!=null){
                     if(appendixDictionary.airlines.length>0){
                         appendixDictionary.airlines.unshift(getSampleAllAirlinesObject());
@@ -1816,7 +1875,9 @@ console.log("Another Web Request");
                         localStorage.setItem('airports',JSON.stringify(appendixDictionary.airports));
                         localStorage.setItem('equipments',JSON.stringify(appendixDictionary.equipments));
                     //}
-
+                    var end = new Date().getTime();
+                    var time = end - start;
+                    console.log('Execution time: ' + time);
                 }
                 else{
                     if(flightslist.error){
@@ -1862,6 +1923,15 @@ if(allFlightsDetail.length==0){
     getFlightFromGivenParameters(getParameteresDictionary.source,getParameteresDictionary.destination,getParameteresDictionary.leavingdate,getParameteresDictionary.comingindate,connectionType,numberOfDaysToRetrieveFlight);
 }
     }
+
+
+    $timeout(function () {
+
+        $('div[id^="connectiondetails-"]').hide();
+
+    },0);
+    //hideDivs();
+    console.log("****///");
 });
 
 airlinetravelmodule.controller('upperleftbarcontroller',function($scope){
@@ -2072,6 +2142,7 @@ $scope.opened1=true;
 
     if(localStorage.getItem('historySearchData')){
         userHistorydata=JSON.parse(localStorage.getItem('historySearchData'));
+
 console.log(userHistorydata +" this is previously stored user data");
         $scope.sourcecodenew=userHistorydata.sourceCountry;
         $scope.destcodenew=userHistorydata.destinationCountry;
@@ -2236,8 +2307,8 @@ allFlightsDetail.clear();
         userHistorydata.destinationCity=$scope.searchStringDestination;
         userHistorydata.travelDirection=tripDirection;
         console.log("Expected travel direction"+tripDirection);
-        userHistorydata.travelType=travelType;
-        //console.log("hahaha "+$scope.leavingOut);
+        userHistorydata.travelType=(userHistorydata.sourceCountry===userHistorydata.destinationCountry)?"Domestic":"International";
+        //console.log("kkkk "+$scope.leavingOut);
         //var modelDate = $filter('date')($scope.leavingOut, "YYYY-MM-DD");
         //console.log("hahaha 100 "+modalDate);
         userHistorydata.leavingOutOn=$scope.leavingOut;
@@ -2407,7 +2478,7 @@ if(typeof countryCode ==="undefined"){
 
         baseUrl=baseUrl+'searchString='+searchStringToPass;
 
-
+        var start = new Date().getTime();
         $http({method: 'GET', url: 'http://jayeshkawli.com/airlinetravel/airportsapi.php?searchstring='+searchStringToPass+"&countryCode="+countryCode,
              params: {}
         }).
@@ -2421,6 +2492,9 @@ if(typeof countryCode ==="undefined"){
 
                 $scope.movies=airportslist;
                 $scope.sam="";
+                var end = new Date().getTime();
+                var time = end - start;
+                console.log('Execution time: ' + time);
 
             }).
             error(function(data, status, headers, config) {

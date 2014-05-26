@@ -92,6 +92,9 @@ a {
             $('#popoverData').popover();
             $('#popoverOption').popover({ trigger: "hover" });
 
+function changetogglebuttontext(buttonObject){
+    buttonObject.innerHTML=(buttonObject.innerHTML==="Show")?"Hide":"Show";
+}
 
         </script>
 
@@ -299,7 +302,9 @@ Filter By Airline
                             <div>Flight Duration: {{flightDetail.flightDurationMinutes}}</div>
                             <div>Layover Duration: {{flightDetail.layoverDurationMinutes}}</div>
                             <div>Flight Type: {{flightDetail.flightType}}</div>
-                            <div>Connection Details</div><br/>
+
+                            <button>Connection Details</button> <button onclick="changetogglebuttontext(this)" data-ng-click="hideConnectionDetails($index+1)">Show</button><br/>
+                            <div id="connectiondetails-{{$index+1}}">
                             <div ng-repeat="connectionDetail in flightDetail.flightLegs">
                                 <div>Departing From: <span  tooltip-html-unsafe="{{getairportsindi(connectionDetail.departureAirportFsCode,0)}}" popover-trigger="mouseenter"  popover-placement="right">{{connectionDetail.departureAirportFsCode}}</span> At {{connectionDetail.departureTime}} </div>
                                 <div>Terminal {{connectionDetail.departureTerminal}}</div>
@@ -311,8 +316,9 @@ Filter By Airline
                                 <div>Distance in Miles {{connectionDetail.distanceMiles}}</div>
                                 <div>Flight Duration {{connectionDetail.flightDurationMinutes}}</div>
                                 <div>Leasing Info: {{connectionDetail.wetleaseInfo?connectionDetail.wetleaseInfo:"N/A"}} </div>
-<br/>
+                    <br/>
                             </div>
+                                </div>
                     <br/>
                             <button ng-click="bookorgotoreturingflights($index);">{{bookbuttontitle}}</button>
                         </div><br/><br/>

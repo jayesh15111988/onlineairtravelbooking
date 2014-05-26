@@ -70,7 +70,8 @@
 
     <div>{{arrivalstatus}}</div>
 
-    <button>Book Now</button>
+    <button data-ng-click="showconfirmationorloginwindow();" data-ng-show="toshowfirst">{{bookingbuttontitle}}</button>
+    <button data-ng-click="checkoutguest();" data-ng-show="toshowsecond">Checkout As Guest/Register</button>
 <div>{{bottomarrivalstatus}}</div>
 
 
