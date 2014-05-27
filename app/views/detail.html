@@ -75,7 +75,23 @@
     <button data-ng-click="showconfirmationorloginwindow();" data-ng-show="toshowfirst">{{bookingbuttontitle}}</button>
     <button data-ng-click="checkoutguest();" data-ng-show="toshowsecond">Checkout As Guest/Register</button>
     <button data-ng-show="toshowconfirmbutton" data-ng-click="finalconfirmbooking()">Confirm Booking </button>
+    <button data-ng-click="open('sm')">click me</button>
 <div>{{bottomarrivalstatus}}</div>
 
 
-    </div>
+    <script type="text/ng-template" id="bookingconfirmation">
+        <div class="modal-header">
+            <h3 class="modal-title">You are about to book selected flight</h3>
+        </div>
+        <div class="modal-body">
+
+            Please press ok to continue, cancel to discard reservation and update information
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" ng-click="ok()">OK</button>
+            <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+        </div>
+    </script>
+
+
+</div>
