@@ -75,6 +75,10 @@ angular.module('airtravelbookingappApp', [
                 controller: 'DetailController',
                 templateUrl: 'views/detail.html'
             })
+            .when('/retrievebooking', {
+                controller: 'DetailController',
+                templateUrl: 'views/detail.html'
+            })
             .when('/samfile',{
                 controller:'',
                 templateUrl:'views/sam.php'

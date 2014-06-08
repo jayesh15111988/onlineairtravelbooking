@@ -1,18 +1,19 @@
 <div ng-controller="DetailController">
 
-
     <!-- We are hiding this table when user has requested one way flight. If it's two way flight,we are
     shwoing outbound flight details in this space -->
+
+
 
     <table ng-show="showreturningflights">
         <tr><th><div><h4> {{flightDetailsFirstPart}}</h4></div></th></tr>
 
 
 
-        <tr> <td>Departing From </td> <td>{{fullTravelDetails.departure.departureAirportFsCode}}</td></tr>
-        <tr><td>Departing Airport Code </td> <td> {{getairportsindi(fullTravelDetails.departure.departureAirportFsCode)}}</td></tr>
-        <tr><td>Arriving To </td> <td>{{fullTravelDetails.departure.arrivalAirportFsCode}}</td></tr>
-        <tr><td>Arriving Airport Code </td> <td> {{getairportsindi(fullTravelDetails.departure.arrivalAirportFsCode)}}</td></tr>
+        <tr> <td>Departing From </td> <td>{{getairportsindi(fullTravelDetails.departure.departureAirportFsCode)}}</td></tr>
+        <tr><td>Departing Airport Code </td> <td>{{fullTravelDetails.departure.departureAirportFsCode}} </td></tr>
+        <tr><td>Arriving To </td> <td>{{getairportsindi(fullTravelDetails.departure.arrivalAirportFsCode)}}</td></tr>
+        <tr><td>Arriving Airport Code </td> <td>{{fullTravelDetails.departure.arrivalAirportFsCode}} </td></tr>
 
         <tr><td>Departing On </td> <td>{{updateDeparture}}</td></tr>
         <tr><td>Reaching On </td> <td>{{updateDeparture1}}</td></tr>
@@ -22,13 +23,13 @@
 
         <tr><td> Connection Details</td> </tr><td>
         <div ng-repeat="connectionDetail in fullTravelDetails.departure.flightLegs">
-            <div>Departing From {{connectionDetail.departureAirportFsCode}} </div>
+            <div>Departing From {{getairportsindi(connectionDetail.departureAirportFsCode)}} ({{connectionDetail.departureAirportFsCode}})</div>
             <div>Departing At {{connectionDetail.departureTime}} </div>
             <div>Terminal  {{connectionDetail.departureTerminal}}</div>
-            <div>Arriving To:  {{connectionDetail.arrivalAirportFsCode}}</div>
+            <div>Arriving To:  {{getairportsindi(connectionDetail.arrivalAirportFsCode)}} ({{connectionDetail.arrivalAirportFsCode}})</div>
             <div>Arriving at:  {{connectionDetail.arrivalTime}}</div>
             <div>Terminal {{connectionDetail.arrivalTerminal}}</div>
-            <div>Carrier Airline {{connectionDetail.carrierFsCode}}</div>
+            <div>Carrier Airline {{getAirlineFullInfoFromCode(connectionDetail.carrierFsCode)}} ({{connectionDetail.carrierFsCode}})</div>
             <div>Flight Number {{connectionDetail.flightNumber}}</div>
             <div>Day difference between source and destination {{connectionDetail.arrivalDateAdjustment}}</div>
             <div>Distance in Miles {{connectionDetail.distanceMiles}}</div>
@@ -42,10 +43,10 @@
     <table ng-show="showsecondpartofflightbooking">
         <tr><th><div><h4>{{flightDetailsSecondPart}}</h4></div></th></tr>
 
-        <tr> <td>Departing From </td> <td>{{fullTravelDetails.arrival.departureAirportFsCode}}</td></tr>
-          <tr><td>Departing Airport Code </td> <td> {{getairportsindi(fullTravelDetails.arrival.departureAirportFsCode)}}</td></tr>
-        <tr><td>Arriving To </td> <td>{{fullTravelDetails.arrival.arrivalAirportFsCode}}</td></tr>
-        <tr><td>Arriving Airport Code </td> <td> {{getairportsindi(fullTravelDetails.arrival.arrivalAirportFsCode)}}</td></tr>
+        <tr> <td>Departing From </td> <td>{{getairportsindi(fullTravelDetails.arrival.departureAirportFsCode)}}</td></tr>
+          <tr><td>Departing Airport Code </td> <td> {{fullTravelDetails.arrival.departureAirportFsCode}}</td></tr>
+        <tr><td>Arriving To </td> <td> {{getairportsindi(fullTravelDetails.arrival.arrivalAirportFsCode)}}</td></tr>
+        <tr><td>Arriving Airport Code </td> <td>{{fullTravelDetails.arrival.arrivalAirportFsCode}}</td></tr>
 
         <tr><td>Departing On </td> <td>{{departureDate2}}</td></tr>
         <tr><td>Reaching On </td> <td>{{departureDate3}}</td></tr>
@@ -55,11 +56,13 @@
 
 <tr><td> Connection Details</td> </tr><td>
         <div ng-repeat="connectionDetail in fullTravelDetails.arrival.flightLegs">
-            <div>Departing From: At {{connectionDetail.departureTime}} </div>
+            <div>Departing From {{getairportsindi(connectionDetail.departureAirportFsCode)}} ({{connectionDetail.departureAirportFsCode}})</div>
+            <div>Departing At {{connectionDetail.departureTime}} </div>
             <div>Terminal  {{connectionDetail.departureTerminal}}</div>
-            <div>Arriving To:  {{connectionDetail.arrivalTime}}</div>
+            <div>Arriving At time:  {{connectionDetail.arrivalTime}}</div>
+            <div>Arriving To :  {{getairportsindi(connectionDetail.arrivalAirportFsCode)}} ({{connectionDetail.arrivalAirportFsCode}})</div>
             <div>Terminal {{connectionDetail.arrivalTerminal}}</div>
-            <div>Carrier Airline {{connectionDetail.carrierFsCode}}</div>
+            <div>Carrier Airline {{getAirlineFullInfoFromCode(connectionDetail.carrierFsCode)}}({{connectionDetail.carrierFsCode}})</div>
             <div>Flight Number {{connectionDetail.flightNumber}}</div>
             <div>Day difference between source and destination {{connectionDetail.arrivalDateAdjustment}}</div>
             <div>Distance in Miles {{connectionDetail.distanceMiles}}</div>
@@ -74,21 +77,28 @@
 
     <button data-ng-click="showconfirmationorloginwindow();" data-ng-show="toshowfirst">{{bookingbuttontitle}}</button>
     <button data-ng-click="checkoutguest();" data-ng-show="toshowsecond">Checkout As Guest/Register</button>
-    <button data-ng-show="toshowconfirmbutton" data-ng-click="finalconfirmbooking()">Confirm Booking </button>
-    <button data-ng-click="open('sm')">click me</button>
+    <button data-ng-show="toshowconfirmbutton" data-ng-click="open('sm')">Confirm Booking </button>
+    <!--<button data-ng-click="open('sm')" ng-hidden="true">click me</button>-->
 <div>{{bottomarrivalstatus}}</div>
-
 
     <script type="text/ng-template" id="bookingconfirmation">
         <div class="modal-header">
             <h3 class="modal-title">You are about to book selected flight</h3>
         </div>
-        <div class="modal-body">
 
-            Please press ok to continue, cancel to discard reservation and update information
+        <div class="modal-body">
+            Please enter addtional email addresses where you would like to recieve confirmation of your booking
+            <input type="text" class="form-control" id="emailAddress" placeholder="Enter email Addresses" ng-model="emailAddresses">
+
+            Please enter phone number to recieve frequent updates about booking
+            <input type="text" class="form-control" id="phoneNumbeers" placeholder="Enter Phone Number" ng-model="phoneNumber">
+
+
+
         </div>
         <div class="modal-footer">
-            <button class="btn btn-primary" ng-click="ok()">OK</button>
+            Please press ok to continue, cancel to discard reservation and update information:
+            <button class="btn btn-primary" ng-click="ok(emailAddresses,phoneNumber)">OK</button>
             <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
         </div>
     </script>

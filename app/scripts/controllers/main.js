@@ -310,7 +310,7 @@ airlinetravelmodule.controller('samcontroller',function($scope, $http, $log, pro
 
         var expiryTime = new Date(JSON.parse(localStorage.getItem('authTokenInfo')).tokenexpirytime);
         var currentTime = new Date();
-
+//asdsa
         console.log("now time"+currentTime+ "Future time"+ expiryTime);
         if(currentTime>expiryTime){
 
@@ -333,11 +333,13 @@ airlinetravelmodule.controller('samcontroller',function($scope, $http, $log, pro
                 headers: {'Content-Type': 'application/x-www-form-urlencoded'}
             }).success(function (data, status, headers, config) {
 
-                    console.log(data);
+                    console.log(data+ "whole data we have");
 
                     if(data.success==true){
+
                         data.tokenexpirytime=addMinutes(new Date(),30);
                         data.firstname=previousFirstName;
+
                         localStorage.setItem('authTokenInfo',JSON.stringify(data));
 
                     }
@@ -360,6 +362,10 @@ airlinetravelmodule.controller('samcontroller',function($scope, $http, $log, pro
         console.log("no session exists");
     }
 
+
+    $scope.sampleFunction=function(){
+        console.log("Working");
+    }
 
     if(!localStorage.getItem('authTokenInfo')){
         $scope.loginlogouttext="Login";
@@ -1183,9 +1189,10 @@ var ModalInstanceCtrl = function ($scope, $modalInstance, items) {
 
 
 
-    console.log("dssa "+items);
-    $scope.ok = function () {
-        $modalInstance.close("Confirmed");
+
+    $scope.ok = function (emailAddresses,phoneNumber) {
+var data=[emailAddresses,phoneNumber];
+        $modalInstance.close(data);
     };
 
     $scope.cancel = function () {
@@ -1195,17 +1202,70 @@ var ModalInstanceCtrl = function ($scope, $modalInstance, items) {
 
 airlinetravelmodule.controller('DetailController',function($scope,$routeParams,$modal,$http){
 
+$scope.value="asdagara";
+
+
+    var QueryString = function () {
+        // This function is anonymous, is executed immediately and
+        // the return value is assigned to QueryString!
+        var query_string = {};
+        var query = window.location.search.substring(1);
+        var vars = query.split("&");
+        for (var i=0;i<vars.length;i++) {
+            var pair = vars[i].split("=");
+            // If first entry with this name
+            if (typeof query_string[pair[0]] === "undefined") {
+                query_string[pair[0]] = pair[1];
+                // If second entry with this name
+            } else if (typeof query_string[pair[0]] === "string") {
+                var arr = [ query_string[pair[0]], pair[1] ];
+                query_string[pair[0]] = arr;
+                // If third or later entry with this name
+            } else {
+                query_string[pair[0]].push(pair[1]);
+            }
+        }
+        return query_string;
+    } ();
+
+
+
+    console.log(QueryString.confirmationcode+ " &&& "+ QueryString.reservationretrievalemail);
+
+
+
+
+
+
+
+
+
     //Put logic to check if user has valid auth token or not
+    console.log("These are routeparams "+JSON.stringify($routeParams));
+    var dataWithFullNameForAirportsAndAirlines={};
 
-
+    var arrayForAllAirlinesInfo= JSON.parse(localStorage.getItem('airlines'));
+    airportsDeepDetailsGlobal=JSON.parse(localStorage.getItem('allAvailableAirportDetailsWithFullNames'));
+    console.log(airportsDeepDetailsGlobal+ " Total aiport entry ");
 
     $scope.toshowconfirmbutton=false;
 
 
 
-//End of workaround for Angular's post http request not working
 
+$scope.getAirlineFullInfoFromCode=function(airlineFSCode){
+
+    for (var i in arrayForAllAirlinesInfo) {
+        if(arrayForAllAirlinesInfo[i].fs===airlineFSCode){
+            dataWithFullNameForAirportsAndAirlines[airlineFSCode]=arrayForAllAirlinesInfo[i].name;
+            return dataWithFullNameForAirportsAndAirlines[airlineFSCode];
+            break;
+        }
+    }
+    return airlineFSCode;
+}
     $scope.open = function () {
+
 
         var modalInstance = $modal.open({
             templateUrl: 'bookingconfirmation',
@@ -1213,33 +1273,42 @@ airlinetravelmodule.controller('DetailController',function($scope,$routeParams,$
             size: 'sm',
             resolve: {
                 items: function () {
-                    return "Nothing";
+
                 }
             }
         });
 
-        modalInstance.result.then(function (okResult) {
+        modalInstance.result.then(function (data1) {
+
+            //console.log(data1[0]+" Result of booking data "+data1[1]);
             //User has confirmed to send infomration to server and reserve booking
             //Book ticket, make database entry and send email and pdf
             var dataToSendForBookingConfirmation=[];
 
             if(localStorage.getItem('authTokenInfo')){
 
+
                 dataToSendForBookingConfirmation.push(JSON.parse(localStorage.getItem('authTokenInfo')));
 
             }
             else{
+
                 //User did not login, nor does it have an account - This option falls into case where user is doing guest checkout and
                 //We need some mechanism to keep track of user informaiton. Probably auto enroll him in the registration while checking out
                 //As a guest. That seems closest possible approach to follow
+
             }
 
             if(localStorage.getItem('historySearchData')){
-
-                dataToSendForBookingConfirmation.push(JSON.parse(localStorage.getItem('historySearchData')));
-
+                var historySearchData=JSON.parse(localStorage.getItem('historySearchData'));
+               //These are addiitonal fields added in case user wants to receive updates via extra means
+                historySearchData.additionalEmails=data1[0];
+                historySearchData.phoneNumberToSend=data1[1];
+                dataToSendForBookingConfirmation.push(historySearchData);
             }
-
+//            dataToSendForBookingConfirmation.push(JSON.parse(localStorage.getItem('allAvailableAirportDetailsWithFullNames')));
+  //          dataToSendForBookingConfirmation.push(JSON.parse(localStorage.getItem('airlines')));
+            dataToSendForBookingConfirmation.push(dataWithFullNameForAirportsAndAirlines);
             dataToSendForBookingConfirmation.push(JSON.parse(localStorage.getItem('goingoutdetails')));
             //dataToSendForBookingConfirmation.push(JSON.parse(localStorage.getItem('updatedgoingoutdetail')));
 
@@ -1249,6 +1318,8 @@ airlinetravelmodule.controller('DetailController',function($scope,$routeParams,$
               //  dataToSendForBookingConfirmation.push(JSON.parse(localStorage.getItem('updatedcomingindetail')));
 
             }
+
+
 
 
             $http.post('http://www.jayeshkawli.com/airlinetravel/finalbookingconfirmation.php', { bookinginformation: dataToSendForBookingConfirmation }).success(function(response) {
@@ -1297,23 +1368,13 @@ airlinetravelmodule.controller('DetailController',function($scope,$routeParams,$
     console.log("tripdirection "+ tripDirection);
 
     if(Object.keys(airportsDeepDetailsGlobal).length>0){
-        //console.log("***non empty");
+
         if(localStorage.getItem('allAvailableAirportDetailsWithFullNames')){
             localStorage.removeItem('allAvailableAirportDetailsWithFullNames');
         }
-
-
         localStorage.setItem( 'allAvailableAirportDetailsWithFullNames', JSON.stringify(airportsDeepDetailsGlobal) );
 
     }
-
-    airportsDeepDetailsGlobal=JSON.parse(localStorage.getItem('allAvailableAirportDetailsWithFullNames'));
-    console.log(airportsDeepDetailsGlobal+ " Total aiport entry ");
-
-
-
-
-
 
     $scope.toshowfirst=true;
     $scope.toshowsecond=true;
@@ -1376,9 +1437,7 @@ airlinetravelmodule.controller('DetailController',function($scope,$routeParams,$
         }
     }
 
-    $scope.finalconfirmbooking=function(){
-        console.log("Confirm Booking");
-    }
+
 
     if(tripDirection=="OneWay"){
         console.log("still one");
@@ -1433,7 +1492,7 @@ airlinetravelmodule.controller('DetailController',function($scope,$routeParams,$
         $scope.flightDetailsFirstPart="Two way flight details - First Part";
         $scope.flightDetailsSecondPart="Two way flight details - Second Part";
         console.log(JSON.stringify($scope.fullTravelDetails.departure)+" Object full description ");
-        console.log(JSON.parse(localStorage.getItem('updatedcomingindetail')).updatedcomingindetail+" Departure date returning");
+        //console.log(JSON.parse(localStorage.getItem('updatedcomingindetail')).updatedcomingindetail+" Departure date returning");
 
 
        // if(JSON.parse(localStorage.getItem('updatedgoingoutdetail'))){
@@ -1481,13 +1540,19 @@ airlinetravelmodule.controller('DetailController',function($scope,$routeParams,$
 
     }
 
+    console.log("One way -->        "+JSON.stringify($scope.fullTravelDetails.departure));
+
+    console.log("Two way -->   "+ JSON.stringify($scope.fullTravelDetails.arrival));
+
     $scope.getairportsindi=function(iatacode){
         // $scope.airportTitle=iatacode;
 
         // console.log(airportsDeepDetailsGlobal[iatacode].name+ " sad "+iatacode);
         if(airportsDeepDetailsGlobal.hasOwnProperty(iatacode)){
-            //console.log("NON EMPTY");
-            return airportsDeepDetailsGlobal[iatacode].name;
+            dataWithFullNameForAirportsAndAirlines[iatacode]=airportsDeepDetailsGlobal[iatacode].name
+
+
+            return dataWithFullNameForAirportsAndAirlines[iatacode];
         }
         else{
             //console.log("EMPTY");
@@ -1527,9 +1592,9 @@ airlinetravelmodule.controller('showflightscontroller',function($scope,$http,$ro
         localStorage.removeItem('updatedcomingindetail');
     }
 
-    if(localStorage.getItem('updatedgoingoutdetail')){
-        localStorage.removeItem('updatedgoingoutdetail');
-    }
+    //if(localStorage.getItem('updatedgoingoutdetail')){
+      //  localStorage.removeItem('updatedgoingoutdetail');
+    //}
 
 
     var isBookingReturnFlight=0;
@@ -1592,26 +1657,26 @@ airlinetravelmodule.controller('showflightscontroller',function($scope,$http,$ro
         }
 
 
-      //  var updatedate;
+
         var previouslyStoredHistorySearchData=JSON.parse(localStorage.getItem('historySearchData'));
         if(!isBookingReturnFlight){
 
-           // updatedate={updatedgoingoutdetail:$scope.departureDate};
+
             previouslyStoredHistorySearchData.leavingOutOn=$scope.departureDate;
-           // localStorage.setItem('updatedgoingoutdetail',JSON.stringify(updatedate));
+
 
         }
         else{
 
-           // updatedate={updatedcomingindetail:$scope.departureDate};
+
             previouslyStoredHistorySearchData.comingInOn=$scope.departureDate;
-            //localStorage.setItem('updatedcomingindetail',JSON.stringify(updatedate));
+
 
         }
 
 
         localStorage.setItem('historySearchData',JSON.stringify(previouslyStoredHistorySearchData));
-//console.log("Son of a bitch"+ updatedeparturedate.updatedgoingoutdetail);
+
 
         if(isBookingReturnFlight){
             getFlightFromGivenParameters(getParameteresDictionary.destination,getParameteresDictionary.source,$scope.departureDate,getParameteresDictionary.comingindate,connectionType,numberOfDaysToRetrieveFlight);
@@ -1681,7 +1746,7 @@ airlinetravelmodule.controller('showflightscontroller',function($scope,$http,$ro
 
 
     var getSampleAllAirlinesObject=function(){
-        return {iata:"clearall", name:'All Airlines'};
+        return {iata:"clearall", name:'All Airlines',fs:""};
     }
 
 
@@ -1845,7 +1910,7 @@ airlinetravelmodule.controller('showflightscontroller',function($scope,$http,$ro
 
             $scope.departuredate=originalDepartureDate;
             console.log(originalDepartureDate+ "///");
-            localStorage.setItem('updatedcomingindetail',JSON.stringify({updatedcomingindetail:originalDepartureDate}));
+            //localStorage.setItem('updatedcomingindetail',JSON.stringify({updatedcomingindetail:originalDepartureDate}));
 
             getFlightFromGivenParameters(getParameteresDictionary.destination,getParameteresDictionary.source,getParameteresDictionary.comingindate,getParameteresDictionary.leavingdate,connectionType,numberOfDaysToRetrieveFlight);
 
@@ -2445,7 +2510,7 @@ airlinetravelmodule.controller('flightsearchcontroller',function($scope,$http,$w
         //console.log("hahaha 100 "+modalDate);
         userHistorydata.leavingOutOn=$scope.leavingOut;
         userHistorydata.comingInOn=$scope.comingIn;
-
+    userHistory.travelclass=travelClass;
 
         localStorage.setItem('historySearchData',JSON.stringify(userHistorydata));
 

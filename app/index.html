@@ -153,16 +153,27 @@
     ga('create', 'UA-XXXXX-X');
     ga('send', 'pageview');
 
+function setPreviouslyStoredValue(){
+    setTimeout( function(){
+        if(localStorage.getItem('recordlocatorcode')){
+            console.log((JSON.parse(localStorage.getItem('recordlocatorcode')).confirmationCode+ " haha  "));
+            document.getElementById('recordlocator').value=JSON.parse(localStorage.getItem('recordlocatorcode')).confirmationCode;
+            document.getElementById('bookingretrievalemail').value=JSON.parse(localStorage.getItem('recordlocatorcode')).emailaddress;
+        }
+    }, 5 );
 
+}
     function toremember(checkboxfield){
 
         console.log(checkboxfield.checked);
-        if(!document.getElementById('recordlocator').value){
+        if(!document.getElementById('recordlocator').value || !document.getElementById('bookingretrievalemail').value ){
             checkboxfield.checked=false;
         }
         else{
             if(checkboxfield.checked){
-                localStorage.setItem('recordlocatorcode',document.getElementById('recordlocator').value);
+                localStorage.setItem('recordlocatorcode',JSON.stringify({confirmationCode:document.getElementById('recordlocator').value,emailaddress:document.getElementById('bookingretrievalemail').value}));
+
+
             }
             else{
                 localStorage.removeItem('recordlocatorcode');
@@ -647,40 +658,42 @@ Not needed for now
 
     <li class="submenu"><a data-html="true"  ng-click="showLoginViewOnClick();" >{{loginlogouttext}}</a></li>
     <li class="submenu"><a data-html="true" data-toggle="modal" ng-click="viewingProfileInfoForEditing(false);" class="btn-link" data-placement="bottom" data-original-title="Register for new account" >Register</a></li>
-    <li><button class="btn" id="loginbutton" data-toggle="popover" data-placement="bottom" data-html="true" data-original-title="Click to Retrieve Reservation" data-title="<div style='width:800px'>asdasdas</div>"
-                data-content="<div><form class='form-horizontal' role='form' action='http://jayeshkawli.com/airlinetravel/retrievereservation.php' target='_blank' method='post'>
+    <li><button class="btn" onclick="setPreviouslyStoredValue()" id="loginbutton" data-toggle="popover" data-placement="bottom" data-html="true" data-original-title="Click to Retrieve Reservation" data-title="<div style='width:800px'>asdasdas</div>"
+                data-content="<div ng-controller='samcontroller'><form class='form-horizontal' role='form' method='GET' action='#/retrievebooking'>
+ <div style='margin-left:0px'>
   <div class='form-group'>
-    <label for='inputEmail3' class='col-sm-2 control-label'>Confirmation Code</label>
-    <div class='col-sm-9' style='margin-left:10px'>
-      <input required='true' class='form-control' style='margin-left:20px' id='recordlocator' placeholder='Confirmation Code'>
+    <label for='recordlocator' class='col-sm-2 control-label'>Confirmation Code</label>
+    <div class='col-sm-8'>
+      <input required='true' maxlength='7' class='col-sm-offset-2 form-control' name='confirmationcode' id='recordlocator' placeholder='Confirmation Code'>
     </div>
   </div>
-  <!--<div class='form-group'>
-    <label for='inputPassword3' class='col-sm-2 control-label'>Password</label>
-    <div class='col-sm-9'>
-      <input type='password'  class='form-control' style='margin-left:30px' id='inputPassword3' placeholder='Password'>
-    </div>
-  </div>-->
+
   <div class='form-group'>
-    <div class='col-sm-offset-2 col-sm-10'>
-      <div class='checkbox'>
-        <label>
-          <input type='checkbox' onclick='toremember(this);'> Remember Reservation
-        </label>
-      </div>
+     <label for='bookingretrievalemail' class='col-sm-2 control-label'>Email address</label>
+    <div class='col-sm-8'>
+      <input type='email' required='true' class='col-sm-offset-2 form-control' name='reservationretrievalemail' id='bookingretrievalemail' placeholder='Enter email At the time of booking ticket'>
     </div>
   </div>
+
+  <div class='checkbox'>
+    <label class='col-sm-8 control-label'>
+      <input type='checkbox' onclick='toremember(this);'> Remember Reservation
+    </label>
+  </div>
   <div class='form-group'>
-    <div class='col-sm-offset-2 col-sm-10'>
-
-
-      <button type='submit' onclick='savereservationinfo()'  id='submitreservationrequest'  class='btn btn-primary'>Retrieve Reservation</button>
-
-
-
+    <div class='col-sm-8 control-label'>
+      <label class='col-sm-8 control-label'>
+      <div>
+      <button type='submit' ng-click='sampleFunction();'   id='submitreservationrequest'  class='btn btn-primary'>Retrieve Reservation</button>
+    </div>
+    </label>
     </div>
   </div>
+</div>
+
 </form>" style="margin-top:10px;">Reservation</button></li>
+
+
 
     <li class="dropdown">
         <a class="dropdown-toggle" data-toggle="dropdown">Dropdown <b class="caret"></b></a>
