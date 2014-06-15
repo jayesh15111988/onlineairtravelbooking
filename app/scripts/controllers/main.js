@@ -302,11 +302,11 @@ airlinetravelmodule.controller('userupdatecontroller',function($scope){
 });
 
 
-airlinetravelmodule.controller('samcontroller',function($scope, $http, $log, promiseTracker, $timeout,$window,$rootScope,sharedService){
+airlinetravelmodule.controller('samcontroller',function($scope, $http, $log, promiseTracker, $timeout,$window,$rootScope,sharedService,$modal){
 
     //console.log("parent one controller came");
     $scope.passwordsnotmatch=false;
-
+//$scope.toShowDropdownMenuForResrevationRetrieval=false;
 
     // another controller or even directive
 
@@ -319,6 +319,11 @@ airlinetravelmodule.controller('samcontroller',function($scope, $http, $log, pro
         $scope.toShowDropdownMenuForResrevationRetrieval=true;
 
     });
+
+    $scope.salutations=['Mr.','Ms.','Mrs.','Dear'];
+
+$scope.salutation=$scope.salutations[0];
+
 
     if(localStorage.getItem('authTokenInfo')){
 
@@ -476,7 +481,7 @@ $scope.toRememberSelection=true;
         }
         else{
             loguserout();
-            console.log("You are already signed in");
+            console.log("You were already signed in and now forcibly logged out by our system");
         }
     }
     //We will be using ajax request using jQuery because Angular request mechanism is a piece of shit and gives access control allow origin error
@@ -829,9 +834,31 @@ $scope.toRememberSelection=true;
         console.log("Sending..");
     }
 
+    //Special Controler for modal view that we will use to notify user that he is already logged in
+    //And needs to logout first to create a new profile
+    var ModalInstanceCtrl = function ($scope, $modalInstance, items) {
+
+        $scope.items = items;
+       $scope.selected = {
+            item: $scope.items[0]
+        };
+var selectedIndex=0;
+$scope.setSelectedItem=function(index,item){
+    $scope.selected.item = item;
+    selectedIndex=index;
+}
+        $scope.ok = function () {
+            $modalInstance.close(selectedIndex);
+        };
+
+        $scope.cancel = function () {
+            $modalInstance.dismiss('cancel');
+        };
+    };
+
     $scope.viewingProfileInfoForEditing=function(isEditing){
         isEditingUserRegistrationInfo=isEditing;
-        // console.log("is eidting"+ isEditing);
+
 
         if(isEditing===true){
 
@@ -845,7 +872,36 @@ $scope.toRememberSelection=true;
         }
         else{
             console.log("Creating a new profile");
+            if(localStorage.getItem('userauthinfo')){
+                $scope.items = [{name:'Undecided'}, {name:'Remain Logged In wihtout creating an additional account'},{name:'Logout and create new account'}];
+
+                var modalInstance = $modal.open({
+                    templateUrl: 'alreadyRegisteredNotificationModal',
+                    controller: ModalInstanceCtrl,
+                    size: 'sm',
+                    resolve: {
+                        items: function () {
+                            return $scope.items;
+                        }
+                    }
+                });
+
+                modalInstance.result.then(function (selectedIndex) {
+                    console.log("Selected Index "+selectedIndex );
+                    //If selected option is index = 2 then user wish to logout of current account and create additional one
+                    //Use this carefully, we are logigng current user out
+                    if(selectedIndex==2){
+                    loguserout();
+                    }
+
+                }, function () {
+                    $log.info('Modal dismissed at: ' + new Date());
+                });
+
+
+            }else{
             $("#registerview").modal('show');
+            }
 
         }
 
@@ -891,6 +947,7 @@ $scope.toRememberSelection=true;
     var today = new Date();
     var dd = today.getDate();
     var mm = today.getMonth()+1; //January is 0!
+    //This is where we set maximum birthday date for the user
     var yyyy = today.getFullYear()-10;
 
     if(dd<10) {
@@ -1092,6 +1149,32 @@ $scope.toRememberSelection=true;
             });
     }
 
+    //Prototype method for replacing all occurrences of specific character in a string
+    /*String.prototype.replaceAll = function(str1, str2, ignore)
+    {
+        return this.replace(new RegExp(str1.replace(/([\,\!\\\^\$\{\}\[\]\(\)\.\*\+\?\|\<\>\-\&])/g, function(c){return "\\" + c;}), "g"+(ignore?"i":"")), str2);
+    };*/
+
+    $scope.$watch('telephonenumber',function(n,o){
+        if(n && o){
+            var lengthOfInput= n.length;
+            var oldLength= o.length;
+
+        if(lengthOfInput>12){
+
+            $scope.telephonenumber=o;
+
+        }
+            else if((lengthOfInput==3 || lengthOfInput==7) && oldLength<lengthOfInput){
+            $scope.telephonenumber=n+"-";
+
+        }
+
+        }
+    },true);
+
+
+
     $scope.submit=function(form){
         console.log("submit pressed");
 
@@ -1102,19 +1185,28 @@ $scope.toRememberSelection=true;
         console.log($scope.reject+" reject");
         $scope.submitted = true;
 
+        var regex = /^\d{3}-?\d{3}-?\d{4}$/g
+        var isTelephoneNumber= regex.test($scope.telephonenumber);
 
-        if($scope.password!==$scope.repassword){
-            $scope.passwordsnotmatch=true;
+        if(!isTelephoneNumber){
+            $scope.telephoneError=true;
         }
+        if($scope.password!==$scope.repassword){
 
+            $scope.passwordError=true;
+        }
+$scope.showTCError=!$scope.didConditionsAccepted;
 
         // If form is invalid, return and let AngularJS show validation errors.
-        if (form.$invalid || !$scope.didConditionsAccepted || $scope.passwordsnotmatch) {
+        if (form.$invalid || !$scope.didConditionsAccepted || $scope.passwordsnotmatch || $scope.telephoneError) {
             return;
         }
 
         var authTokenInfoFromLocalStorage=JSON.parse(localStorage.getItem('authTokenInfo'));
-
+var authToken='';
+        if(authTokenInfoFromLocalStorage){
+            authToken=authTokenInfoFromLocalStorage.authtoken;
+        }
         var formData={
             'salutation':$scope.salutation,
             'firstname':$scope.firstname,
@@ -1134,7 +1226,7 @@ $scope.toRememberSelection=true;
             'telephonenumber':$scope.telephonenumber,
             'languagechoice':$scope.languagechoice,
             'comments':$scope.comments,
-            'Authorization': authTokenInfoFromLocalStorage.authtoken
+            'Authorization': authToken
         }
 
 
@@ -1195,7 +1287,9 @@ function sendUserDataToServer(formData,$scope,isCreatingUser,$http){
                 $scope.userfirstnamedisplay=data.firstname;
                 console.log("Success");
                 if(isCreatingUser){
-                    $scope.dismissRegPage();
+
+                    $("#registerview").modal('hide');
+//                    $scope.dismissRegPage();
                     $scope.showSecondPage();
                 }
                 else{
@@ -1207,8 +1301,10 @@ function sendUserDataToServer(formData,$scope,isCreatingUser,$http){
             }
             else if (data.success===false){
 
+                alert("User Creation failed with an error -> "+data.errorinfo);
                 localStorage.setItem( 'serverregistrationerror', serverResponseData);
                 console.log("failture with error "+data.errorinfo);
+
             }
         }).error(function (data, status, headers, config) {
 

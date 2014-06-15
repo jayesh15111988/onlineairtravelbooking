@@ -671,6 +671,30 @@ Not needed for now
             <li><a href="#">Item</a>
         </ul>
     -->
+<!--Beginning of Modal content for notice that user is alreadu logged in the account -->
+
+    <script type="text/ng-template" id="alreadyRegisteredNotificationModal">
+        <div class="modal-header">
+            <h3 class="modal-title">You must log out of the current account before creating new one</h3>
+        </div>
+
+        <div class="modal-body">
+            Please select one of the options below and press Ok. Press cancel to prevent any changes further.
+            <ul>
+                <li ng-repeat="item in items">
+                    <a ng-click="setSelectedItem($index,item)">{{ item.name }}</a>
+                </li>
+            </ul>
+            I prefer to: <b>{{ selected.item.name }}</b>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" ng-click="ok()">OK</button>
+            <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+        </div>
+    </script>
+    <!--End of Modal content for notice that user is alreadu logged in the account -->
+
+
 
     <li class="submenu"><a data-html="true"  ng-click="showLoginViewOnClick();" >{{loginlogouttext}}</a></li>
     <li class="submenu"><a data-html="true" data-toggle="modal" ng-click="viewingProfileInfoForEditing(false);" class="btn-link" data-placement="bottom" data-original-title="Register for new account" >Register</a></li>
@@ -848,13 +872,18 @@ Not needed for now
 <div class="form-group">
     <label class="control-label" for="select01">Title</label>
     <div class="controls">
-        <select id="select03" ng-model="salutation">
 
-            <option>Mr.</option>
+        <select ng-model="salutation" ng-options="salutation for salutation in salutations">
+
+        </select>
+
+        <!--<select id="select03" ng-model="salutation">
+
+            <option >Mr.</option>
             <option>Mrs.</option>
             <option>Ms.</option>
             <option>Dear</option>
-        </select>
+        </select>-->
     </div>
 </div>
 
@@ -926,8 +955,8 @@ Not needed for now
     <div class="row">
 
         <div class="col-md-4">Zip Code:
-            <span class="label label-danger" data-ng-show="submitted && helpForm.zipcode.$error.required">Required!</span>
-            <input type="number" name="zipcode" ng-model="zipcode" maxlength="5" required>
+            <span class="label label-danger"  data-ng-show="submitted && helpForm.zipcode.$error.required">Required!</span>
+            <input type="text" maxlength="5" name="zipcode" ng-model="zipcode" required>
         </div>
 
         <div class="col-md-4">City:
@@ -941,27 +970,27 @@ Not needed for now
         </div>
     </div>
 
-    Enter you email address
+    Enter your email address
+
+
+
+
     <div class="row">
         <div class="col-lg-6">
             <div class="input-group">
 
-                                            <span class="input-group-addon">
-                                            <input type="radio">
-                                            </span>
-                <label></label>
+
                 <span class="label label-danger" data-ng-show="submitted && helpForm.email.$error.required">Required!</span>
+                <span class="label label-danger" data-ng-show="submitted && helpForm.email.$invalid">Email Not Valid!</span>
                 <input type="email" name="email" ng-model="email" class="form-control" placeholder="Email Address" required>
             </div>
         </div>
 
         <div class="col-lg-6">
             <div class="input-group">
-                                            <span class="input-group-addon">
-                                        <input type="radio">
-                                    </span>
-                <label></label>
+
                 <span class="label label-danger" data-ng-show="submitted && helpForm.reemail.$error.required">Required!</span>
+                <span class="label label-danger" data-ng-show="submitted && helpForm.reemail.$invalid">Email Not Valid!</span>
                 <input type="email" name="reemail" ng-model="reemail" class="form-control" placeholder="Re-enter Email address" required>
             </div><!-- /input-group -->
         </div><!-- /.col-lg-6 -->
@@ -980,7 +1009,7 @@ Not needed for now
             <span class="label label-danger" data-ng-show="submitted && helpForm.userid.$error.required">Required!</span>
             <input type="text" name="userid" ng-model="userid" required>
         </div>
-
+<div class="label label-danger" data-ng-show="passwordError">Passwords Should Match</div>
         <div class="col-md-4">Password:
             <span class="label label-danger" data-ng-show="submitted && helpForm.password.$error.required">Required!</span>
             <input type="password" name="password" ng-model="password" required>
@@ -990,7 +1019,7 @@ Not needed for now
             <span class="label label-danger" data-ng-show="submitted && helpForm.repassword.$error.required">Required!</span>
             <input type="password" name="repassword" ng-model="repassword" required>
         </div>
-        <span class="label label-danger" data-ng-show="submitted && passwordsnotmatch">Passwords Must Match</span>
+
     </div>
 </div>
 <hr/>
@@ -1001,9 +1030,11 @@ Not needed for now
 
 <div class="control-group">
     <label class="control-label">Please enter you phone number</label>
+    <div ng-show="telephoneError" class="label label-danger">Invalid Phone Number</div>
     <div class="controls">
         <span class="label label-danger" data-ng-show="submitted && helpForm.telephonenumber.$error.required">Required!</span>
-        <input type="text" class="input-xlarge" id="input01" name="telephonenumber" ng-model="telephonenumber" required>
+
+        <input type="text" class="input-xlarge" name="telephonenumber" ng-model="telephonenumber" required>
 
 
     </div>
@@ -1025,7 +1056,7 @@ Not needed for now
     <div class="controls">
         <span class="label label-danger" data-ng-show="submitted && helpForm.languagechoice.$error.required">Required!</span>
         <select id="select01" name="languagechoice" ng-model="languagechoice" required>
-            <option></option>
+
             <option>English</option>
             <option>Hindi</option>
             <option>Spanish</option>
@@ -1047,7 +1078,7 @@ Not needed for now
         </select>
     </div>
 </div>
-
+<div class="label label-danger" data-ng-show="showTCError">Terms and Conditions must be accepted to create an account</div>
 
 Terms And Conditions
 <textarea class="form-control" rows="4">  Payment
