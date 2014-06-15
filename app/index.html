@@ -123,6 +123,40 @@
         transition: transform 100ms, opacity 120ms;
         opacity: 1;
     }
+.retrieve-reservation{
+    position:absolute;
+    left:-250px;
+    top:50px;
+    z-index:100;
+    background-color: #269abc;
+    text-decoration-color: aliceblue;
+    width:400px;
+    height:250px;
+
+}
+
+.error-class{
+    color: #ac2925;
+    font-size: 12px;
+    text-decoration: underline;
+}
+/* Arrow to the tooltip */
+    .arrow-up {
+
+        width: 0;
+        height: 0;
+        margin-top: -8px;
+        margin-left: 300px;
+        border-left: 10px solid transparent;
+        border-right: 10px solid transparent;
+        border-bottom: 10px solid #269abc;
+    }
+
+    .retrieve-reservation-subclass{
+        margin-top: 20px;
+        margin-left: 15px;
+    }
+
 
     .modal-body{
         background-color: #add8e6;
@@ -153,33 +187,8 @@
     ga('create', 'UA-XXXXX-X');
     ga('send', 'pageview');
 
-function setPreviouslyStoredValue(){
-    setTimeout( function(){
-        if(localStorage.getItem('recordlocatorcode')){
-            console.log((JSON.parse(localStorage.getItem('recordlocatorcode')).confirmationCode+ " haha  "));
-            document.getElementById('recordlocator').value=JSON.parse(localStorage.getItem('recordlocatorcode')).confirmationCode;
-            document.getElementById('bookingretrievalemail').value=JSON.parse(localStorage.getItem('recordlocatorcode')).emailaddress;
-        }
-    }, 5 );
-
-}
-    function toremember(checkboxfield){
-
-        console.log(checkboxfield.checked);
-        if(!document.getElementById('recordlocator').value || !document.getElementById('bookingretrievalemail').value ){
-            checkboxfield.checked=false;
-        }
-        else{
-            if(checkboxfield.checked){
-                localStorage.setItem('recordlocatorcode',JSON.stringify({confirmationCode:document.getElementById('recordlocator').value,emailaddress:document.getElementById('bookingretrievalemail').value}));
 
 
-            }
-            else{
-                localStorage.removeItem('recordlocatorcode');
-            }
-        }
-    }
 
 
 
@@ -373,9 +382,8 @@ function setPreviouslyStoredValue(){
     <div class="row">
 
 
-        <div class="col-md-4"> <label>First Name:</label>
+        <div class="col-md-4"> <label>First der Name:</label>
             <span class="label label-danger" data-ng-show="submitted && helpForm.firstname.$error.required">Required!</span>
-
             <input type="text"  name="firstname" ng-model="firstname" required="true"/></div>
         <div class="col-md-4"> <label> Middle Name:</label>
             <span class="label label-danger" data-ng-show="submitted && helpForm.middlename.$error.required">Required!</span>
@@ -398,10 +406,10 @@ function setPreviouslyStoredValue(){
         <div class="col-md-6">
             <p class="input-group">
                 <span class="label label-danger" data-ng-show="submitted && helpForm.birthdate.$error.required">Required!</span>
-                <input type="text" id="dob" name="birthdate" ng-model="birthdate" class="form-control" datepicker-popup="{{format}}" ng-model="dt" is-open="openedUpdate" min="minDate" max="'2015-06-22'" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" />
-              <span class="input-group-btn">
-                <button class="btn btn-default" ng-click="openUpdate($event)"><i class="glyphicon glyphicon-calendar"></i></button>
-              </span>
+                    <input type="text" id="" name="birthdate" ng-model="birthdate" class="form-control" datepicker-popup="{{format}}" ng-model="dt" is-open="openedUpdate" min="minDate" max="'2015-06-22'" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" />
+                        <span class="input-group-btn">
+                            <button class="btn btn-default" ng-click="openUpdate($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+                    </span>
             </p>
         </div>
     </div>
@@ -656,42 +664,76 @@ Not needed for now
     <li><a>Welcome {{userfirstnamedisplay}}</a></li>
     <li><a href="#/flightsearch" data-html="true" data-target="#" class="btn-link" data-placement="bottom"  data-original-title="Flight Search" >Flight Search</a></li>
 
+    <!--
+        <a class="dropdown-toggle" data-toggle="dropdown" href="#">Dropdown trigger</a>
+
+        <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+            <li><a href="#">Item</a>
+        </ul>
+    -->
+
     <li class="submenu"><a data-html="true"  ng-click="showLoginViewOnClick();" >{{loginlogouttext}}</a></li>
     <li class="submenu"><a data-html="true" data-toggle="modal" ng-click="viewingProfileInfoForEditing(false);" class="btn-link" data-placement="bottom" data-original-title="Register for new account" >Register</a></li>
-    <li><button class="btn" onclick="setPreviouslyStoredValue()" id="loginbutton" data-toggle="popover" data-placement="bottom" data-html="true" data-original-title="Click to Retrieve Reservation" data-title="<div style='width:800px'>asdasdas</div>"
-                data-content="<div ng-controller='samcontroller'><form class='form-horizontal' role='form' method='GET' action='#/retrievebooking'>
- <div style='margin-left:0px'>
-  <div class='form-group'>
-    <label for='recordlocator' class='col-sm-2 control-label'>Confirmation Code</label>
-    <div class='col-sm-8'>
-      <input required='true' maxlength='7' class='col-sm-offset-2 form-control' name='confirmationcode' id='recordlocator' placeholder='Confirmation Code'>
-    </div>
-  </div>
+    <li>
 
-  <div class='form-group'>
-     <label for='bookingretrievalemail' class='col-sm-2 control-label'>Email address</label>
-    <div class='col-sm-8'>
-      <input type='email' required='true' class='col-sm-offset-2 form-control' name='reservationretrievalemail' id='bookingretrievalemail' placeholder='Enter email At the time of booking ticket'>
-    </div>
-  </div>
 
-  <div class='checkbox'>
-    <label class='col-sm-8 control-label'>
-      <input type='checkbox' onclick='toremember(this);'> Remember Reservation
-    </label>
-  </div>
-  <div class='form-group'>
-    <div class='col-sm-8 control-label'>
-      <label class='col-sm-8 control-label'>
-      <div>
-      <button type='submit' ng-click='sampleFunction();'   id='submitreservationrequest'  class='btn btn-primary'>Retrieve Reservation</button>
-    </div>
-    </label>
-    </div>
-  </div>
-</div>
+    <li class="dropdown">
+    <button class="btn" ng-click="showHideDropDownMenu()" id="loginbutton"
+           style="margin-top:10px;">Reservation</button>
 
-</form>" style="margin-top:10px;">Reservation</button></li>
+        <div class="retrieve-reservation"  ng-show="toShowDropdownMenuForResrevationRetrieval">
+            <div class="arrow-up"></div>
+            <div><form class='form-horizontal' name="userForm" ng-submit="submitForm(userForm.$valid)" novalidate>
+                <div class="retrieve-reservation-subclass">
+                    <div class='form-group'>
+                        <label class='col-sm-2 control-label'>Confirmation Code</label>
+
+                        <div class='col-sm-8' ng-class="{ 'has-error' : userForm.recordlocator.$invalid && !userForm.recordlocator.$pristine }">
+                            <input required='true' ng-minlength='7' ng-maxlength='7' class='col-sm-offset-2 form-control' ng-model='recordlocator' ng-keydown="keyPressed($event)" ng-required="true" placeholder='Confirmation Code'>
+                        </div>
+                        <p ng-show="confirmationCodeLengthErrorDisplay">Confirmation Code must be exactly 7 digits long</p>
+
+
+                    </div>
+
+                    <div class='form-group'>
+                        <label class='col-sm-2 control-label'>Email address</label>
+                        <div class='col-sm-8' ng-class="{ 'has-error' : userForm.bookingretrievalemail.$invalid && !userForm.bookingretrievalemail.$pristine }">
+                            <input type='email' required='true' class='col-sm-offset-2 form-control' name='reservationretrievalemail' ng-required="true" ng-model='bookingretrievalemail' placeholder='Email at time of Booking Ticket'>
+                        </div>
+
+                    </div>
+                    <!--<div ng-show="showRetrievelError" class="help-block">{{errorMessage}}</div>-->
+                    <div class="error-class">{{errormessage}}</div>
+                    <div class='checkbox'>
+                        <label class='col-sm-8 control-label'>
+                            <input type='checkbox' ng-model='toRememberSelection' ng-change='toremember();'> Remember Reservation
+                        </label>
+                    </div>
+
+
+                                    <button type='submit'  ng-disabled="userForm.$invalid"    class='btn btn-primary retrieve-reservation-subclass'>Retrieve Reservation</button>
+
+
+
+                </div>
+
+            </form>
+
+            </div>
+
+        </div>
+    </li>
+
+
+
+       <!--
+        <button class="btn" onclick="setPreviouslyStoredValue()" id="loginbutton" data-toggle="popover" data-placement="bottom" data-html="true" data-original-title="Click to Retrieve Reservation" data-title="<div style='width:800px'>Retrieve Your Itinerary</div>"
+                data-content="" style="margin-top:10px;">Reservation</button>
+
+    -->
+
+    </li>
 
 
 
@@ -860,14 +902,10 @@ Not needed for now
 <hr/>
 
 <div class="form-group">
-
     <div class="col">
-
         <label for="selectCountry">Select Country</label><br/>
         <div class="controls">
             <span class="label label-danger" data-ng-show="submitted && helpForm.country.$error.required">Required!</span>
-
-
             <select id="selectCountry" name="country" ng-model="country" required>
 
                 <option ng-repeat="country in countrynameslist" value="{{country}}">{{country}}</option>
@@ -1218,3 +1256,4 @@ Bottom menu bar - Maybe wont be much useful for now
 
 
 
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     

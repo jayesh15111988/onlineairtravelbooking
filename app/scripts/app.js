@@ -75,7 +75,7 @@ angular.module('airtravelbookingappApp', [
                 controller: 'DetailController',
                 templateUrl: 'views/detail.html'
             })
-            .when('/retrievebooking', {
+            .when('/retrievebooking/:confirmationcode/:emailaddress', {
                 controller: 'DetailController',
                 templateUrl: 'views/detail.html'
             })
@@ -86,4 +86,16 @@ angular.module('airtravelbookingappApp', [
             .otherwise({
                 redirectTo: '/'
             });
+    })
+.service('sharedService',function(){
+        var property='';
+
+        return {
+            getProperty: function () {
+                return property;
+            },
+            setProperty: function(value) {
+                property = value;
+            }
+        };
     });

@@ -302,10 +302,24 @@ airlinetravelmodule.controller('userupdatecontroller',function($scope){
 });
 
 
-airlinetravelmodule.controller('samcontroller',function($scope, $http, $log, promiseTracker, $timeout,$window){
+airlinetravelmodule.controller('samcontroller',function($scope, $http, $log, promiseTracker, $timeout,$window,$rootScope,sharedService){
 
     //console.log("parent one controller came");
     $scope.passwordsnotmatch=false;
+
+
+    // another controller or even directive
+
+
+    $rootScope.$on("errorInReservationRetrieval", function (args) {
+
+        console.log(angular.toJson(args, true));
+        $scope.showRetrievelError=true;
+        $scope.errormessage=sharedService.getProperty();//"Record Not found for given Confirmation Code and email address";
+        $scope.toShowDropdownMenuForResrevationRetrieval=true;
+
+    });
+
     if(localStorage.getItem('authTokenInfo')){
 
         var expiryTime = new Date(JSON.parse(localStorage.getItem('authTokenInfo')).tokenexpirytime);
@@ -362,10 +376,90 @@ airlinetravelmodule.controller('samcontroller',function($scope, $http, $log, pro
         console.log("no session exists");
     }
 
+//For Reservation button and validation upon clicking a link
+    //We are removing all JS support for better practice
 
-    $scope.sampleFunction=function(){
-        console.log("Working");
+   $scope.toShowDropdownMenuForResrevationRetrieval=false;
+$scope.recordlocator='';
+    var currentConfirmationCodeLength=0;
+$scope.showHideDropDownMenu=function(){
+
+    if(!$scope.toShowDropdownMenuForResrevationRetrieval){
+    if(localStorage.getItem('recordlocatorcode')){
+
+        $scope.recordlocator=JSON.parse(localStorage.getItem('recordlocatorcode')).confirmationCode;
+        currentConfirmationCodeLength=$scope.recordlocator.length;
+        $scope.bookingretrievalemail=JSON.parse(localStorage.getItem('recordlocatorcode')).emailaddress;
+        $scope.toRememberSelection.checked=true;
     }
+        else{
+        $scope.toRememberSelection.checked=false;
+    }
+    }
+
+    $scope.toShowDropdownMenuForResrevationRetrieval=!$scope.toShowDropdownMenuForResrevationRetrieval;
+}
+
+    //$scope.$watch('recordlocator', function(newvalue, oldvalue){console.log("newvalue: " + newvalue);console.log("oldvalue: " + oldvalue);},true);
+    $scope.keyPressed=function(keyEvent){
+//console.log((keyEvent.keyCode)+" **** ");
+        //User Pressed Delete or backspace
+        if(keyEvent.keyCode==8){
+            if(currentConfirmationCodeLength!=0){
+currentConfirmationCodeLength-=1;
+            }
+        }
+        else if(keyEvent.keyCode==46){
+            currentConfirmationCodeLength=0;
+        }
+        else if(String.fromCharCode(keyEvent.keyCode) &&!(keyEvent.keyCode>36 && keyEvent.keyCode<41)){
+            currentConfirmationCodeLength+=1;
+        }
+
+            $scope.confirmationCodeLengthErrorDisplay=(currentConfirmationCodeLength>7);
+
+
+
+
+
+
+    }
+
+
+
+    $scope.submitForm = function(isValid) {
+
+        // check to make sure the form is completely valid
+        if (isValid) {
+
+            console.log($scope.recordlocator);
+            console.log($scope.bookingretrievalemail);
+            $scope.toShowDropdownMenuForResrevationRetrieval=false;
+            $window.location.href = "#/retrievebooking/"+$scope.recordlocator+"/"+$scope.bookingretrievalemail;
+        }
+
+    };
+
+$scope.toRememberSelection=true;
+
+    $scope.toremember=function (){
+
+        console.log($scope.toRememberSelection);
+        if(!$scope.recordlocator|| !$scope.bookingretrievalemail ){
+            $scope.toRememberSelection=false;
+        }
+        else{
+            if($scope.toRememberSelection){
+                localStorage.setItem('recordlocatorcode',JSON.stringify({confirmationCode:$scope.recordlocator,emailaddress:$scope.bookingretrievalemail}));
+
+
+            }
+            else{
+                localStorage.removeItem('recordlocatorcode');
+            }
+        }
+    }
+
 
     if(!localStorage.getItem('authTokenInfo')){
         $scope.loginlogouttext="Login";
@@ -668,7 +762,7 @@ airlinetravelmodule.controller('samcontroller',function($scope, $http, $log, pro
     /*$scope.$on("UPDATE_PARENT", function(event, formData){
      // $scope.foo = message;
      console.log("Parent received message");
-     sendUserDataToServer(formData,$scope,false);
+
      /*console.log("successful"+ message);
      //Broadcast to Child example part 1
      $scope.$broadcast("DO_BIDDING", {
@@ -883,11 +977,6 @@ airlinetravelmodule.controller('samcontroller',function($scope, $http, $log, pro
 
 
 
-
-    function addMinutes(date, minutes) {
-        return new Date(date.getTime() + minutes*60000);
-    }
-
     $scope.loguserin=function(form){
         //  console.log("user clicked login button");
         $scope.userloggedin=true;
@@ -966,7 +1055,7 @@ airlinetravelmodule.controller('samcontroller',function($scope, $http, $log, pro
 
                     localStorage.setItem( 'serverloginauthenticationsuccess', serverResponseData);
 
-                    localStorage.setItem('authTokenInfo',JSON.stringify({'authtoken':data.authorization,'emailaddress':data.emailaddress,'firstname':data.firstname,'tokenexpirytime':addMinutes(new Date(),30)}));
+                    localStorage.setItem('authTokenInfo',JSON.stringify({authtoken:data.authorization,emailaddress:data.emailaddress,firstname:data.firstname,tokenexpirytime:addMinutes(new Date(),30)}));
 
 
 
@@ -1001,26 +1090,6 @@ airlinetravelmodule.controller('samcontroller',function($scope, $http, $log, pro
                 $scope.messages = 'Your registration information has been unsuccessfully sent! No try again later...';
 
             });
-
-
-
-        /*setTimeout(function () {
-
-         if(success===true){
-         console.log("abt to exteute apply function");
-         $scope.$apply(function () {
-         console.log("coming coming coming...");
-         $scope.userfirstnamedisplay="asdasdsa";
-         $scope.loginlogouttext="Logoutasdsadas";
-         });
-         }
-         else{
-         console.log("nononono");
-         }
-
-         }, 1500);*/
-
-
     }
 
     $scope.submit=function(form){
@@ -1073,6 +1142,10 @@ airlinetravelmodule.controller('samcontroller',function($scope, $http, $log, pro
     }
 })
 
+function addMinutes(date, minutes) {
+    return new Date(date.getTime() + minutes*60000);
+}
+
 function sendUserDataToServer(formData,$scope,isCreatingUser,$http){
 
 
@@ -1117,10 +1190,8 @@ function sendUserDataToServer(formData,$scope,isCreatingUser,$http){
 
                 $scope.$emit('handleEmit', {message: isCreatingUser?1:2});
 
-
-
                 localStorage.setItem( 'serverloginauthenticationsuccess', serverResponseData);
-                localStorage.setItem('authTokenInfo',JSON.stringify({'authtoken':data.authorization,'emailaddress':data.emailaddress,'firstname':data.firstname}));
+                localStorage.setItem('authTokenInfo',JSON.stringify({'authtoken':data.authorization,'emailaddress':data.emailaddress,firstname:data.firstname,tokenexpirytime:addMinutes(new Date(),30)}));
                 $scope.userfirstnamedisplay=data.firstname;
                 console.log("Success");
                 if(isCreatingUser){
@@ -1189,22 +1260,50 @@ var ModalInstanceCtrl = function ($scope, $modalInstance, items) {
 
 
 
+    var isInputValid=false;
+
+
+
+$scope.errormessage="";
+
+    $scope.dothat=function(emailaddress){
+
+    //Each time user starts typing, cleat out previous error message
+        $scope.errormessage="";
+isInputValid=emailaddress.length>10;
+
+
+    }
+
+
+if(items){
+    $scope.emailAddresses=items;
+}
+
 
     $scope.ok = function (emailAddresses,phoneNumber) {
-var data=[emailAddresses,phoneNumber];
+if(isInputValid){
+        var data=[emailAddresses,phoneNumber];
         $modalInstance.close(data);
+}else{
+    $scope.errormessage="Please input valid email address";
+    console.log("Not valid input yet");
+}
     };
 
     $scope.cancel = function () {
+
         $modalInstance.dismiss('cancel');
+
     };
 };
 
-airlinetravelmodule.controller('DetailController',function($scope,$routeParams,$modal,$http){
-
-$scope.value="asdagara";
+airlinetravelmodule.controller('DetailController',function($scope,$routeParams,$modal,$http,$window,$rootScope,sharedService){
 
 
+    var isBookingNewFlight=false;
+    isBookingNewFlight = $routeParams.id;
+    $scope.showbookingdetails=!isBookingNewFlight;
     var QueryString = function () {
         // This function is anonymous, is executed immediately and
         // the return value is assigned to QueryString!
@@ -1228,156 +1327,166 @@ $scope.value="asdagara";
         return query_string;
     } ();
 
+    console.log(unescape(JSON.stringify(QueryString))+ " Received data From query ");
 
+    var urlEmailAddress=$routeParams.emailaddress;          //unescape(QueryString.reservationretrievalemail);
+    var urlConfirmationCode=$routeParams.confirmationcode;  //QueryString.confirmationcode;
 
-    console.log(QueryString.confirmationcode+ " &&& "+ QueryString.reservationretrievalemail);
+    $scope.getAirlineFullInfoFromCode=function(airlineFSCode){
 
-
-
-
-
-
-
-
-
-    //Put logic to check if user has valid auth token or not
-    console.log("These are routeparams "+JSON.stringify($routeParams));
-    var dataWithFullNameForAirportsAndAirlines={};
-
-    var arrayForAllAirlinesInfo= JSON.parse(localStorage.getItem('airlines'));
-    airportsDeepDetailsGlobal=JSON.parse(localStorage.getItem('allAvailableAirportDetailsWithFullNames'));
-    console.log(airportsDeepDetailsGlobal+ " Total aiport entry ");
-
-    $scope.toshowconfirmbutton=false;
-
-
-
-
-$scope.getAirlineFullInfoFromCode=function(airlineFSCode){
-
-    for (var i in arrayForAllAirlinesInfo) {
-        if(arrayForAllAirlinesInfo[i].fs===airlineFSCode){
-            dataWithFullNameForAirportsAndAirlines[airlineFSCode]=arrayForAllAirlinesInfo[i].name;
-            return dataWithFullNameForAirportsAndAirlines[airlineFSCode];
-            break;
+        //It mean we came on this page while making booking - AND NOT while retrieving it from database from previous activity
+        if(isBookingNewFlight){
+        for (var i in arrayForAllAirlinesInfo) {
+            if(arrayForAllAirlinesInfo[i].fs===airlineFSCode){
+                dataWithFullNameForAirportsAndAirlines[airlineFSCode]=arrayForAllAirlinesInfo[i].name;
+                return dataWithFullNameForAirportsAndAirlines[airlineFSCode];
+                break;
+            }
         }
+        }
+        else{
+            if(airportsDeepDetailsGlobal[airlineFSCode]){
+                return airportsDeepDetailsGlobal[airlineFSCode].fullname;
+            }
+        }
+        return airlineFSCode;
     }
-    return airlineFSCode;
-}
+
+
+    var isInputValid=false;
     $scope.open = function () {
 
-
         var modalInstance = $modal.open({
-            templateUrl: 'bookingconfirmation',
+            templateUrl: isBookingNewFlight?'bookingconfirmation':'sendpdfdoctoemailaddress',
             controller: ModalInstanceCtrl,
             size: 'sm',
             resolve: {
-                items: function () {
-
+                items:function () {
+                    if(!isBookingNewFlight){
+                        return urlEmailAddress;
+                    }
                 }
             }
         });
+modalInstance.checkif=function(isInputValidFromUser){
+
+isInputValid=isInputValidFromUser;
+}
 
         modalInstance.result.then(function (data1) {
 
-            //console.log(data1[0]+" Result of booking data "+data1[1]);
             //User has confirmed to send infomration to server and reserve booking
             //Book ticket, make database entry and send email and pdf
             var dataToSendForBookingConfirmation=[];
 
             if(localStorage.getItem('authTokenInfo')){
-
-
                 dataToSendForBookingConfirmation.push(JSON.parse(localStorage.getItem('authTokenInfo')));
-
             }
             else{
-
+                console.log("This is to fix ASAP - This is special case as descried below");
                 //User did not login, nor does it have an account - This option falls into case where user is doing guest checkout and
                 //We need some mechanism to keep track of user informaiton. Probably auto enroll him in the registration while checking out
                 //As a guest. That seems closest possible approach to follow
-
             }
 
             if(localStorage.getItem('historySearchData')){
                 var historySearchData=JSON.parse(localStorage.getItem('historySearchData'));
-               //These are addiitonal fields added in case user wants to receive updates via extra means
+                //These are addiitonal fields added in case user wants to receive updates via extra means
                 historySearchData.additionalEmails=data1[0];
                 historySearchData.phoneNumberToSend=data1[1];
                 dataToSendForBookingConfirmation.push(historySearchData);
             }
-//            dataToSendForBookingConfirmation.push(JSON.parse(localStorage.getItem('allAvailableAirportDetailsWithFullNames')));
-  //          dataToSendForBookingConfirmation.push(JSON.parse(localStorage.getItem('airlines')));
+
+            //This is to get full names for respective airlines - Probably won't be available while retrieving reservations back
             dataToSendForBookingConfirmation.push(dataWithFullNameForAirportsAndAirlines);
             dataToSendForBookingConfirmation.push(JSON.parse(localStorage.getItem('goingoutdetails')));
-            //dataToSendForBookingConfirmation.push(JSON.parse(localStorage.getItem('updatedgoingoutdetail')));
+
 
             if(tripDirection=="Round Trip"){
-
                 dataToSendForBookingConfirmation.push(JSON.parse(localStorage.getItem('comingindetails')));
-              //  dataToSendForBookingConfirmation.push(JSON.parse(localStorage.getItem('updatedcomingindetail')));
-
             }
 
-
-
-
+if(isBookingNewFlight){
             $http.post('http://www.jayeshkawli.com/airlinetravel/finalbookingconfirmation.php', { bookinginformation: dataToSendForBookingConfirmation }).success(function(response) {
+
                 console.log(response+ " Successful Response ");
-                //$scope.response = response;
-                //$scope.loading = false;
+
             });
+        }
+                else{
 
-        }, function (cancelResult) {
+//console.log("Code "+urlConfirmationCode+"And email address "+data1[0]);
+    $http.post('http://www.jayeshkawli.com/airlinetravel/sendpdffiletoemail.php', { emailaddresses: data1[0],confirmationcode:urlConfirmationCode }).success(function(response) {
 
-            //To use it, just inject $log dependency in given controller
-            //$log.info('Modal dismissed at: ' + new Date());
+        console.log(response+ " Successful Sent the pdf file on email addresses ");
+
+    });
+}
+
+
+            }, function (cancelResult) {
+
             console.log("dismissed at "+ new Date()+cancelResult);
-        });
+
+        }
+
+        );
+
     };
 
-
-    var storedUserHistorydata=JSON.parse(localStorage.getItem('historySearchData'));
-    //tripDirection=storedUserHistorydata.tripDirection;
-    tripDirection=storedUserHistorydata.travelDirection;
-
-    var numberOfKeys=Object.keys(arrivalDetailsglobal).length;
-
-    $scope.fullTravelDetails=[];
-    $scope.fullTravelDetails.arrival=[];
-    $scope.fullTravelDetails.departure=[];
-
-    var isUserLoggedIn=localStorage.getItem('authTokenInfo');
-
-    Date.prototype.addDays = function(days)
-    {
+    Date.prototype.addDays = function(days){
         var dat = new Date(this.valueOf());
         dat.setDate(dat.getDate() + days);
         return dat;
     }
 
     var getStandardDate=function(originalDate,numberOfDaysOffset){
-
+        //console.log(originalDate+ " yoyo ");
         var pattern = /(\d{4})-(\d{2})-(\d{2})/;
         var dt = new Date(originalDate.replace(pattern,'$1-$2-$3'));
         return  new Date(dt.addDays(numberOfDaysOffset)).toISOString();
 
     }
 
+    //Put logic to check if user has valid auth token or not
+    $scope.fullTravelDetails=[];
+    $scope.fullTravelDetails.arrival=[];
+    $scope.fullTravelDetails.departure=[];
+var fullCodeNames={};
 
-    console.log("tripdirection "+ tripDirection);
+    var isUserLoggedIn;
+    if(isBookingNewFlight){
+    var dataWithFullNameForAirportsAndAirlines={};
+    var arrayForAllAirlinesInfo= JSON.parse(localStorage.getItem('airlines'));
 
-    if(Object.keys(airportsDeepDetailsGlobal).length>0){
-
-        if(localStorage.getItem('allAvailableAirportDetailsWithFullNames')){
-            localStorage.removeItem('allAvailableAirportDetailsWithFullNames');
+    $scope.toshowconfirmbutton=false;
+        var storedUserHistorydata=JSON.parse(localStorage.getItem('historySearchData'));
+        tripDirection=storedUserHistorydata.travelDirection;
+        var numberOfKeys=Object.keys(arrivalDetailsglobal).length;
+        isUserLoggedIn=localStorage.getItem('authTokenInfo');
+        if(Object.keys(airportsDeepDetailsGlobal).length>0){
+            if(localStorage.getItem('allAvailableAirportDetailsWithFullNames')){
+                localStorage.removeItem('allAvailableAirportDetailsWithFullNames');
+            }
+            localStorage.setItem( 'allAvailableAirportDetailsWithFullNames', JSON.stringify(airportsDeepDetailsGlobal) );
         }
-        localStorage.setItem( 'allAvailableAirportDetailsWithFullNames', JSON.stringify(airportsDeepDetailsGlobal) );
+        airportsDeepDetailsGlobal=JSON.parse(localStorage.getItem('allAvailableAirportDetailsWithFullNames'));
+        $scope.toshowfirst=true;
+        $scope.toshowsecond=true;
+    }
+    else{
+
+
+        $scope.toshowconfirmbutton=false;
+        $scope.toshowfirst=false;
+        $scope.toshowsecond=false;
+
+
 
     }
 
-    $scope.toshowfirst=true;
-    $scope.toshowsecond=true;
+
+
 
     if(isUserLoggedIn){
         $scope.bookingbuttontitle="Update Booking Info and Book";
@@ -1385,7 +1494,6 @@ $scope.getAirlineFullInfoFromCode=function(airlineFSCode){
     }
     else{
         $scope.bookingbuttontitle="Login"
-        //$scope.toshowfirst=false;
     }
 
     $scope.checkoutguest=function(){
@@ -1397,20 +1505,16 @@ $scope.getAirlineFullInfoFromCode=function(airlineFSCode){
     //after user logs in. So we are using global variable 'isLoggedInOnConfirmationScreen' to check if credentials are valid and
     //We are ok to confirm booking on final screen
 
-    //This block is appliable only when user creates new account or updates account details
+    //This block is applicable only when user creates new account or updates account details
 
     $scope.$on('handleBroadcast', function(event, args) {
-
         if(args.message==-1){
-
-            console.log("this is message *** "+args.message);
             $scope.bookingbuttontitle="Login"
             $scope.toshowsecond=true;
             isUserLoggedIn=localStorage.getItem('authTokenInfo');
         }
         else{
             $scope.toshowconfirmbutton=true;
-            console.log("aaya tohfaa aaya "+args.message);
         }
     });
 
@@ -1422,147 +1526,182 @@ $scope.getAirlineFullInfoFromCode=function(airlineFSCode){
 
     $scope.showconfirmationorloginwindow=function(){
 
-        //
         if(isUserLoggedIn){
             //User is already logged in
-            console.log("Please update any info in the window");
             $scope.$broadcast("SET_MESSAGE_HEADER","Sample message");
             $("#userupdateview").modal('show');
         }
         else{
             //User is not logged in - Give change to either act as a guest or allow them to create new register
-            console.log("Please create or log in with existing account");
             $('#loginview').modal('show');
-            //
         }
     }
-
-
-
-    if(tripDirection=="OneWay"){
-        console.log("still one");
-
-        $scope.showsecondpartofflightbooking=false;
-        $scope.showreturningflights=true;
-        $scope.flightDetailsSecondPart="One way flight details";
-
-        // if(localStorage.getItem('goingoutdetails')){
-        //   localStorage.removeItem('goingoutdetails');
-        //}
-
-        //Storing our details in the local storage
-        console.log("Length of dictionary with airport name in it"+Object.keys(arrivalDetailsglobal).length);
-        if(Object.keys(arrivalDetailsglobal).length>0){
-
-            localStorage.setItem( 'goingoutdetails', JSON.stringify(arrivalDetailsglobal) );
-
-        }
-        else{
-
-            //console.log("***Empty");
-
-        }
-
-        $scope.fullTravelDetails.departure=JSON.parse(localStorage.getItem('goingoutdetails'));
-
-
-
-        //if(JSON.parse(localStorage.getItem('updatedgoingoutdetail'))){
-
-            $scope.updateDeparture=JSON.parse(localStorage.getItem('historySearchData')).leavingOutOn;
-
-        //}
-        //else{
-
-          //  $scope.updateDeparture=$scope.fullTravelDetails.departure.departureDateFrom;
-
-        //}
-
-        console.log($scope.updateDeparture+ "Date"+"and this "+$scope.fullTravelDetails.departure.arrivalDateAdjustment);
-        $scope.updateDeparture1=getStandardDate($scope.updateDeparture,$scope.fullTravelDetails.departure.arrivalDateAdjustment);
-
-        console.log(JSON.parse(localStorage.getItem('goingoutdetails')) + "these are total entries from local storage ");
-        $scope.bottomarrivalstatus="Have a nice flight1";
-    }
-
-    else if(tripDirection=="Round Trip"){
-        $scope.arrivalstatus="Arrival Flight Details";
-        $scope.showsecondpartofflightbooking=true;
-        $scope.showreturningflights=true;
-        $scope.flightDetailsFirstPart="Two way flight details - First Part";
-        $scope.flightDetailsSecondPart="Two way flight details - Second Part";
-        console.log(JSON.stringify($scope.fullTravelDetails.departure)+" Object full description ");
-        //console.log(JSON.parse(localStorage.getItem('updatedcomingindetail')).updatedcomingindetail+" Departure date returning");
-
-
-       // if(JSON.parse(localStorage.getItem('updatedgoingoutdetail'))){
-            $scope.updateDeparture=JSON.parse(localStorage.getItem('historySearchData')).leavingOutOn;
-        //}
-        //else{
-          //  $scope.updateDeparture=$scope.fullTravelDetails.departure.departureDateFrom;
-        //}
-
-
-        //if(JSON.parse(localStorage.getItem('updatedcomingindetail'))){
-            $scope.departureDate2=JSON.parse(localStorage.getItem('historySearchData')).comingInOn;
-        //}
-        //else{
-          //  $scope.departureDate2=$scope.fullTravelDetails.arrival.departureDateFrom;
-        //}
-
-
-//Going two way first part
-
-        //We are removing any stale entries that might be lingering in local storage
-
-        if(Object.keys(departureDetailsGlobal).length>0 || Object.keys(arrivalDetailsglobal).length>0){
-            localStorage.setItem( 'goingoutdetails', JSON.stringify(departureDetailsGlobal) );
-            localStorage.setItem( 'comingindetails', JSON.stringify(arrivalDetailsglobal) );
-        }
-
-//Departure section comes first and then arrives arrival - I mean name of identifier which displays airline booking info
-        $scope.fullTravelDetails.departure=JSON.parse(localStorage.getItem('goingoutdetails'));
-        $scope.fullTravelDetails.arrival=JSON.parse(localStorage.getItem('comingindetails'));
-
-
-        //Set going and coming out detail
-        $scope.updateDeparture1=getStandardDate( $scope.updateDeparture,$scope.fullTravelDetails.departure.arrivalDateAdjustment);
-        $scope.departureDate3=getStandardDate($scope.departureDate2,$scope.fullTravelDetails.arrival.arrivalDateAdjustment);
-
-
-
-       // if(JSON.parse(localStorage.getItem('updatedgoingoutdetail'))){
-            $scope.fullTravelDetails.departure.departureDateFrom=JSON.parse(localStorage.getItem('historySearchData')).leavingOutOn;//JSON.parse(localStorage.getItem('updatedgoingoutdetail')).updatedgoingoutdetail;
-        //}
-
-        //$scope.fullTravelDetails.arrival=arrivalDetailsglobal;
-        $scope.arrivalstatus="Have a nice flight2";
-
-    }
-
-    console.log("One way -->        "+JSON.stringify($scope.fullTravelDetails.departure));
-
-    console.log("Two way -->   "+ JSON.stringify($scope.fullTravelDetails.arrival));
 
     $scope.getairportsindi=function(iatacode){
-        // $scope.airportTitle=iatacode;
-
-        // console.log(airportsDeepDetailsGlobal[iatacode].name+ " sad "+iatacode);
+if(isBookingNewFlight){
         if(airportsDeepDetailsGlobal.hasOwnProperty(iatacode)){
             dataWithFullNameForAirportsAndAirlines[iatacode]=airportsDeepDetailsGlobal[iatacode].name
-
-
             return dataWithFullNameForAirportsAndAirlines[iatacode];
         }
-        else{
-            //console.log("EMPTY");
-            return "";
-        }
+
+}else{
+    if(airportsDeepDetailsGlobal[iatacode]){
+ return airportsDeepDetailsGlobal[iatacode].fullname;
+    }
+}
+        return "";
     }
 
-    console.log($routeParams.id+ "This is whether one way or round trip");
+
+    function setupTripDetailsForOneWayFlight(){
+
+        if(tripDirection=="OneWay"){
+
+            $scope.showsecondpartofflightbooking=false;
+            $scope.showreturningflights=true;
+            $scope.flightDetailsSecondPart="One way flight details";
+
+            //Storing our details in the local storage
+            if(Object.keys(arrivalDetailsglobal).length>0){
+                localStorage.setItem( 'goingoutdetails', JSON.stringify(arrivalDetailsglobal) );
+            }
+
+            $scope.fullTravelDetails.departure=JSON.parse(localStorage.getItem('goingoutdetails'));
+            $scope.updateDeparture=JSON.parse(localStorage.getItem('historySearchData')).leavingOutOn;
+            $scope.updateDeparture1=getStandardDate($scope.updateDeparture,$scope.fullTravelDetails.departure.arrivalDateAdjustment);
+
+            $scope.bottomarrivalstatus="Have a nice flight1";
+        }
+
+        else if(tripDirection=="Round Trip"){
+            $scope.arrivalstatus="Arrival Flight Details";
+            $scope.showsecondpartofflightbooking=true;
+            $scope.showreturningflights=true;
+            $scope.flightDetailsFirstPart="Two way flight details - First Part";
+            $scope.flightDetailsSecondPart="Two way flight details - Second Part";
+            $scope.updateDeparture=JSON.parse(localStorage.getItem('historySearchData')).leavingOutOn;
+            $scope.departureDate2=JSON.parse(localStorage.getItem('historySearchData')).comingInOn;
+
+            //Going two way first part
+            //We are removing any stale entries that might be lingering in local storage
+
+            if(Object.keys(departureDetailsGlobal).length>0 || Object.keys(arrivalDetailsglobal).length>0){
+                localStorage.setItem( 'goingoutdetails', JSON.stringify(departureDetailsGlobal) );
+                localStorage.setItem( 'comingindetails', JSON.stringify(arrivalDetailsglobal) );
+            }
+
+            //Departure section comes first and then arrives arrival - I mean name of identifier which displays airline booking info
+
+            $scope.fullTravelDetails.departure=JSON.parse(localStorage.getItem('goingoutdetails'));
+            $scope.fullTravelDetails.arrival=JSON.parse(localStorage.getItem('comingindetails'));
+
+            //Set going and coming out detail
+            $scope.updateDeparture1=getStandardDate( $scope.updateDeparture,$scope.fullTravelDetails.departure.arrivalDateAdjustment);
+            $scope.departureDate3=getStandardDate($scope.departureDate2,$scope.fullTravelDetails.arrival.arrivalDateAdjustment);
+            $scope.fullTravelDetails.departure.departureDateFrom=JSON.parse(localStorage.getItem('historySearchData')).leavingOutOn;//JSON.parse(localStorage.getItem('updatedgoingoutdetail')).updatedgoingoutdetail;
+
+            $scope.arrivalstatus="Have a nice flight2";
+        }
 
 
+    }
+
+
+    //We have user with appropriate code and we will user it to retrieve stored reservation
+
+    function retrieveTripDetailsFromBackEnd(){
+
+        console.log(urlEmailAddress+ " email address ");
+        console.log(urlConfirmationCode+ " confirmation code ");
+
+        $scope.showreturningflights=true;
+        $http({method: 'GET', url: 'http://www.jayeshkawli.com/airlinetravel/retrievepreviousbookings.php',params:{emailaddress:urlEmailAddress,confirmationcodetoquerywith:urlConfirmationCode}}).
+        success(function(data, status, headers, config) {
+
+               console.log("Failed to get data from server ****  "+JSON.stringify(data));
+               if(data.success===false){
+                   $window.location.href = "#/";
+                   sharedService.setProperty(data.message);
+                   $rootScope.$broadcast("errorInReservationRetrieval", { });
+                   //$scope.$emit('errorInReservationRetrieval', args);
+                   return;
+               }
+
+                $scope.toshowsendpdfdocbutton=true;
+
+                var passengerbookingdetails=data.booking_details;
+                //$scope.fullTravelDetails.departure
+                //$scope.fullTravelDetails.arrival
+                //console.log("One of that wwanter by us"+data.going_out_details+ "Ane one more thing ");
+                //$scope.updateDeparture="Roger Federer";
+                //$scope.masa="surmai1234455";
+//SetUp passenger details before showing their flight details on screen
+                $scope.fullname=passengerbookingdetails.userfullname;
+                $scope.emailaddress=passengerbookingdetails.useremailaddress;
+                $scope.confirmationcode=passengerbookingdetails.confirmationnumber;
+                $scope.ticketcode=passengerbookingdetails.ticketnumber;
+                $scope.flighttype=passengerbookingdetails.flighttype;
+                $scope.travelclass=passengerbookingdetails.travelclass;
+                $scope.traveldirection=passengerbookingdetails.traveldirection;
+                $scope.sourcecity=passengerbookingdetails.source;
+                $scope.destinationcity=passengerbookingdetails.destination;
+
+
+
+                $scope.fullTravelDetails.departure=data.going_out_details;
+                $scope.updateDeparture=passengerbookingdetails.dateofcomingin;
+                $scope.updateDeparture1=getStandardDate( $scope.updateDeparture,$scope.fullTravelDetails.departure.arrivalDateAdjustment);
+
+              //  fullCodeNames=data.code_names_with_fullform;
+                airportsDeepDetailsGlobal=data.code_names_with_fullform;
+                $scope.flightDetailsSecondPart="One way flight details";
+                //console.log(" Full Name    "+JSON.stringify(airportsDeepDetailsGlobal));
+
+                if(data.coming_in_details){
+                    //Two way flight chosen by the customer
+                    //TwoWay
+                    $scope.arrivalstatus="Arrival Flight Details";
+                    $scope.flightDetailsFirstPart="Two way flight details - First Part";
+                    $scope.flightDetailsSecondPart="Two way flight details - Second Part";
+                    $scope.arrivalstatus="Have a nice flight2";
+
+
+                    $scope.showsecondpartofflightbooking=true;
+                    $scope.arrivalstatus="Arrival Flight Details";
+                    $scope.fullTravelDetails.arrival=data.coming_in_details;
+                    $scope.departureDate2=passengerbookingdetails.dateofgoingout;
+
+                 $scope.departureDate3=getStandardDate($scope.departureDate2,$scope.fullTravelDetails.arrival.arrivalDateAdjustment);
+                }
+                else{
+                    //OneWay Flight Chosen by the customer
+                    $scope.flightDetailsSecondPart="One way flight details";
+                    $scope.bottomarrivalstatus="Have a nice flight1";
+                }
+            //console.log(JSON.stringify(data)+ "Data received from server");
+            // this callback will be called asynchronously
+            // when the response is available
+        }).
+        error(function(data, status, headers, config) {
+            console.log("Error Occurred as following "+ data+ "With status "+status);
+            // called asynchronously if an error occurs
+            // or server returns response with an error status.
+        });
+    }
+
+
+    if(isBookingNewFlight){
+   setupTripDetailsForOneWayFlight();
+    }
+    else{
+
+        //Retrieve backend booking details from database using confirmation code and user's email address
+        retrieveTripDetailsFromBackEnd();
+    }
+
+$scope.masa="surmai";
+    console.log("One way -->        "+JSON.stringify($scope.fullTravelDetails.departure));
+    console.log("Two way -->   "+ JSON.stringify($scope.fullTravelDetails.arrival));
 })
 
 function clone(obj){
@@ -1600,9 +1739,6 @@ airlinetravelmodule.controller('showflightscontroller',function($scope,$http,$ro
     var isBookingReturnFlight=0;
     var preStoredGoingOutDate=JSON.parse(localStorage.getItem('historySearchData')).leavingOutOn;
 
-
-
-//
 
     var originalDepartureDate;
     console.log("Returning date flag ****"+isBookingReturnFlight);
@@ -2319,12 +2455,12 @@ airlinetravelmodule.controller('flightsearchcontroller',function($scope,$http,$w
 
     $scope.doit1=function(){
 
-        console.log(today22);
-        //$scope.mindate23='\''+today22+'\'';
+
+
         $scope.opened1=true;
 
     }
-    //$scope.mindate1='05/03/2014';
+
     $scope.open1 = function($event) {
         $event.preventDefault();
         $event.stopPropagation();
@@ -2505,12 +2641,12 @@ airlinetravelmodule.controller('flightsearchcontroller',function($scope,$http,$w
         userHistorydata.travelDirection=tripDirection;
         console.log("Expected travel direction"+tripDirection);
         userHistorydata.travelType=(userHistorydata.sourceCountry===userHistorydata.destinationCountry)?"Domestic":"International";
-        //console.log("kkkk "+$scope.leavingOut);
+
         //var modelDate = $filter('date')($scope.leavingOut, "YYYY-MM-DD");
         //console.log("hahaha 100 "+modalDate);
         userHistorydata.leavingOutOn=$scope.leavingOut;
         userHistorydata.comingInOn=$scope.comingIn;
-    userHistory.travelclass=travelClass;
+    userHistorydata.travelclass=travelClass;
 
         localStorage.setItem('historySearchData',JSON.stringify(userHistorydata));
 

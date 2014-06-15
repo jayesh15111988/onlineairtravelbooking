@@ -3,7 +3,23 @@
     <!-- We are hiding this table when user has requested one way flight. If it's two way flight,we are
     shwoing outbound flight details in this space -->
 
+<div ng-show="showbookingdetails">
+Passenger Details :
 
+    Full Name:      {{fullname}}<br/>
+    Email Address:  {{emailaddress}}<br/>
+    Booking Confirmation Details:{{confirmationcode}} <br/>
+    Ticket Code:    {{ticketcode}}<br/>
+    Flight Type :   {{flighttype}}<br/>
+    Travel Class :  {{travelclass}}<br/>
+    Travel Direction : {{traveldirection}}<br/>
+    Source City Airport:    {{sourcecity}}<br/>
+    Destination City Airport: {{destinationcity}}<br/>
+
+
+
+
+    </div>
 
     <table ng-show="showreturningflights">
         <tr><th><div><h4> {{flightDetailsFirstPart}}</h4></div></th></tr>
@@ -74,10 +90,10 @@
     </table>
 
     <div>{{arrivalstatus}}</div>
-
+    <button data-ng-click="open('sm');" data-ng-show="toshowsendpdfdocbutton">Forward PDF copy on Email</button>
     <button data-ng-click="showconfirmationorloginwindow();" data-ng-show="toshowfirst">{{bookingbuttontitle}}</button>
     <button data-ng-click="checkoutguest();" data-ng-show="toshowsecond">Checkout As Guest/Register</button>
-    <button data-ng-show="toshowconfirmbutton" data-ng-click="open('sm')">Confirm Booking </button>
+    <button data-ng-click="open('sm')" data-ng-show="toshowconfirmbutton">Confirm Booking </button>
     <!--<button data-ng-click="open('sm')" ng-hidden="true">click me</button>-->
 <div>{{bottomarrivalstatus}}</div>
 
@@ -102,6 +118,26 @@
             <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
         </div>
     </script>
+
+    <script type="text/ng-template" id="sendpdfdoctoemailaddress">
+        <div class="modal-header">
+            <h3 class="modal-title">You are about to send pdf document on specified email address</h3>
+        </div>
+
+        <div class="modal-body">
+            Please enter additional email addresses where you would like to receive confirmation of your booking. If multiple email addresses, please separate them by a comma
+            <input type="text" class="form-control" id="emailAddress" placeholder="Enter email Addresses" ng-model="emailAddresses" ng-keyup="dothat(emailAddresses)">
+
+{{errormessage}}
+        </div>
+        <div class="modal-footer">
+            Please press ok to continue, cancel to discard reservation and update information:
+            <button class="btn btn-primary" ng-disabled="{{isokdisabled}}" ng-click="ok(emailAddresses,phoneNumber)">OK</button>
+            <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+        </div>
+    </script>
+
+
 
 
 </div>
