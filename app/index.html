@@ -778,20 +778,19 @@ Not needed for now
 
 <!-- Modal -->
 
-<!--For registration successful event-->
+<!--For registration successful event--><!-- ALERT Jayesh -->
 <div>
     <div class="modal fade" ng-controller="samcontroller" successfull-registration id="registrationsuccessfull">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    <h4 class="modal-title" id="">User Login</h4>
+                    <h4 class="modal-title">User Login</h4>
                 </div>
                 <div class="modal-body">
-
                     <form role="form" name="loginform" novalidate>
                         <div class="form-group">
-                            <label for="exampleInputEmail1">Email address</label>
+                            <label>Email address</label>
                             <div class="input-group input-group-lg">
                             </div>
                         </div>
@@ -805,8 +804,8 @@ Not needed for now
 
 
 <!-- For Login purpose -->
-<div class="modal fade" login-view ng-controller="samcontroller" id="loginview" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
+<script type="text/ng-template" id="loginview">
+<!--<div class="modal fade" login-view ng-controller="samcontroller" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">-->
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
@@ -822,29 +821,22 @@ Not needed for now
                             <span class="label label-danger" ng-show="loginform.loginemail.$error.email">
       Not valid email!</span>
                             <input type="email" name="loginemail" ng-model="loginemail" class="form-control" id="exampleInputEmail1" placeholder="Enter email" required="true" >
-                        </div>
-                    </div>
-
+                        </div></div>
                     <div class="form-group">
                         <label for="exampleInputPassword1">Password</label>
                         <div class="input-group input-group-lg">
                             <span class="input-group-addon"> * </span>
                             <span class="label label-danger" data-ng-show="userloggedin && loginform.loginpassword.$error.required">Required!</span>
                             <input type="password" name="loginpassword" ng-model="loginpassword" class="form-control" id="exampleInputPassword1" placeholder="Password" required="true">
-                        </div>
-                    </div>
+                        </div></div>
                     <input type="checkbox" ng-model="savecredentials">  Do you want to save your credentials? <br/>
                     <div class="modal-footer center-block">
                         <button type="submit" class="btn btn-default" data-dismiss="modal" ng-click="forgotPassword();">Forgot Password</button>
-                        <button type="submit" class="btn btn-primary" data-toggle="modal" data-target="#loginview" ng-click="loguserin(loginform)" >Login</button>
+                        <button type="submit" class="btn btn-primary" data-toggle="modal" data-target="#" ng-click="loguserin(loginform,loginemail,loginpassword)" >Login</button>
                     <button type="submit" class="btn btn-primary" data-toggle="modal" ng-click="hideloginshowregistration();">Register New User</button>
                     </div>
-                </form>
-            </div>
-
-        </div>
-    </div>
-</div>
+                    <div>{{errorMessage}}</div>
+                </form></div></div></script>
 
 
 <!-- For registration purpose -->
@@ -1141,31 +1133,11 @@ Not needed for now
 <div class="control-group">
     <label class="control-label" for="textarea">Comments and Suggestions</label>
     <div class="controls">
-        <textarea class="input-xlarge" id="textarea" rows="3" ng-model="comments" value="Please put any suggestions and/or comments you may have in this box"></textarea>
+        <textarea class="input-xlarge" id="" rows="3" ng-model="comments" value="Please put any suggestions and/or comments you may have in this box"></textarea>
     </div>
 </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 <br/>
-
-
-
 </fieldset>
-
-
-
 <button type="button" class="btn btn-default" data-dismiss="modal">Cancel And Close</button>
 <button class="btn btn-primary" data-ng-disabled="progress.active()" ng-click="submit(helpForm)" data-title="go to next page" data-html="true" data-toggle="modal"  data-dismiss="var1">Next</button>
 
@@ -1176,6 +1148,7 @@ Not needed for now
 </div>
 </div>
 </div>
+
 </div>
 </div>
 
@@ -1187,28 +1160,34 @@ Not needed for now
 </div>
 </div>
 
-<div class="modal fade" forgot-password   id="fogrgotpasswordpage" tabindex="-1" role="dialog" aria-hidden="true" >
+<div class="modal fade" forgot-password  tabindex="-1" role="dialog" aria-hidden="true" >
     <div class="modal-dialog modal-lg"  >
         <div class="modal-content" ng-controller="samcontroller">
-
+            <form role="form" name="forgotpasswordform" novalidate>
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h4 class="modal-title" id="myModalLabel45">User Registration</h4>
+                <h4 class="modal-title" id="myModalLabel45">Forgot Password</h4>
             </div>
             <div class="modal-body">
+                <!-- This is where we will send message to user saying we sent their password to their email address -->
                 <div ng-bind="messageafterpasswordsend"></div>
+                <span class="label label-danger" data-ng-show="toShowErrorOnForgotPassword && forgotpasswordform.useremail.$error.required">Required!</span>
+           <!--                 <span class="label label-danger" ng-show="forgotpasswordform.useremail.$error.email">
+      Not a valid email!</span>-->
                 <div class="input-group input-group-lg">
                     <span class="input-group-addon">@</span>
-                    <input type="text" class="form-control" placeholder="Username">
+
+                    <input type="text" name="useremail" ng-model="useremail" class="form-control" ng-required="true" placeholder="Registered Username or Email address">
                 </div>
 
-
+                {{messageFromServer}}
             </div>
 
             <div class="modal-footer center-block">
-                <button type="button" class="btn btn-default" data-toggle="modal" ng-click="gotobackpage();" data-target="#loginview" >Back to login page</button>
-                <button type="button" class="btn btn-primary" data-toggle="modal" ng-click="sendpasswordtouser()"  >Send</button>
+                <button type="button" class="btn btn-default" data-toggle="modal" ng-click="gotobackpage(forgotpassword);" data-target="" >Back to login page</button>
+                <button type="button" class="btn btn-primary" data-toggle="modal" ng-click="sendpasswordtouser(forgotpasswordform,useremail)"  >Send</button>
             </div>
+            </form>
         </div>
     </div>
 </div>

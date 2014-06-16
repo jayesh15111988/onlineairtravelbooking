@@ -363,7 +363,8 @@ $scope.salutation=$scope.salutations[0];
 
                     }
                     else if(data.success==false){
-                        $('#loginview').modal('show');
+                        loguserinwithmodalview();
+                       // $('#loginview').modal('show');
                     }
                 }).error(function (data, status, headers, config) {
                     console.log("Token regenration failer with response: "+ data+ "And status code "+status);
@@ -473,11 +474,157 @@ $scope.toRememberSelection=true;
         $scope.loginlogouttext="Logout";
     }
 
+    //Controller for login view for user to log into the account
+    var loginModalInstanceController = function ($scope, $modalInstance, items) {
+
+        $scope.savecredentials=false;
+        var storedUserAuthInfo=JSON.parse(localStorage.getItem('userauthinfo'));
+        if(storedUserAuthInfo){
+        $scope.loginemail=storedUserAuthInfo.emailid;
+        $scope.loginpassword=storedUserAuthInfo.password;
+            $scope.savecredentials=true;
+        }
+
+        $scope.forgotPassword=function(){
+            //$modalInstance.close("");
+            $modalInstance.dismiss('cancel');
+            $scope.showForgotPasswordView();
+        }
+
+        $scope.hideloginshowregistration=function(){
+            //$modalInstance.close("");
+            $modalInstance.dismiss('cancel');
+            $("#registerview").modal('show');
+        }
+/*
+$scope.$parent.$watch('loginemail',function(n,o){
+    console.log("I Love Beatles");
+},true);
+*/
+
+
+        $scope.loguserin=function(form,loginemail,loginpassword){
+              console.log("user clicked login button"+ loginemail+ " "+loginpassword);
+            $scope.userloggedin=true;
+            if(form.$invalid){
+                return;
+            }
+
+            var userLoginInfo={'emailid':loginemail,'password':loginpassword};
+            console.log(angular.toJson(userLoginInfo,true)+ " &&&&*** ");
+            var success=false;
+            $scope.usernametodisplay="Guest";
+            var authTokenInfoFromLocalStorage;
+            if(localStorage.getItem('authTokenInfo')){
+                authTokenInfoFromLocalStorage=JSON.parse(localStorage.getItem('authTokenInfo'));
+            }
+            $http({
+                url: 'http://jayeshkawli.com/airlinetravel/userlogin.php',
+                method: "GET",
+                cache:true,
+                params: userLoginInfo,
+                headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+            }).success(function (data, status, headers, config) {
+                    $scope.loginemail=userLoginInfo.emailid;
+                    $scope.loginpassword=userLoginInfo.password;
+                    //User's email addres and password for local stoarge
+                    if(localStorage.getItem('userauthinfo')){
+                        localStorage.removeItem('userauthinfo');
+                    }
+
+                    success=true;
+                    if($scope.savecredentials===true){
+                        localStorage.setItem('userauthinfo',JSON.stringify(userLoginInfo));
+                    }
+                    var serverResponseData = JSON.stringify(data);
+                    if(data.success===true){
+                        if(localStorage.getItem('serverloginauthenticationsuccess')){
+
+                            localStorage.removeItem('serverloginauthenticationsuccess');
+                            localStorage.removeItem('authTokenInfo');
+
+                        }
+                        //Emit the message that user is successfully logged in this is useful on details controller where user
+                        // is ready to finalize his selection
+                        isLoggedInOnConfirmationScreen=true;
+                        localStorage.setItem( 'serverloginauthenticationsuccess', serverResponseData);
+                        localStorage.setItem('authTokenInfo',JSON.stringify({authtoken:data.authorization,emailaddress:data.emailaddress,firstname:data.firstname,tokenexpirytime:addMinutes(new Date(),30)}));
+
+                        $scope.userfirstnamedisplay=data.firstname;
+                        $scope.usernametodisplay=data.firstname;
+                        //$scope.messages = 'Your login information has been successfully sent! Congratulations...';
+                        //$modalInstance.dismiss('cancel'); - Not using it because user actually logged into the system
+                        //Not actually necessary - User is refreshing the page anyways
+                        $modalInstance.close(data);
+        //                $window.location.reload();
+                    }
+                    else if (data.success===false){
+                        $scope.errorMessage=data.errorinfo;
+                        localStorage.setItem( 'serverloginauthenticationerror', serverResponseData);
+
+                    }
+
+
+
+                    //$('#loginview').modal('hide');
+
+                })
+                .error(function (data, status, headers, config) {
+                    //$modalInstance.close(data);
+                    //$('#loginview').modal('hide');
+                    $scope.errorMessage="Login Failed with an error. Please try again "+angular.toJson(data);
+                    localStorage.setItem( 'serverloginerror', JSON.stringify(data));
+                    $scope.messages = 'Your registration information has been unsuccessfully sent! No try again later...';
+
+                });
+        }
+
+
+        //$scope.ok = function () {
+           // $modalInstance.close($scope.selected.item);
+        //};
+
+        $scope.cancel = function () {
+            $modalInstance.dismiss('cancel');
+        };
+    };
+
+
+    var loguserinwithmodalview=function(){
+        var modalInstance = $modal.open({
+            templateUrl: 'loginview',
+            controller: loginModalInstanceController,
+            size: 'sm',
+            resolve: {
+                items: function () {
+                    return "";
+                }
+            }
+        });
+
+
+        modalInstance.result.then(function (selectedItem) {
+//User logged in succesfully, now change main name from guest to valid username and change login text to logout
+
+            $scope.loginlogouttext="Logout";
+            setUserFirstNameOnDisplay();
+            console.log("Selected *** Item from Login modal view "+selectedItem);
+            //$scope.selected = selectedItem;
+        }, function () {
+            console.log(' Login view Modal dismissed at: ' + new Date());
+        });
+        //$('#loginview').modal('show');
+    }
+
     $scope.showLoginViewOnClick=function(){
-
-
+console.log("Came here $$$");
+//User is not logged in currently - Show login box to allow him to get into the account
         if(!localStorage.getItem('authTokenInfo')){
-            $('#loginview').modal('show');
+           //Show login view to user
+            //This is bad - Breaking the MVC pattern in Ang JS
+
+           loguserinwithmodalview();
+
         }
         else{
             loguserout();
@@ -808,12 +955,7 @@ $scope.toRememberSelection=true;
 
     setUserFirstNameOnDisplay();
 
-    if(localStorage.getItem('userauthinfo')){
-        var storedUserAuthInfo=JSON.parse(localStorage.getItem('userauthinfo'));
-        $scope.loginemail=storedUserAuthInfo.emailid;
-        $scope.loginpassword=storedUserAuthInfo.password;
 
-    }
 
 
 
@@ -821,17 +963,31 @@ $scope.toRememberSelection=true;
     $scope.gotobackpage=function(){
 
         $scope.dismissForgotPasswordView();
-        $scope.showLoginView();
+        $scope.showLoginViewOnClick();
     }
 
-    $scope.forgotPassword=function(){
-        $scope.showForgotPasswordView();
-    }
 
-    $scope.sendpasswordtouser=function(){
+$scope.toShowErrorOnForgotPassword=false;
+    $scope.sendpasswordtouser=function(form,emailorusername){
 
-        $scope.messageafterpasswordsend="Send sit wait for some time";
-        console.log("Sending..");
+        $scope.toShowErrorOnForgotPassword=true;
+console.log(form.$invalid + "Is valid or not");
+        if(form.$invalid){
+            return;
+        }
+//Now make call to remote script to send an email to user with forgotten password information
+
+        $http.post('http://www.jayeshkawli.com/airlinetravel/sendforgotpasswordtoemail.php', { emailorusernametosend: emailorusername }).success(function(response) {
+
+            console.log(response);
+            $scope.messageFromServer=response.message;
+
+        });
+
+
+
+
+
     }
 
     //Special Controler for modal view that we will use to notify user that he is already logged in
@@ -872,7 +1028,7 @@ $scope.setSelectedItem=function(index,item){
         }
         else{
             console.log("Creating a new profile");
-            if(localStorage.getItem('userauthinfo')){
+            if(localStorage.getItem('authTokenInfo')){
                 $scope.items = [{name:'Undecided'}, {name:'Remain Logged In wihtout creating an additional account'},{name:'Logout and create new account'}];
 
                 var modalInstance = $modal.open({
@@ -911,10 +1067,7 @@ $scope.setSelectedItem=function(index,item){
 
     }
 
-    $scope.hideloginshowregistration=function(){
-        $('#loginview').modal('hide');
-        $("#registerview").modal('show');
-    }
+
 
     //$route.location.reload();
 
@@ -1034,120 +1187,7 @@ $scope.setSelectedItem=function(index,item){
 
 
 
-    $scope.loguserin=function(form){
-        //  console.log("user clicked login button");
-        $scope.userloggedin=true;
-        if(form.$invalid){
-            return;
-        }
 
-
-
-
-        var userLoginInfo={'emailid':$scope.loginemail,'password':$scope.loginpassword};
-
-
-        /*if(localStorage.getItem('userlogininfo')){
-         localStorage.removeItem('userregistrationinfo');
-         }
-
-         localStorage.setItem('userregistrationinfo',formData);*/
-
-        //console.log(userLoginInfo+ " info to sent to the server ");
-        //Sample code for testing auth token
-
-        var success=false;
-        $scope.usernametodisplay="Guest";
-        var authTokenInfoFromLocalStorage;
-        if(localStorage.getItem('authTokenInfo')){
-            authTokenInfoFromLocalStorage=JSON.parse(localStorage.getItem('authTokenInfo'));
-        }
-
-        /*$.ajax({
-         type: "GET",
-         url: "http://www.jayeshkawli.com/airlinetravel/userlogin.php",
-         cache:true,
-         headers:{'Content-Type': 'application/x-www-form-urlencoded'},
-         data: userLoginInfo
-         })
-         .done(function( data ) {*/
-        //  console.log(data+ "hahaha"+ status+"  "+config);
-        $http({
-            url: 'http://jayeshkawli.com/airlinetravel/userlogin.php',
-            method: "GET",
-            cache:true,
-            params: userLoginInfo,
-            headers: {'Content-Type': 'application/x-www-form-urlencoded'}
-        }).success(function (data, status, headers, config) {
-
-
-                $scope.loginemail=userLoginInfo.emailid;
-                $scope.loginpassword=userLoginInfo.password;
-                //User's email addres and password for local stoarge
-                if(localStorage.getItem('userauthinfo')){
-                    localStorage.removeItem('userauthinfo');
-                }
-
-                success=true;
-                if($scope.savecredentials===true){
-                    localStorage.setItem('userauthinfo',JSON.stringify(userLoginInfo));
-                }
-//console.log("type of")
-                var serverResponseData = JSON.stringify(data);
-                //   console.log(serverResponseData);
-                if(data.success===true){
-
-                    if(localStorage.getItem('serverloginauthenticationsuccess')){
-
-                        localStorage.removeItem('serverloginauthenticationsuccess');
-                        localStorage.removeItem('authTokenInfo');
-
-                    }
-                    //Emit the message that user is successfully logged in this is useful on details controller where user
-                    // is ready to finalize his selection
-
-                    isLoggedInOnConfirmationScreen=true;
-                    //$scope.$emit('handleEmit', {message: 0});
-
-
-                    localStorage.setItem( 'serverloginauthenticationsuccess', serverResponseData);
-
-                    localStorage.setItem('authTokenInfo',JSON.stringify({authtoken:data.authorization,emailaddress:data.emailaddress,firstname:data.firstname,tokenexpirytime:addMinutes(new Date(),30)}));
-
-
-
-
-
-                    $scope.userfirstnamedisplay=data.firstname;
-                    $scope.usernametodisplay=data.firstname;
-
-
-
-
-                    //    console.log("scuess");
-                }
-                else if (data.success===false){
-
-                    localStorage.setItem( 'serverloginauthenticationerror', serverResponseData);
-                    console.log("failture ************ Abort Failure while logging user in");
-                }
-
-                $scope.messages = 'Your login information has been successfully sent! Congratulations...';
-
-                $('#loginview').modal('hide');
-                $window.location.reload();
-                //   $scope.dismissLoginView();
-
-            })
-            .error(function (data, status, headers, config) {
-                //     $scope.dismissLoginView();
-                $('#loginview').modal('hide');
-                // console.log(status+"yoyoyoyo "+"  "+headers+status);
-                localStorage.setItem( 'serverloginerror', JSON.stringify(data));
-                $scope.messages = 'Your registration information has been unsuccessfully sent! No try again later...';
-
-            });
-    }
 
     //Prototype method for replacing all occurrences of specific character in a string
     /*String.prototype.replaceAll = function(str1, str2, ignore)
@@ -1285,7 +1325,7 @@ function sendUserDataToServer(formData,$scope,isCreatingUser,$http){
                 localStorage.setItem( 'serverloginauthenticationsuccess', serverResponseData);
                 localStorage.setItem('authTokenInfo',JSON.stringify({'authtoken':data.authorization,'emailaddress':data.emailaddress,firstname:data.firstname,tokenexpirytime:addMinutes(new Date(),30)}));
                 $scope.userfirstnamedisplay=data.firstname;
-                console.log("Success");
+                console.log("Success" + angular.toJson(data));
                 if(isCreatingUser){
 
                     $("#registerview").modal('hide');
@@ -1629,6 +1669,7 @@ var fullCodeNames={};
         }
         else{
             //User is not logged in - Give change to either act as a guest or allow them to create new register
+
             $('#loginview').modal('show');
         }
     }
