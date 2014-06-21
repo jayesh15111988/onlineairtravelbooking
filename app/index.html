@@ -428,7 +428,7 @@
         <div>
             Selected Country : {{country}}
         </div>
-        <label for="selectCountry">Select Country</label><br/>
+        <label>Select Country</label><br/>
         <div class="controls">
             <span class="label label-danger" data-ng-show="submitted && helpForm.country.$error.required">Required!</span>
 
@@ -483,6 +483,7 @@
                                             </span>
                 <label></label>
                 <span class="label label-danger" data-ng-show="submitted && helpForm.email.$error.required">Required!</span>
+
                 <input type="email" name="email" ng-model="email" class="form-control" data-ng-disabled="true" placeholder="Email Address" required>
             </div>
         </div>
@@ -853,7 +854,7 @@ Not needed for now
 <legend>Create an Account</legend>
 
 <div class="form-group">
-    <label class="control-label" for="select01">Title</label>
+    <label class="control-label">Title</label>
     <div class="controls">
 
         <select ng-model="salutation" ng-options="salutation for salutation in salutations">
@@ -957,16 +958,13 @@ Not needed for now
 
     Enter your email address
 
-
-
-
     <div class="row">
         <div class="col-lg-6">
+            <span class="label label-danger" data-ng-show="submitted && isEmailsMatchError">Emails Must match!</span>
             <div class="input-group">
-
-
                 <span class="label label-danger" data-ng-show="submitted && helpForm.email.$error.required">Required!</span>
                 <span class="label label-danger" data-ng-show="submitted && helpForm.email.$invalid">Email Not Valid!</span>
+
                 <input type="email" name="email" ng-model="email" class="form-control" placeholder="Email Address" required>
             </div>
         </div>

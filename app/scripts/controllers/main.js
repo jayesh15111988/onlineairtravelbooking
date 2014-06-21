@@ -1224,7 +1224,8 @@ $scope.setSelectedItem=function(index,item){
 
         console.log($scope.firstname+ " asdas ");
         console.log($scope.middlename+ " adasd ");
-
+        $scope.passwordError=false;
+        $scope.isEmailsMatchError=false;
         console.log($scope.accept+" accept");
         console.log($scope.reject+" reject");
         $scope.submitted = true;
@@ -1239,10 +1240,18 @@ $scope.setSelectedItem=function(index,item){
 
             $scope.passwordError=true;
         }
+
+        console.log("Email "+$scope.email);
+        console.log("repeat Email "+$scope.reemail);
+
+        if($scope.email!==$scope.reemail){
+            $scope.isEmailsMatchError=true;
+        }
+
 $scope.showTCError=!$scope.didConditionsAccepted;
 
         // If form is invalid, return and let AngularJS show validation errors.
-        if (form.$invalid || !$scope.didConditionsAccepted || $scope.passwordsnotmatch || $scope.telephoneError) {
+        if (form.$invalid || !$scope.didConditionsAccepted || $scope.passwordsnotmatch || $scope.telephoneError||$scope.isEmailsMatchError) {
             return;
         }
 
@@ -1269,12 +1278,12 @@ var authToken='';
             'password':$scope.password,
             'telephonenumber':$scope.telephonenumber,
             'languagechoice':$scope.languagechoice,
-            'travelreason':$scope.travelpurpose,
+            'travelpurpose':$scope.travelpurpose,
             'comments':$scope.comments,
             'Authorization': authToken
         }
 
-
+console.log(JSON.stringify(formData)+ "This is data");
         sendUserDataToServer(formData,$scope,true,$http);
     }
 })
