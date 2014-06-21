@@ -224,6 +224,7 @@ airlinetravelmodule.controller('userupdatecontroller',function($scope){
         $scope.password=$scope.repassword=prestoredUserData.password;
         $scope.telephonenumber=prestoredUserData.phonenumber;
         $scope.languagechoice=prestoredUserData.languagechoice;
+        $scope.travelpurpose=prestoredUserData.travelpurpose;
         $scope.comments=prestoredUserData.comments;
         console.log("Came into update hahah"+ prestoredUserData.country);
     }
@@ -279,6 +280,7 @@ airlinetravelmodule.controller('userupdatecontroller',function($scope){
             'password':$scope.password,
             'phonenumber':$scope.telephonenumber,
             'languagechoice':$scope.languagechoice,
+            'travelreason':$scope.travelpurpose,
             'comments':$scope.comments
         }
 
@@ -321,8 +323,11 @@ airlinetravelmodule.controller('samcontroller',function($scope, $http, $log, pro
     });
 
     $scope.salutations=['Mr.','Ms.','Mrs.','Dear'];
-
+$scope.travelreasons=['Personal','Family','Meeting Friends','Travel','Business','Other'];
+    $scope.languages=['English','Hindi','Spanish','French','German','Other'];
 $scope.salutation=$scope.salutations[0];
+    $scope.languagechoice=$scope.languages[0];
+    $scope.travelpurpose=$scope.travelreasons[0];
 
 
     if(localStorage.getItem('authTokenInfo')){
@@ -647,7 +652,6 @@ console.log("Came here $$$");
      */
     $scope.savecredentials=false;
     $scope.userfirstnamedisplay="Guest";
-    $scope.country="";
     $scope.loginviewtarget='#loginview';
     //Not working - Don't know why
     //$scope.showSuccessfullRegistration();
@@ -905,7 +909,7 @@ console.log("Came here $$$");
         "Zimbabwe"
     ];
 
-
+    $scope.country=$scope.countrynameslist[0];
     //Set country names in related select-options structure
 
 
@@ -1265,6 +1269,7 @@ var authToken='';
             'password':$scope.password,
             'telephonenumber':$scope.telephonenumber,
             'languagechoice':$scope.languagechoice,
+            'travelreason':$scope.travelpurpose,
             'comments':$scope.comments,
             'Authorization': authToken
         }

@@ -356,7 +356,7 @@
 <div class="form-actions modal-body">
 
 <!--<div id="messages" class="alert alert-success" data-ng-show="messages" data-ng-bind="messages"></div>-->
-<div id="messages" class="alert alert-success" data-ng-show="messages" data-ng-bind="messages"></div>
+<div id="" class="alert alert-success" data-ng-show="messages" data-ng-bind="messages"></div>
 <div data-ng-show="progress.active()" style="color: red; font-size: 50px;">Sending&hellip;</div>
 
 <form name="helpForm" class="form-horizontal" novalidate role="form">
@@ -364,14 +364,18 @@
 <legend>Update an Account</legend>
 
 <div class="form-group">
-    <label class="control-label" for="select01">Title</label>
+    <label class="control-label">Title</label>
     <div class="controls">
-        <select id="select03" ng-model="salutation">
+
+       <!-- <select id="select03" ng-model="salutation">
 
             <option>Mr.</option>
             <option>Mrs.</option>
             <option>Ms.</option>
             <option>Dear</option>
+        </select>-->
+        <select ng-model="salutation" ng-options="salutation for salutation in salutations">
+
         </select>
     </div>
 </div>
@@ -551,33 +555,20 @@
     <label class="control-label">Please enlist your choice of languages</label>
     <div class="controls">
         <span class="label label-danger" data-ng-show="submitted && helpForm.languagechoice.$error.required">Required!</span>
-        <select id="select01" name="languagechoice" ng-model="languagechoice" required>
-            <option></option>
-            <option>English</option>
-            <option>Hindi</option>
-            <option>Spanish</option>
-            <option>French</option>
+
+        <select ng-model="languagechoice" ng-options="language for language in languages">
         </select>
     </div>
 </div>
 
 
 <div class="control-group">
-    <label class="control-label" for="multiSelect">Please select why would you want to use airline commercial</label>
+    <label class="control-label">Please select why would you want to use airline commercial</label>
     <div class="controls">
-        <select multiple="multiple" id="multiSelect">
-            <option>Personal</option>
-            <option>Family</option>
-            <option>Meet Friends</option>
-            <option>Travel</option>
-            <option>Business</option>
+        <select ng-model="travelpurpose" ng-options="travelreason for travelreason in travelreasons">
         </select>
     </div>
 </div>
-
-
-
-
 
 
 <!--
@@ -924,14 +915,16 @@ Not needed for now
 
 <div class="form-group">
     <div class="col">
-        <label for="selectCountry">Select Country</label><br/>
+        <label for="">Select Country</label><br/>
         <div class="controls">
             <span class="label label-danger" data-ng-show="submitted && helpForm.country.$error.required">Required!</span>
-            <select id="selectCountry" name="country" ng-model="country" required>
+            <!--<select id="selectCountry" name="country" ng-model="country" required>
 
                 <option ng-repeat="country in countrynameslist" value="{{country}}">{{country}}</option>
 
-            </select>
+            </select>-->
+            <select ng-model="country"
+                    ng-options="country as country for country in countrynameslist" ></select>
         </div>
     </div>
 </div>
@@ -1036,7 +1029,7 @@ Not needed for now
     <label class="control-label" for="optionsCheckbox">Promotional Offers</label>
     <div class="controls">
         <label class="checkbox">
-            <input type="checkbox" id="optionsCheckbox" ng-model="subscribingforpromotionaloffers">
+            <input type="checkbox" id="" ng-model="subscribingforpromotionaloffers">
             Please select if you would like to receive promotional offers from AirFlightBooking Inc.
         </label>
 
@@ -1047,27 +1040,33 @@ Not needed for now
     <label class="control-label">Please enlist your choice of languages</label>
     <div class="controls">
         <span class="label label-danger" data-ng-show="submitted && helpForm.languagechoice.$error.required">Required!</span>
-        <select id="select01" name="languagechoice" ng-model="languagechoice" required>
+        <!--<select id="" name="languagechoice" ng-model="languagechoice" required>
 
             <option>English</option>
             <option>Hindi</option>
             <option>Spanish</option>
             <option>French</option>
-        </select>
+            <option>Other</option>
+        </select>-->
+
+        <select ng-model="languagechoice" ng-options="language for language in languages">
+            </select>
     </div>
 </div>
 
 
 <div class="control-group">
-    <label class="control-label" for="multiSelect">Please select why would you want to use airline commercial</label>
+    <label class="control-label">Please select why would you want to use airline commercial</label>
     <div class="controls">
-        <select multiple="multiple" id="multiSelect">
+        <select ng-model="travelpurpose" ng-options="travelreason for travelreason in travelreasons">
+        </select>
+        <!--<select multiple="multiple" id="multiSelect">
             <option>Personal</option>
             <option>Family</option>
             <option>Meet Friends</option>
             <option>Travel</option>
             <option>Business</option>
-        </select>
+        </select>-->
     </div>
 </div>
 <div class="label label-danger" data-ng-show="showTCError">Terms and Conditions must be accepted to create an account</div>
