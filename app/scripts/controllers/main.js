@@ -213,8 +213,12 @@ airlinetravelmodule.controller('userupdatecontroller',function($scope){
         //$scope.country=$scope.countrynameslist[sam];
 
         //$scope.country=prestoredUserData.country;
-        $scope.streetname=prestoredUserData.streetinfo;
-        $scope.streetsubname="";
+        //console.log("Full street info is "+prestoredUserData.streetinfo);
+        //Full streetinfo contains two parts which in turn are separated by ':'
+        //split them and show as streetinfo and streetsubinfo
+
+
+
         $scope.zipcode=prestoredUserData.zipcode;
         $scope.city=prestoredUserData.city;
         $scope.state=prestoredUserData.state;
@@ -270,7 +274,7 @@ airlinetravelmodule.controller('userupdatecontroller',function($scope){
             'lastname':$scope.lastname,
             'dateofbirth':$scope.birthdate,
             'country':$scope.country,
-            'streetinfo':$scope.streetname + "  "+$scope.streetsubname,
+            'streetinfo':$scope.streetname + ":"+$scope.streetsubname,
             'zipcode':$scope.zipcode,
             'city':$scope.city,
             'state':$scope.state,
@@ -284,7 +288,7 @@ airlinetravelmodule.controller('userupdatecontroller',function($scope){
             'comments':$scope.comments
         }
 
-        console.log("submit pressed -> "+$scope.subscribingforpromotionaloffers );
+        console.log("submit pressed -> "+formData );
 
         console.log($scope.firstname+ " asdas ");
         console.log($scope.middlename+ " adasd ");
@@ -304,13 +308,27 @@ airlinetravelmodule.controller('userupdatecontroller',function($scope){
 });
 
 
-airlinetravelmodule.controller('samcontroller',function($scope, $http, $log, promiseTracker, $timeout,$window,$rootScope,sharedService,$modal){
+airlinetravelmodule.controller('samcontroller',function($scope, $http, $log, promiseTracker, $timeout,$window,$rootScope,sharedService,$modal,openRegistrationDialogueService){
 
     //console.log("parent one controller came");
 
 //$scope.toShowDropdownMenuForResrevationRetrieval=false;
 
     // another controller or even directive
+
+    /*$rootScope.$on("createNewUserAccount", function (args) {
+//This notification is used to pop up a dialogue which will then be used to create a new user during user checkout process
+  //      console.log(angular.toJson(args, true));
+
+openRegistrationDialogue(true);
+
+    });*/
+
+
+
+    $rootScope.$on('request:validate', function(e) {
+        openRegistrationDialogue(true);
+    });
 
 
     $rootScope.$on("errorInReservationRetrieval", function (args) {
@@ -360,7 +378,7 @@ airlinetravelmodule.controller('samcontroller',function($scope, $http, $log, pro
                         data.firstname=previousFirstName;
 
                         localStorage.setItem('authTokenInfo',JSON.stringify(data));
-
+setUserFirstNameOnDisplay("Logout");
                     }
                     else if(data.success==false){
                         loguserinwithmodalview();
@@ -476,6 +494,10 @@ $scope.toRememberSelection=true;
             $scope.savecredentials=true;
         }
 
+        $scope.closeLoginDialogue=function(){
+            $modalInstance.dismiss('cancel');
+        }
+
         $scope.forgotPassword=function(){
             //$modalInstance.close("");
             $modalInstance.dismiss('cancel');
@@ -485,7 +507,8 @@ $scope.toRememberSelection=true;
         $scope.hideloginshowregistration=function(){
             //$modalInstance.close("");
             $modalInstance.dismiss('cancel');
-            $("#registerview").modal('show');
+            openRegistrationDialogue(true);
+            //$("#registerview").modal('show');
         }
 
 
@@ -586,8 +609,8 @@ $scope.toRememberSelection=true;
         modalInstance.result.then(function (selectedItem) {
 //User logged in succesfully, now change main name from guest to valid username and change login text to logout
 
-            $scope.loginlogouttext="Logout";
-            setUserFirstNameOnDisplay();
+
+            setUserFirstNameOnDisplay("Logout");
 
         }, function () {
             console.log(' Login view Modal dismissed at: ' + new Date());
@@ -653,8 +676,8 @@ $scope.toRememberSelection=true;
      });*/
     //});
 
-    function setUserFirstNameOnDisplay(){
-
+    function setUserFirstNameOnDisplay(sessionStatus){
+        $scope.loginlogouttext=sessionStatus;
         if(localStorage.getItem('authTokenInfo')){
 
             var authInfoInLocalStorage=JSON.parse(localStorage.getItem('authTokenInfo'));
@@ -681,7 +704,7 @@ $scope.toRememberSelection=true;
 
 
 
-    setUserFirstNameOnDisplay();
+    setUserFirstNameOnDisplay("Logout");
 
 
 
@@ -742,17 +765,27 @@ $scope.setSelectedItem=function(index,item){
 
     $scope.viewingProfileInfoForEditing=function(isEditing){
 
+
+
+//User is logged in and we will make sure to change text to update and instread of creating account, we will redirect him to this screen
+        //where he'll be able to edit profile information
+
+
+
         isEditingUserRegistrationInfo=isEditing;
 
         if(isEditing===true){
+console.log("Came here with variable is editing value is "+isEditing);
 
-            if(localStorage.getItem('authTokenInfo')){
+
+            openRegistrationDialogue(!isEditing)
+         /*   if(localStorage.getItem('authTokenInfo')){
                 $scope.$broadcast("SET_MESSAGE_HEADER","Sample message");
                 $("#userupdateview").modal('show');
             }
             else{
                 console.log("sorry, you must sign in to go this menu");
-            }
+            }*/
         }
         else{
             console.log("Creating a new profile");
@@ -786,481 +819,8 @@ $scope.setSelectedItem=function(index,item){
             }else{
 
 
-                var userRegistrationController = function ($scope, $modalInstance, items) {
+               openRegistrationDialogue(!isEditing);
 
-
-                    $scope.salutations=['Mr.','Ms.','Mrs.','Dear'];
-                    $scope.travelreasons=['Personal','Family','Meeting Friends','Travel','Business','Other'];
-                    $scope.languages=['English','Hindi','Spanish','French','German','Other'];
-
-
-
-                    //Setting fieldnames in our form
-                    $scope.fieldnames={
-                        salutation:$scope.salutations[0],
-                        firstname:$scope.firstname,
-                        middlename:$scope.middlename,
-                        lastname:$scope.lastname,
-                        birthdate:$scope.birthdate,
-                        country:$scope.country,
-                        streetname:$scope.streetname,
-                        streetsubname:$scope.streetsubname,
-                        zipcode:$scope.zipcode,
-                        city:$scope.city,
-                        state:$scope.state,
-                        issubscribed:$scope.subscribingforpromotionaloffers,
-                        emailaddress:$scope.email,
-                        userid:$scope.userid,
-                        password:$scope.password,
-                        telephonenumber:$scope.telephonenumber,
-                        languagechoice:$scope.languages[0],
-                        travelpurpose:$scope.travelreasons[0],
-                        comments:$scope.comments,
-                        passwordsnotmatch:false,
-                        didConditionsAccepted:false,
-                        isZipcodeInvalid:false
-
-                    }
-
-
-
-
-
-                    $scope.$watch('fieldnames.telephonenumber',function(n,o){
-
-                        if(n && o){
-                            var lengthOfInput= n.length;
-                            var oldLength= o.length;
-
-                            if(lengthOfInput>12){
-
-                                $scope.fieldnames.telephonenumber=o;
-
-                            }
-                            else if((lengthOfInput==3 || lengthOfInput==7) && oldLength<lengthOfInput){
-                                $scope.fieldnames.telephonenumber=n+"-";
-
-                            }
-                        }
-                    },true);
-
-
-
-
-                    $scope.disabled = function(date, mode) {
-                        //  return ( mode === 'day' && ( date.getDay() === 0 || date.getDay() === 6 ) );
-                    };
-                    $scope.dateOptions = {
-                        'year-format': "'yy'",
-                        'starting-day': 1,
-                        'show-weeks':true
-                    };
-
-                    $scope.open = function($event) {
-                        $event.preventDefault();
-                        $event.stopPropagation();
-                        $scope.fieldnames.opened = true;
-                    };
-
-                    //Set maximum birthdate as 0 years earlier from current date
-                    var today = new Date();
-                    var dd = today.getDate();
-                    var mm = today.getMonth()+1; //January is 0!
-                    //This is where we set maximum birthday date for the user
-                    var yyyy = today.getFullYear()-10;
-
-                    if(dd<10) {
-                        dd='0'+dd
-                    }
-
-                    if(mm<10) {
-                        mm='0'+mm
-                    }
-
-
-
-
-                   $scope.doit=function(){
-
-                       //var scope = angular.element('telephonenumber').scope();
-                       //alert(scope.telephonenumber);
-                        console.log($scope.fieldnames.telephonenumber);
-                    }
-                    today = mm+'/'+dd+'/'+yyyy;
-                    $scope.maxdate='\''+today+'\'';
-
-                    //$scope.formats = ['dd-MMMM-yyyy', 'yyyy/MM/dd', 'shortDate'];
-
-                    $scope.format = 'MM/dd/yyyy';//$scope.formats[2];
-                    $scope.fieldnames.subscribingforpromotionaloffers=false;
-                    $scope.fieldnames.didConditionsAccepted=false;
-
-                    $scope.conditionschanged=function(acceptFlag){
-                        $scope.fieldnames.didConditionsAccepted=!acceptFlag;
-
-                        // console.log($scope.didConditionsAccepted+" final value accept reject ");
-                    }
-
-
-                    $scope.countrynameslist=[" ","United States of America",
-                        "Afganistan",
-                        "Albania",
-                        "Algeria",
-                        "American Samoa",
-                        "Andorra",
-                        "Angola",
-                        "Anguilla",
-                        "Antigua & Barbuda",
-                        "Argentina",
-                        "Armenia",
-                        "Aruba",
-                        "Australia",
-                        "Austria",
-                        "Azerbaijan",
-                        "Bahamas",
-                        "Bahrain",
-                        "Bangladesh",
-                        "Barbados",
-                        "Belarus",
-                        "Belgium",
-                        "Belize",
-                        "Benin",
-                        "Bermuda",
-                        "Bhutan",
-                        "Bolivia",
-                        "Bonaire",
-                        "Bosnia & Herzegovina",
-                        "Botswana",
-                        "Brazil",
-                        "British Indian Ocean Ter",
-                        "Brunei",
-                        "Bulgaria",
-                        "Burkina Faso",
-                        "Burundi",
-                        "Cambodia",
-                        "Cameroon",
-                        "Canada",
-                        "Canary Islands",
-                        "Cape Verde",
-                        "Cayman Islands",
-                        "Central African Republic",
-                        "Chad",
-                        "Channel Islands",
-                        "Chile",
-                        "China",
-                        "Christmas Island",
-                        "Cocos Island",
-                        "Colombia",
-                        "Comoros",
-                        "Congo",
-                        "Cook Islands",
-                        "Costa Rica",
-                        "Cote DIvoire",
-                        "Croatia",
-                        "Cuba",
-                        "Curaco",
-                        "Cyprus",
-                        "Czech Republic",
-                        "Denmark",
-                        "Djibouti",
-                        "Dominica",
-                        "Dominican Republic",
-                        "East Timor",
-                        "Ecuador",
-                        "Egypt",
-                        "El Salvador",
-                        "Equatorial Guinea",
-                        "Eritrea",
-                        "Estonia",
-                        "Ethiopia",
-                        "Falkland Islands",
-                        "Faroe Islands",
-                        "Fiji",
-                        "Finland",
-                        "France",
-                        "French Guiana",
-                        "French Polynesia",
-                        "French Southern Ter",
-                        "Gabon",
-                        "Gambia",
-                        "Georgia",
-                        "Germany",
-                        "Ghana",
-                        "Gibraltar",
-                        "Great Britain",
-                        "Greece",
-                        "Greenland",
-                        "Grenada",
-                        "Guadeloupe",
-                        "Guam",
-                        "Guatemala",
-                        "Guinea",
-                        "Guyana",
-                        "Haiti",
-                        "Hawaii",
-                        "Honduras",
-                        "Hong Kong",
-                        "Hungary",
-                        "Iceland",
-                        "India",
-                        "Indonesia",
-                        "Iran",
-                        "Iraq",
-                        "Ireland",
-                        "Isle of Man",
-                        "Israel",
-                        "Italy",
-                        "Jamaica",
-                        "Japan",
-                        "Jordan",
-                        "Kazakhstan",
-                        "Kenya",
-                        "Kiribati",
-                        "Korea North",
-                        "Korea Sout",
-                        "Kuwait",
-                        "Kyrgyzstan",
-                        "Laos",
-                        "Latvia",
-                        "Lebanon",
-                        "Lesotho",
-                        "Liberia",
-                        "Libya",
-                        "Liechtenstein",
-                        "Lithuania",
-                        "Luxembourg",
-                        "Macau",
-                        "Macedonia",
-                        "Madagascar",
-                        "Malaysia",
-                        "Malawi",
-                        "Maldives",
-                        "Mali",
-                        "Malta",
-                        "Marshall Islands",
-                        "Martinique",
-                        "Mauritania",
-                        "Mauritius",
-                        "Mayotte",
-                        "Mexico",
-                        "Midway Islands",
-                        "Moldova",
-                        "Monaco",
-                        "Mongolia",
-                        "Montserrat",
-                        "Morocco",
-                        "Mozambique",
-                        "Myanmar",
-                        "Nambia",
-                        "Nauru",
-                        "Nepal",
-                        "Netherland Antilles",
-                        "Netherlands",
-                        "Nevis",
-                        "New Caledonia",
-                        "New Zealand",
-                        "Nicaragua",
-                        "Niger",
-                        "Nigeria",
-                        "Niue",
-                        "Norfolk Island",
-                        "Norway",
-                        "Oman",
-                        "Pakistan",
-                        "Palau Island",
-                        "Palestine",
-                        "Panama",
-                        "Papua New Guinea",
-                        "Paraguay",
-                        "Peru",
-                        "Phillipines",
-                        "Pitcairn Island",
-                        "Poland",
-                        "Portugal",
-                        "Puerto Rico",
-                        "Qatar",
-                        "Republic of Montenegro",
-                        "Republic of Serbia",
-                        "Reunion",
-                        "Romania",
-                        "Russia",
-                        "Rwanda",
-                        "St Barthelemy",
-                        "St Eustatius",
-                        "St Helena",
-                        "St Kitts-Nevis",
-                        "St Lucia",
-                        "St Maarten",
-                        "St Pierre & Miquelon",
-                        "St Vincent & Grenadines",
-                        "Saipan",
-                        "Samoa",
-                        "Samoa American",
-                        "San Marino",
-                        "Sao Tome & Principe",
-                        "Saudi Arabia",
-                        "Senegal",
-                        "Serbia",
-                        "Seychelles",
-                        "Sierra Leone",
-                        "Singapore",
-                        "Slovakia",
-                        "Slovenia",
-                        "Solomon Islands",
-                        "Somalia",
-                        "South Africa",
-                        "Spain",
-                        "Sri Lanka",
-                        "Sudan",
-                        "Suriname",
-                        "Swaziland",
-                        "Sweden",
-                        "Switzerland",
-                        "Syria",
-                        "Tahiti",
-                        "Taiwan",
-                        "Tajikistan",
-                        "Tanzania",
-                        "Thailand",
-                        "Togo",
-                        "Tokelau",
-                        "Tonga",
-                        "Trinidad & Tobago",
-                        "Tunisia",
-                        "Turkey",
-                        "Turkmenistan",
-                        "Turks & Caicos Is",
-                        "Tuvalu",
-                        "Uganda",
-                        "Ukraine",
-                        "United Arab Erimates",
-                        "United Kingdom",
-                        "Uraguay",
-                        "Uzbekistan",
-                        "Vanuatu",
-                        "Vatican City State",
-                        "Venezuela",
-                        "Vietnam",
-                        "Virgin Islands (Brit)",
-                        "Virgin Islands (USA)",
-                        "Wake Island",
-                        "Wallis & Futana Is",
-                        "Yemen",
-                        "Zaire",
-                        "Zambia",
-                        "Zimbabwe"];
-
-                    $scope.fieldnames.country=$scope.countrynameslist[0];
-                    /*$scope.items = items;
-                     $scope.selected = {
-                     item: $scope.items[0]
-                     };
-                     */
-
-
-                    $scope.closeRegistrationView = function () {
-                        $modalInstance.dismiss('cancel');
-                    };
-
-
-                    $scope.submit=function(form){
-
-
-                        $scope.passwordError=false;
-                        $scope.telephoneError=false;
-                        $scope.isEmailsMatchError=false;
-                        $scope.passwordsnotmatch=false;
-                        $scope.submitted = true;
-console.log("Birth date "+ $scope.fieldnames.birthdate);
-
-                        var telephoneRegex = /^\d{3}-?\d{3}-?\d{4}$/g
-                        var isTelephoneNumber= telephoneRegex.test($scope.fieldnames.telephonenumber);
-
-
-                            $scope.telephoneError=!isTelephoneNumber;
-
-
-                        //Zip code must be all digit and with minimum 5 and maximum 8 digits - that's all
-                        var zipCodeRegex=/^\d{5,8}$/g;
-                        $scope.fieldnames.isZipcodeInvalid=!(zipCodeRegex.text($scope.fieldnames.zipcode));
-
-                        $scope.passwordError = $scope.passwordsnotmatch=($scope.fieldnames.password!==$scope.fieldnames.repassword);
-
-
-
-                            $scope.isEmailsMatchError=($scope.fieldnames.email!==$scope.fieldnames.reemail);
-
-
-                       
-
-                        // If form is invalid, return and let AngularJS show validation errors.
-
-                        if (form.$invalid || !$scope.fieldnames.didConditionsAccepted ||$scope.fieldnames.isZipcodeInvalid ||$scope.passwordsnotmatch || $scope.telephoneError||$scope.isEmailsMatchError) {
-                            return;
-                        }
-console.log("came here now");
-
-                        var authTokenInfoFromLocalStorage=JSON.parse(localStorage.getItem('authTokenInfo'));
-                        var authToken='';
-                        if(authTokenInfoFromLocalStorage){
-                            authToken=authTokenInfoFromLocalStorage.authtoken;
-                        }
-                        var formData={
-                            'salutation':$scope.fieldnames.salutation,
-                            'firstname':$scope.fieldnames.firstname,
-                            'middlename':$scope.fieldnames.middlename,
-                            'lastname':$scope.fieldnames.lastname,
-                            'birthdate':$scope.fieldnames.birthdate,
-                            'country':$scope.fieldnames.country,
-                            'streetname':$scope.fieldnames.streetname,
-                            'streetsubname':$scope.fieldnames.streetsubname,
-                            'zipcode':$scope.fieldnames.zipcode,
-                            'city':$scope.fieldnames.city,
-                            'state':$scope.fieldnames.state,
-                            'issubscribed':$scope.fieldnames.subscribingforpromotionaloffers,
-                            'emailaddress':$scope.fieldnames.email,
-                            'userid':$scope.fieldnames.userid,
-                            'password':$scope.fieldnames.password,
-                            'telephonenumber':$scope.fieldnames.telephonenumber,
-                            'languagechoice':$scope.fieldnames.languagechoice,
-                            'travelpurpose':$scope.fieldnames.travelpurpose,
-                            'comments':$scope.fieldnames.comments,
-                            'Authorization': authToken
-                        }
-                        console.log(JSON.stringify(formData)+ " *** This is data *** ");
-
-var callbackFunctionafterUserCreateupdateOperation=function(responseData){
-
-    $modalInstance.close(responseData);
-}
-
-                        sendUserDataToServer(formData,$scope,true,$http,callbackFunctionafterUserCreateupdateOperation);
-                        //Close dialogue box once process is completed
-
-                    }
-                };
-
-                var modalInstance = $modal.open({
-                    templateUrl: 'userRegistrationContent.html',
-                    controller: userRegistrationController,
-                    size: 'sm',
-                    resolve: {
-                        items: function () {
-                            return "Jayesh Kawli";
-                        }
-                    }
-                });
-
-                modalInstance.result.then(function (responseDataAfterUserCreateUpdateOperation) {
-  console.log("Response data after user operation ->"+ responseDataAfterUserCreateUpdateOperation);
-                    //Now we submitted data succesfull - Show user second page confirmaing ongoing registration
-                    $scope.loginlogouttext="Logout";
-                    setUserFirstNameOnDisplay();
-                    $scope.showSecondPage();
-  //                  $scope.selected = selectedItem;
-                }, function () {
-                    $log.info('Registration Modal dismissed at: ' + new Date());
-                });
             }
         }
     }
@@ -1268,12 +828,545 @@ var callbackFunctionafterUserCreateupdateOperation=function(responseData){
 
 
     //$route.location.reload();
+var openRegistrationDialogue=function(isCreatingNewUser)
+{
+    var userRegistrationController = function ($scope, $modalInstance, items) {
 
+
+        $scope.salutations=['Mr.','Ms.','Mrs.','Dear'];
+        $scope.travelreasons=['Personal','Family','Meeting Friends','Travel','Business','Other'];
+        $scope.languages=['English','Hindi','Spanish','French','German','Other'];
+
+
+        $scope.closeRegistrationModalView=function(){
+            console.log("Dismissing lolz");
+            $modalInstance.dismiss('cancel');
+        }
+        //Setting fieldnames in our form
+
+        $scope.countrynameslist=[" ","United States of America",
+            "Afganistan",
+            "Albania",
+            "Algeria",
+            "American Samoa",
+            "Andorra",
+            "Angola",
+            "Anguilla",
+            "Antigua & Barbuda",
+            "Argentina",
+            "Armenia",
+            "Aruba",
+            "Australia",
+            "Austria",
+            "Azerbaijan",
+            "Bahamas",
+            "Bahrain",
+            "Bangladesh",
+            "Barbados",
+            "Belarus",
+            "Belgium",
+            "Belize",
+            "Benin",
+            "Bermuda",
+            "Bhutan",
+            "Bolivia",
+            "Bonaire",
+            "Bosnia & Herzegovina",
+            "Botswana",
+            "Brazil",
+            "British Indian Ocean Ter",
+            "Brunei",
+            "Bulgaria",
+            "Burkina Faso",
+            "Burundi",
+            "Cambodia",
+            "Cameroon",
+            "Canada",
+            "Canary Islands",
+            "Cape Verde",
+            "Cayman Islands",
+            "Central African Republic",
+            "Chad",
+            "Channel Islands",
+            "Chile",
+            "China",
+            "Christmas Island",
+            "Cocos Island",
+            "Colombia",
+            "Comoros",
+            "Congo",
+            "Cook Islands",
+            "Costa Rica",
+            "Cote DIvoire",
+            "Croatia",
+            "Cuba",
+            "Curaco",
+            "Cyprus",
+            "Czech Republic",
+            "Denmark",
+            "Djibouti",
+            "Dominica",
+            "Dominican Republic",
+            "East Timor",
+            "Ecuador",
+            "Egypt",
+            "El Salvador",
+            "Equatorial Guinea",
+            "Eritrea",
+            "Estonia",
+            "Ethiopia",
+            "Falkland Islands",
+            "Faroe Islands",
+            "Fiji",
+            "Finland",
+            "France",
+            "French Guiana",
+            "French Polynesia",
+            "French Southern Ter",
+            "Gabon",
+            "Gambia",
+            "Georgia",
+            "Germany",
+            "Ghana",
+            "Gibraltar",
+            "Great Britain",
+            "Greece",
+            "Greenland",
+            "Grenada",
+            "Guadeloupe",
+            "Guam",
+            "Guatemala",
+            "Guinea",
+            "Guyana",
+            "Haiti",
+            "Hawaii",
+            "Honduras",
+            "Hong Kong",
+            "Hungary",
+            "Iceland",
+            "India",
+            "Indonesia",
+            "Iran",
+            "Iraq",
+            "Ireland",
+            "Isle of Man",
+            "Israel",
+            "Italy",
+            "Jamaica",
+            "Japan",
+            "Jordan",
+            "Kazakhstan",
+            "Kenya",
+            "Kiribati",
+            "Korea North",
+            "Korea Sout",
+            "Kuwait",
+            "Kyrgyzstan",
+            "Laos",
+            "Latvia",
+            "Lebanon",
+            "Lesotho",
+            "Liberia",
+            "Libya",
+            "Liechtenstein",
+            "Lithuania",
+            "Luxembourg",
+            "Macau",
+            "Macedonia",
+            "Madagascar",
+            "Malaysia",
+            "Malawi",
+            "Maldives",
+            "Mali",
+            "Malta",
+            "Marshall Islands",
+            "Martinique",
+            "Mauritania",
+            "Mauritius",
+            "Mayotte",
+            "Mexico",
+            "Midway Islands",
+            "Moldova",
+            "Monaco",
+            "Mongolia",
+            "Montserrat",
+            "Morocco",
+            "Mozambique",
+            "Myanmar",
+            "Nambia",
+            "Nauru",
+            "Nepal",
+            "Netherland Antilles",
+            "Netherlands",
+            "Nevis",
+            "New Caledonia",
+            "New Zealand",
+            "Nicaragua",
+            "Niger",
+            "Nigeria",
+            "Niue",
+            "Norfolk Island",
+            "Norway",
+            "Oman",
+            "Pakistan",
+            "Palau Island",
+            "Palestine",
+            "Panama",
+            "Papua New Guinea",
+            "Paraguay",
+            "Peru",
+            "Phillipines",
+            "Pitcairn Island",
+            "Poland",
+            "Portugal",
+            "Puerto Rico",
+            "Qatar",
+            "Republic of Montenegro",
+            "Republic of Serbia",
+            "Reunion",
+            "Romania",
+            "Russia",
+            "Rwanda",
+            "St Barthelemy",
+            "St Eustatius",
+            "St Helena",
+            "St Kitts-Nevis",
+            "St Lucia",
+            "St Maarten",
+            "St Pierre & Miquelon",
+            "St Vincent & Grenadines",
+            "Saipan",
+            "Samoa",
+            "Samoa American",
+            "San Marino",
+            "Sao Tome & Principe",
+            "Saudi Arabia",
+            "Senegal",
+            "Serbia",
+            "Seychelles",
+            "Sierra Leone",
+            "Singapore",
+            "Slovakia",
+            "Slovenia",
+            "Solomon Islands",
+            "Somalia",
+            "South Africa",
+            "Spain",
+            "Sri Lanka",
+            "Sudan",
+            "Suriname",
+            "Swaziland",
+            "Sweden",
+            "Switzerland",
+            "Syria",
+            "Tahiti",
+            "Taiwan",
+            "Tajikistan",
+            "Tanzania",
+            "Thailand",
+            "Togo",
+            "Tokelau",
+            "Tonga",
+            "Trinidad & Tobago",
+            "Tunisia",
+            "Turkey",
+            "Turkmenistan",
+            "Turks & Caicos Is",
+            "Tuvalu",
+            "Uganda",
+            "Ukraine",
+            "United Arab Erimates",
+            "United Kingdom",
+            "Uraguay",
+            "Uzbekistan",
+            "Vanuatu",
+            "Vatican City State",
+            "Venezuela",
+            "Vietnam",
+            "Virgin Islands (Brit)",
+            "Virgin Islands (USA)",
+            "Wake Island",
+            "Wallis & Futana Is",
+            "Yemen",
+            "Zaire",
+            "Zambia",
+            "Zimbabwe"];
+
+
+       if(isCreatingNewUser){
+        $scope.fieldnames={
+            salutation:$scope.salutations[0],
+            firstname:$scope.firstname,
+            middlename:$scope.middlename,
+            lastname:$scope.lastname,
+            birthdate:$scope.birthdate,
+            selcountry:$scope.country,
+            streetname:$scope.streetname,
+            streetsubname:$scope.streetsubname,
+            zipcode:$scope.zipcode,
+            city:$scope.city,
+            state:$scope.state,
+            issubscribed:$scope.subscribingforpromotionaloffers,
+            emailaddress:$scope.email,
+            userid:$scope.userid,
+            password:$scope.password,
+            telephonenumber:$scope.telephonenumber,
+            languagechoice:$scope.languages[0],
+            travelpurpose:$scope.travelreasons[0],
+            comments:$scope.comments,
+            passwordsnotmatch:false,
+            didConditionsAccepted:false,
+            isZipcodeInvalid:false
+        }
+       }else{
+           var prestoredUserData=JSON.parse(localStorage.getItem('serverloginauthenticationsuccess'));
+
+           if(prestoredUserData){
+
+
+               var sam=$scope.countrynameslist.indexOf(prestoredUserData.country);
+
+
+
+console.log(prestoredUserData.country+ "  indexified now **** ");
+
+$scope.toHideTCSection=true;
+//We have two parts in the address - Street info and street sub info
+               var dividedStreetinfo=prestoredUserData.streetinfo.split(':');
+
+$scope.fieldnames={
+    selcountry: $scope.countrynameslist[sam],
+        salutation:prestoredUserData.salutation,
+        firstname:prestoredUserData.firstname,
+        middlename:prestoredUserData.middlename,
+        lastname:prestoredUserData.lastname,
+    birthdate:prestoredUserData.dateofbirth.substring(0,10),
+        streetname:dividedStreetinfo[0],
+        streetsubname:dividedStreetinfo[1],
+        zipcode:prestoredUserData.zipcode,
+        city:prestoredUserData.city,
+        state:prestoredUserData.state,
+        subscribingforpromotionaloffers:prestoredUserData.issubscribed,
+        email: prestoredUserData.emailaddress,
+        reemail:prestoredUserData.emailaddress,
+        userid:prestoredUserData.userid,
+        password:prestoredUserData.password,
+        repassword:prestoredUserData.password,
+        telephonenumber:prestoredUserData.phonenumber,
+        languagechoice:prestoredUserData.languagechoice,
+        travelpurpose:prestoredUserData.travelpurpose,
+        comments:prestoredUserData.comments,
+        didConditionsAccepted:true
+           }
+           }
+       }
+
+
+
+
+
+        $scope.$watch('fieldnames.telephonenumber',function(n,o){
+
+            if(n && o){
+                var lengthOfInput= n.length;
+                var oldLength= o.length;
+
+                if(lengthOfInput>12){
+
+                    $scope.fieldnames.telephonenumber=o;
+
+                }
+                else if((lengthOfInput==3 || lengthOfInput==7) && oldLength<lengthOfInput){
+                    $scope.fieldnames.telephonenumber=n+"-";
+
+                }
+            }
+        },true);
+
+
+
+
+        $scope.disabled = function(date, mode) {
+            //  return ( mode === 'day' && ( date.getDay() === 0 || date.getDay() === 6 ) );
+        };
+        $scope.dateOptions = {
+            'year-format': "'yy'",
+            'starting-day': 1,
+            'show-weeks':true
+        };
+
+        $scope.open = function($event) {
+            $event.preventDefault();
+            $event.stopPropagation();
+            $scope.fieldnames.opened = true;
+        };
+
+        //Set maximum birthdate as 0 years earlier from current date
+        var today = new Date();
+        var dd = today.getDate();
+        var mm = today.getMonth()+1; //January is 0!
+        //This is where we set maximum birthday date for the user
+        var yyyy = today.getFullYear()-10;
+
+        if(dd<10) {
+            dd='0'+dd
+        }
+
+        if(mm<10) {
+            mm='0'+mm
+        }
+
+
+
+
+
+        today = mm+'/'+dd+'/'+yyyy;
+        $scope.maxdate='\''+today+'\'';
+
+        //$scope.formats = ['dd-MMMM-yyyy', 'yyyy/MM/dd', 'shortDate'];
+
+        $scope.format = 'MM/dd/yyyy';//$scope.formats[2];
+        $scope.fieldnames.subscribingforpromotionaloffers=false;
+        $scope.fieldnames.didConditionsAccepted=false;
+
+        $scope.conditionschanged=function(acceptFlag){
+            $scope.fieldnames.didConditionsAccepted=!acceptFlag;
+
+            // console.log($scope.didConditionsAccepted+" final value accept reject ");
+        }
+
+
+
+
+        $scope.fieldnames.country=$scope.countrynameslist[0];
+        /*$scope.items = items;
+         $scope.selected = {
+         item: $scope.items[0]
+         };
+         */
+
+
+        $scope.closeRegistrationView = function () {
+            $modalInstance.dismiss('cancel');
+        };
+
+
+        $scope.submit=function(form){
+
+
+            $scope.passwordError=false;
+            $scope.telephoneError=false;
+            $scope.isEmailsMatchError=false;
+            $scope.passwordsnotmatch=false;
+            $scope.submitted = true;
+            console.log("Birth date "+ $scope.fieldnames.birthdate);
+
+            var telephoneRegex = /^\d{3}-?\d{3}-?\d{4}$/g
+            var isTelephoneNumber= telephoneRegex.test($scope.fieldnames.telephonenumber);
+
+
+            $scope.telephoneError=!isTelephoneNumber;
+
+
+            //Zip code must be all digit and with minimum 5 and maximum 8 digits - that's all
+            var zipCodeRegex=/^\d{5,8}$/g;
+            $scope.fieldnames.isZipcodeInvalid=!(zipCodeRegex.test($scope.fieldnames.zipcode));
+
+            $scope.passwordError = $scope.passwordsnotmatch=($scope.fieldnames.password!==$scope.fieldnames.repassword);
+
+            if(!isCreatingNewUser){
+            $scope.fieldnames.didConditionsAccepted=true;
+            }
+
+            $scope.isEmailsMatchError=($scope.fieldnames.email!==$scope.fieldnames.reemail);
+
+
+
+            console.log("came here before");
+            // If form is invalid, return and let AngularJS show validation errors.
+            console.log(JSON.stringify(form)+" what is status ");
+
+            if (form.$invalid || !$scope.fieldnames.didConditionsAccepted ||$scope.fieldnames.isZipcodeInvalid ||$scope.passwordsnotmatch || $scope.telephoneError||$scope.isEmailsMatchError) {
+                return;
+            }
+
+            console.log("came here now");
+
+            var authTokenInfoFromLocalStorage=JSON.parse(localStorage.getItem('authTokenInfo'));
+            var authToken='';
+            if(authTokenInfoFromLocalStorage){
+                authToken=authTokenInfoFromLocalStorage.authtoken;
+            }
+
+            var fullStreetInfo=$scope.fieldnames.streetname+":"+$scope.fieldnames.streetsubname;
+
+            var formData={
+                'salutation':$scope.fieldnames.salutation,
+                'firstname':$scope.fieldnames.firstname,
+                'middlename':$scope.fieldnames.middlename,
+                'lastname':$scope.fieldnames.lastname,
+                'dateofbirth':$scope.fieldnames.birthdate,
+                'country':$scope.fieldnames.selcountry,
+                'streetinfo':fullStreetInfo,
+                'zipcode':$scope.fieldnames.zipcode,
+                'city':$scope.fieldnames.city,
+                'state':$scope.fieldnames.state,
+                'issubscribed':$scope.fieldnames.subscribingforpromotionaloffers,
+                'emailaddress':$scope.fieldnames.email,
+                'userid':$scope.fieldnames.userid,
+                'password':$scope.fieldnames.password,
+                'phonenumber':$scope.fieldnames.telephonenumber,
+                'languagechoice':$scope.fieldnames.languagechoice,
+                'travelpurpose':$scope.fieldnames.travelpurpose,
+                'comments':$scope.fieldnames.comments,
+                'Authorization': authToken
+            }
+            console.log(JSON.stringify(formData)+ " *** DEBUG INFO This is data *** ");
+
+            var callbackFunctionafterUserCreateupdateOperation=function(responseData){
+
+                $modalInstance.close(responseData);
+            }
+
+            sendUserDataToServer(formData,$scope,isCreatingNewUser,$http,callbackFunctionafterUserCreateupdateOperation);
+            //Close dialogue box once process is completed
+
+        }
+    };
+
+
+    var modalInstance = $modal.open({
+
+        templateUrl: 'userRegistrationContent.html',
+        controller: userRegistrationController,
+        size: 'sm',
+        resolve: {
+            items: function () {
+                return "";
+            }
+        }
+    });
+
+
+    modalInstance.result.then(function (responseDataAfterUserCreateUpdateOperation) {
+        console.log("Response data after user operation ->"+ responseDataAfterUserCreateUpdateOperation);
+        //Now we submitted data succesfull - Show user second page confirmaing ongoing registration
+
+        setUserFirstNameOnDisplay("Logout");
+        $scope.showSecondPage();
+        //                  $scope.selected = selectedItem;
+    }, function () {
+        $log.info('Registration Modal dismissed at: ' + new Date());
+    });
+
+}
+
+    openRegistrationDialogueService.setProperty(openRegistrationDialogue);
 
     $scope.regionName="Select Region";
     $scope.setRegion=function(regionname){
         $scope.regionName=regionname;
-        //  console.log(regionname);
+
     }
 
 
@@ -1284,7 +1377,7 @@ var callbackFunctionafterUserCreateupdateOperation=function(responseData){
 
 
 
-
+/*
     function setUserFirstNameOnDisplay(){
 
         if(localStorage.getItem('authTokenInfo')){
@@ -1294,7 +1387,7 @@ var callbackFunctionafterUserCreateupdateOperation=function(responseData){
             $scope.userfirstnamedisplay=authInfoInLocalStorage.firstname;
 
         }
-    }
+    }*/
 
     var loguserout=function(){
 
@@ -1373,7 +1466,7 @@ function sendUserDataToServer(formData,$scope,isCreatingUser,$http,callBackFunct
 
 
     var authTokenInfoFromLocalStorage=JSON.parse(localStorage.getItem('authTokenInfo'));
-    //$scope.messages="";
+
     $http({
         url: updateUrl,
         method: "GET",
@@ -1409,10 +1502,11 @@ console.log("Server response data "+ serverResponseData);
                 localStorage.setItem('authTokenInfo',JSON.stringify({'authtoken':data.authorization,'emailaddress':data.emailaddress,firstname:data.firstname,tokenexpirytime:addMinutes(new Date(),30)}));
                 $scope.userfirstnamedisplay=data.firstname;
                 console.log("Success" + angular.toJson(data));
-                if(isCreatingUser){
+                callBackFunctionToExecute(data);
+                /*if(isCreatingUser){
 
 
-                    callBackFunctionToExecute(data);
+
                     //Not using anymore
          //           $("#registerview").modal('hide');
 //                    $scope.dismissRegPage();
@@ -1423,7 +1517,7 @@ console.log("Server response data "+ serverResponseData);
 
                     //This is not a good practice - To be Fixed But I am getting function undefined Will look into it
                     $('#userupdateview').modal('hide');
-                }
+                }*/
             }
             else if (data.success===false){
 
@@ -1719,7 +1813,9 @@ var fullCodeNames={};
     }
 
     $scope.checkoutguest=function(){
-        $("#registerview").modal('show');
+        //Not sure if it will wotk or now - But will see it
+        openRegistrationDialogue(true);
+        //$("#registerview").modal('show');
     }
 
     //User has either logged in/Updated information/created new registration account
@@ -2450,10 +2546,7 @@ airlinetravelmodule.controller('showflightscontroller',function($scope,$http,$ro
             });
     }
 
-    $scope.doitnow=function(){
-        console.log("deteted");
-        $scope.servermessage="hahha";
-    }
+
 
 
     getParameteresDictionary=$location.search();
@@ -2494,7 +2587,17 @@ airlinetravelmodule.controller('upperleftbarcontroller',function($scope){
 
 })
 
-airlinetravelmodule.controller('flightsearchcontroller',function($scope,$http,$window,$timeout){
+airlinetravelmodule.controller('flightsearchcontroller',function($scope,$http,$window,$timeout,$rootScope,openRegistrationDialogueService){
+
+
+    //#warning to use while booking new flight
+    $scope.showRegisterNewUserModalView=function(){
+    var registrationFunction=openRegistrationDialogueService.getProperty();
+
+        registrationFunction(true);
+    //    $rootScope.$emit('request:validate');
+        //$rootScope.$broadcast("createNewUserAccount", { });
+    }
 
     $scope.defaultValue="N/A";
     $scope.sample=function(){

@@ -98,4 +98,15 @@ angular.module('airtravelbookingappApp', [
                 property = value;
             }
         };
+    })
+    .service('openRegistrationDialogueService',function(){
+        var registrationDialogueFunction;
+        return {
+            getProperty: function () {
+                return registrationDialogueFunction;
+            },
+            setProperty: function(functionToAssign) {
+                registrationDialogueFunction = functionToAssign;
+            }
+        };
     });

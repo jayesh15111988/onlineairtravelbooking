@@ -135,6 +135,8 @@
 
 }
 
+
+
 .error-class{
     color: #ac2925;
     font-size: 12px;
@@ -348,7 +350,7 @@
 
 <div class="modal-header">
 
-    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+
     <h4 class="modal-title" id="myModalLabel11">User Registration</h4>
 
 </div>
@@ -803,7 +805,7 @@ Not needed for now
 <!--<div class="modal fade" login-view ng-controller="samcontroller" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">-->
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <button type="button" class="close" data-ng-click="closeLoginDialogue()" data-dismiss="modal" aria-hidden="true">&times;</button>
                 <h4 class="modal-title" id="myModalLabel33">User Login</h4>
             </div>
             <div class="modal-body">
@@ -841,7 +843,7 @@ Not needed for now
 <div class="modal-content">
 <div class="modal-header">
 
-    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <button type="button" class="close" data-ng-click="closeRegistrationModalView();">&times;</button>
     <h4 class="modal-title" >User Registration</h4>
 
 </div>
@@ -851,9 +853,10 @@ Not needed for now
 <!--<div id="messages" class="alert alert-success" data-ng-show="messages" data-ng-bind="messages"></div>-->
 <div id="messages" class="alert alert-success" data-ng-show="messages" data-ng-bind="messages"></div>
 <div data-ng-show="progress.active()" style="color: red; font-size: 50px;">Sending&hellip;</div>
+<!-- Nasty hack cause form would suddenyl change its background color all of a sudden -->
 
-<form name="helpForm" class="form-horizontal" novalidate role="form">
-<fieldset>
+<form name="helpForm" class="form-horizontal" style="background-color: #add8e6"  novalidate role="form">
+
 <legend>Create an Account</legend>
 
 <div class="form-group">
@@ -882,7 +885,6 @@ Not needed for now
 
         <div class="col-md-4"> <label>First Name:</label>
             <span class="label label-danger" data-ng-show="submitted && helpForm.firstname.$error.required">Required!</span>
-
             <input type="text"  name="firstname" ng-model="fieldnames.firstname" required="true"/></div>
         <div class="col-md-4"> <label> Middle Name:</label>
             <span class="label label-danger" data-ng-show="submitted && helpForm.middlename.$error.required">Required!</span>
@@ -927,8 +929,10 @@ Not needed for now
                 <option ng-repeat="country in countrynameslist" value="{{country}}">{{country}}</option>
 
             </select>-->
-            <select ng-model="fieldnames.country"
-                    ng-options="country as country for country in countrynameslist" ></select>
+
+
+            <select ng-model="fieldnames.selcountry"
+                    ng-options="country for country in countrynameslist" ></select>
         </div>
     </div>
 </div>
@@ -964,12 +968,12 @@ Not needed for now
 
     <div class="row">
         <div class="col-lg-6">
-            <span class="label label-danger" data-ng-show="submitted && isEmailsMatchError">Emails Must match!</span>
+            <div class="label label-danger" data-ng-show="submitted && isEmailsMatchError">Emails Must match!</div>
             <div class="input-group">
-                <span class="label label-danger" data-ng-show="submitted && helpForm.email.$error.required">Required!</span>
-                <span class="label label-danger" data-ng-show="submitted && helpForm.email.$invalid">Email Not Valid!</span>
+                <div class="label label-danger" data-ng-show="submitted && helpForm.email.$error.required">Required!</div>
+                <div class="label label-danger" data-ng-show="submitted && helpForm.email.$invalid">Email Not Valid!</div>
 
-                <input type="email" name="email" ng-model="fieldnames.email" class="form-control" placeholder="Email Address" required>
+                <input type="email" name="email" ng-model="fieldnames.email" class="form-control" placeholder="Email Address" style="background-color: #ffffff" required>
             </div>
         </div>
 
@@ -978,7 +982,7 @@ Not needed for now
 
                 <span class="label label-danger" data-ng-show="submitted && helpForm.reemail.$error.required">Required!</span>
                 <span class="label label-danger" data-ng-show="submitted && helpForm.reemail.$invalid">Email Not Valid!</span>
-                <input type="email" name="reemail" ng-model="fieldnames.reemail" class="form-control" placeholder="Re-enter Email address" required>
+                <input type="email" name="reemail" ng-model="fieldnames.reemail" class="form-control" placeholder="Re-enter Email address" style="background-color: #ffffff" required>
             </div><!-- /input-group -->
         </div><!-- /.col-lg-6 -->
     </div><!-- /.row -->
@@ -1071,6 +1075,7 @@ Not needed for now
         </select>-->
     </div>
 </div>
+<div data-ng-hide="toHideTCSection">
 <div class="label label-danger" data-ng-show="showTCError">Terms and Conditions must be accepted to create an account</div>
 
 Terms And Conditions
@@ -1110,7 +1115,7 @@ Terms And Conditions
 
 
 </div>
-
+</div>
 <span class="label label-danger" data-ng-show="submitted && !fieldnames.didConditionsAccepted">Please accept terms and conditions!</span>
 
 <!--
@@ -1130,7 +1135,6 @@ Not needed for now
     </div>
 </div>
 <br/>
-</fieldset>
 
 <button type="button" class="btn btn-default" ng-click="closeRegistrationView()" data-dismiss="modal">Cancel And Close</button>
 <button class="btn btn-primary" data-ng-disabled="progress.active()" ng-click="submit(helpForm)" data-title="go to next page" data-html="true" data-toggle="modal"  data-dismiss="var1">Next</button>
@@ -1192,17 +1196,13 @@ Not needed for now
     <div class="modal-dialog modal-lg"  >
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <button type="button" class="close" data-ng-click="closeRegistrationModalView();">&times;</button>
                 <h4 class="modal-title" id="myModalLabel">User Registration</h4>
             </div>
             <div class="modal-body">
                 <form class="form-horizontal">
                     <fieldset>
                         <legend>Create an account</legend>
-
-
-                        <hr>
-                        <br/>
                         <div class="form-actions navbar-right">
                             <button type="submit"  class="btn btn-primary" data-title="go to next page" data-html="true" data-toggle="modal" data-dismiss="modal" data-target="#registerview">Back</button>
                             <button type="submit"  class="btn btn-primary" data-title="go to next page" data-html="true" data-toggle="modal" data-target="#gotoregistrationsecondpage">Next</button>
@@ -1217,9 +1217,6 @@ Not needed for now
             </div>
         </div>
     </div>
-
-    <!-- /.row -->
-
 </div>
 
 
