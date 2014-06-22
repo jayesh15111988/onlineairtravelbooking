@@ -410,7 +410,7 @@
         <div class="col-md-6">
             <p class="input-group">
                 <span class="label label-danger" data-ng-show="submitted && helpForm.birthdate.$error.required">Required!</span>
-                    <input type="text" id="" name="birthdate" ng-model="birthdate" class="form-control" datepicker-popup="{{format}}" ng-model="dt" is-open="openedUpdate" min="minDate" max="'2015-06-22'" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" />
+                    <input type="text" name="birthdate" ng-model="birthdate" class="form-control" datepicker-popup="{{format}}" ng-model="dt" is-open="openedUpdate" min="minDate" max="'2015-06-22'" datepicker-options="{{dateOptions}}" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" />
                         <span class="input-group-btn">
                             <button class="btn btn-default" ng-click="openUpdate($event)"><i class="glyphicon glyphicon-calendar"></i></button>
                     </span>
@@ -459,7 +459,9 @@
 
         <div class="col-md-4">Zip Code:
             <span class="label label-danger" data-ng-show="submitted && helpForm.zipcode.$error.required">Required!</span>
+
             <input type="number" name="zipcode" ng-model="zipcode" maxlength="5" required>
+
         </div>
 
         <div class="col-md-4">City:
@@ -607,6 +609,7 @@ Not needed for now
 
 
 </fieldset>
+
 
 
 
@@ -832,10 +835,10 @@ Not needed for now
 
 
 <!-- For registration purpose -->
-<div class="modal fade" ng-controller="samcontroller" register-view register-firstpage id="registerview" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-<div class="modal-dialog modal-lg">
-<div class="modal-content">
+<div ng-controller="samcontroller">
+<script type="text/ng-template" id="userRegistrationContent.html">
 
+<div class="modal-content">
 <div class="modal-header">
 
     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
@@ -857,7 +860,7 @@ Not needed for now
     <label class="control-label">Title</label>
     <div class="controls">
 
-        <select ng-model="salutation" ng-options="salutation for salutation in salutations">
+        <select ng-model="fieldnames.salutation" ng-options="salutation for salutation in salutations">
 
         </select>
 
@@ -880,13 +883,13 @@ Not needed for now
         <div class="col-md-4"> <label>First Name:</label>
             <span class="label label-danger" data-ng-show="submitted && helpForm.firstname.$error.required">Required!</span>
 
-            <input type="text"  name="firstname" ng-model="firstname" required="true"/></div>
+            <input type="text"  name="firstname" ng-model="fieldnames.firstname" required="true"/></div>
         <div class="col-md-4"> <label> Middle Name:</label>
             <span class="label label-danger" data-ng-show="submitted && helpForm.middlename.$error.required">Required!</span>
-            <input type="text" name="middlename" ng-model="middlename" required></div>
+            <input type="text" name="middlename" ng-model="fieldnames.middlename" required></div>
         <div class="col-md-4"> <label>Last Name:</label>
             <span class="label label-danger" data-ng-show="submitted && helpForm.lastname.$error.required">Required!</span>
-            <input type="text" name="lastname" ng-model="lastname" required></div>
+            <input type="text" name="lastname" ng-model="fieldnames.lastname" required></div>
     </div>
 </div>
 
@@ -900,9 +903,10 @@ Not needed for now
     <!-- Excellent resource - Source: http://angular-ui.github.io/bootstrap/ -->
     <div class="row">
         <div class="col-md-6">
+            <!-- jjjkkk -->
             <p class="input-group">
                 <span class="label label-danger" data-ng-show="submitted && helpForm.birthdate.$error.required">Required!</span>
-                <input type="text" id="dob" name="birthdate" ng-model="birthdate" class="form-control" datepicker-popup="{{format}}" is-open="opened" min="{{mindate}}" max="{{maxdate}}" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" />
+                <input type="text" id="dob" name="birthdate" ng-model="fieldnames.birthdate" class="form-control" datepicker-popup="{{format}}" is-open="opened" min="{{mindate}}" max="{{maxdate}}" datepicker-options="{{dateOptions}}" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" />
               <span class="input-group-btn">
                 <button class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
               </span>
@@ -920,11 +924,10 @@ Not needed for now
         <div class="controls">
             <span class="label label-danger" data-ng-show="submitted && helpForm.country.$error.required">Required!</span>
             <!--<select id="selectCountry" name="country" ng-model="country" required>
-
                 <option ng-repeat="country in countrynameslist" value="{{country}}">{{country}}</option>
 
             </select>-->
-            <select ng-model="country"
+            <select ng-model="fieldnames.country"
                     ng-options="country as country for country in countrynameslist" ></select>
         </div>
     </div>
@@ -933,8 +936,8 @@ Not needed for now
     <div class="row">
         <div class="col-md-4"><label>Street:</label>
             <span class="label label-danger" data-ng-show="submitted && helpForm.streetname.$error.required">Required!</span>
-            <input type="text" name="streetname" ng-model="streetname" class="input-lg glyphicon-search" required><br/>
-            Street Information <input type="text" ng-model="streetsubname" class="input-lg glyphicon-search"></div>
+            <input type="text" name="streetname" ng-model="fieldnames.streetname" class="input-lg glyphicon-search" required><br/>
+            Street Information <input type="text" ng-model="fieldnames.streetsubname" class="input-lg glyphicon-search"></div>
 
     </div>
 
@@ -942,17 +945,18 @@ Not needed for now
 
         <div class="col-md-4">Zip Code:
             <span class="label label-danger"  data-ng-show="submitted && helpForm.zipcode.$error.required">Required!</span>
-            <input type="text" maxlength="5" name="zipcode" ng-model="zipcode" required>
+            <span class="label label-danger" ng-show="submitted && fieldnames.isZipcodeInvalid">Please enter valid zip code</span>
+            <input type="text" maxlength="5" name="zipcode" ng-model="fieldnames.zipcode" required>
         </div>
 
         <div class="col-md-4">City:
             <span class="label label-danger" data-ng-show="submitted && helpForm.city.$error.required">Required!</span>
-            <input type="text" name="city" ng-model="city" required>
+            <input type="text" name="city" ng-model="fieldnames.city" required>
         </div>
 
         <div class="col-md-4">State:
             <span class="label label-danger" data-ng-show="submitted && helpForm.state.$error.required">Required!</span>
-            <input type="text" name="state" ng-model="state" required>
+            <input type="text" name="state" ng-model="fieldnames.state" required>
         </div>
     </div>
 
@@ -965,7 +969,7 @@ Not needed for now
                 <span class="label label-danger" data-ng-show="submitted && helpForm.email.$error.required">Required!</span>
                 <span class="label label-danger" data-ng-show="submitted && helpForm.email.$invalid">Email Not Valid!</span>
 
-                <input type="email" name="email" ng-model="email" class="form-control" placeholder="Email Address" required>
+                <input type="email" name="email" ng-model="fieldnames.email" class="form-control" placeholder="Email Address" required>
             </div>
         </div>
 
@@ -974,7 +978,7 @@ Not needed for now
 
                 <span class="label label-danger" data-ng-show="submitted && helpForm.reemail.$error.required">Required!</span>
                 <span class="label label-danger" data-ng-show="submitted && helpForm.reemail.$invalid">Email Not Valid!</span>
-                <input type="email" name="reemail" ng-model="reemail" class="form-control" placeholder="Re-enter Email address" required>
+                <input type="email" name="reemail" ng-model="fieldnames.reemail" class="form-control" placeholder="Re-enter Email address" required>
             </div><!-- /input-group -->
         </div><!-- /.col-lg-6 -->
     </div><!-- /.row -->
@@ -990,17 +994,17 @@ Not needed for now
     <div class="row">
         <div class="col-md-4">User Id:
             <span class="label label-danger" data-ng-show="submitted && helpForm.userid.$error.required">Required!</span>
-            <input type="text" name="userid" ng-model="userid" required>
+            <input type="text" name="userid" ng-model="fieldnames.userid" required>
         </div>
 <div class="label label-danger" data-ng-show="passwordError">Passwords Should Match</div>
         <div class="col-md-4">Password:
             <span class="label label-danger" data-ng-show="submitted && helpForm.password.$error.required">Required!</span>
-            <input type="password" name="password" ng-model="password" required>
+            <input type="password" name="password" ng-model="fieldnames.password" required>
         </div>
 
         <div class="col-md-4">Re-enter Password:
             <span class="label label-danger" data-ng-show="submitted && helpForm.repassword.$error.required">Required!</span>
-            <input type="password" name="repassword" ng-model="repassword" required>
+            <input type="password" name="repassword" ng-model="fieldnames.repassword" required>
         </div>
 
     </div>
@@ -1017,7 +1021,7 @@ Not needed for now
     <div class="controls">
         <span class="label label-danger" data-ng-show="submitted && helpForm.telephonenumber.$error.required">Required!</span>
 
-        <input type="text" class="input-xlarge" name="telephonenumber" ng-model="telephonenumber" required>
+        <input type="text" class="input-xlarge" name="telephonenumber" ng-model="fieldnames.telephonenumber" required>
 
 
     </div>
@@ -1027,7 +1031,7 @@ Not needed for now
     <label class="control-label" for="optionsCheckbox">Promotional Offers</label>
     <div class="controls">
         <label class="checkbox">
-            <input type="checkbox" id="" ng-model="subscribingforpromotionaloffers">
+            <input type="checkbox" id="" ng-model="fieldnames.subscribingforpromotionaloffers">
             Please select if you would like to receive promotional offers from AirFlightBooking Inc.
         </label>
 
@@ -1047,7 +1051,7 @@ Not needed for now
             <option>Other</option>
         </select>-->
 
-        <select ng-model="languagechoice" ng-options="language for language in languages">
+        <select ng-model="fieldnames.languagechoice" ng-options="language for language in languages">
             </select>
     </div>
 </div>
@@ -1056,7 +1060,7 @@ Not needed for now
 <div class="control-group">
     <label class="control-label">Please select why would you want to use airline commercial</label>
     <div class="controls">
-        <select ng-model="travelpurpose" ng-options="travelreason for travelreason in travelreasons">
+        <select ng-model="fieldnames.travelpurpose" ng-options="travelreason for travelreason in travelreasons">
         </select>
         <!--<select multiple="multiple" id="multiSelect">
             <option>Personal</option>
@@ -1092,14 +1096,14 @@ Terms And Conditions
 <div class="btn-group col-sm-offset-1" data-toggle="buttons">
 
 
-    <label class="btn btn-primary active col-md-6" style="margin-left: -50px" ng-click="conditionschanged(1)">
-        <input type="radio" checked name="options" name="accept" ng-model="tandc" id="option1"> I Read Terms and Conditions
+    <label class="btn btn-primary" style="margin-left: -50px" ng-click="conditionschanged(false)">
+        <input type="radio" name="options" name="accept" ng-model="tandc"> I Read Terms and Conditions
     </label>
 
 
 
 
-    <label class="btn btn-primary" style="width: 270px" ng-click="conditionschanged(0)" >
+    <label class="btn btn-primary" style="width: 270px" ng-click="conditionschanged(true)" >
         <input type="radio" name="options" id="option2" name="reject" ng-model="tandc">I Didn't read Terms and Conditions
     </label>
 
@@ -1107,15 +1111,7 @@ Terms And Conditions
 
 </div>
 
-<span class="label label-danger" data-ng-show="!didConditionsAccepted">Please accept terms and conditions!</span>
-
-
-
-
-
-
-
-
+<span class="label label-danger" data-ng-show="submitted && !fieldnames.didConditionsAccepted">Please accept terms and conditions!</span>
 
 <!--
 Not needed for now
@@ -1130,12 +1126,13 @@ Not needed for now
 <div class="control-group">
     <label class="control-label" for="textarea">Comments and Suggestions</label>
     <div class="controls">
-        <textarea class="input-xlarge" id="" rows="3" ng-model="comments" value="Please put any suggestions and/or comments you may have in this box"></textarea>
+        <textarea class="input-xlarge" id="" rows="3" ng-model="fieldnames.comments" value="Please put any suggestions and/or comments you may have in this box"></textarea>
     </div>
 </div>
 <br/>
 </fieldset>
-<button type="button" class="btn btn-default" data-dismiss="modal">Cancel And Close</button>
+
+<button type="button" class="btn btn-default" ng-click="closeRegistrationView()" data-dismiss="modal">Cancel And Close</button>
 <button class="btn btn-primary" data-ng-disabled="progress.active()" ng-click="submit(helpForm)" data-title="go to next page" data-html="true" data-toggle="modal"  data-dismiss="var1">Next</button>
 
 
@@ -1143,7 +1140,7 @@ Not needed for now
 </form>
 </div>
 </div>
-</div>
+</script>
 </div>
 
 </div>
@@ -1190,7 +1187,7 @@ Not needed for now
 </div>
 
 
-<!-- Modal view for second page of registration -->
+<!-- Warning come back here Modal view for second page of registration -->
 <div class="modal fade" register-secondpage  id="gotoregistrationsecondpage" tabindex="-1" role="dialog" aria-labelledby="myModalLabelsecond view" aria-hidden="true" >
     <div class="modal-dialog modal-lg"  >
         <div class="modal-content">
@@ -1201,7 +1198,7 @@ Not needed for now
             <div class="modal-body">
                 <form class="form-horizontal">
                     <fieldset>
-                        <legend>Crate an account</legend>
+                        <legend>Create an account</legend>
 
 
                         <hr>
