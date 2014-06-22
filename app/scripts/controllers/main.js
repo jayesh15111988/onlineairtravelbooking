@@ -93,8 +93,8 @@ airlinetravelmodule.run(function($rootScope) {
     });
 });
 
-
-airlinetravelmodule.directive('registerSecondpage', function() {
+//How to create directive based approach to show hide modal view Important
+/*airlinetravelmodule.directive('registerSecondpage', function() {
     return {
         restrict: 'A',
         link: function(scope, element, attr) {
@@ -107,7 +107,7 @@ airlinetravelmodule.directive('registerSecondpage', function() {
         }
     }
 });
-
+*/
 
 
 airlinetravelmodule.directive('forgotPassword', function() {
@@ -1325,7 +1325,7 @@ $scope.fieldnames={
 
             var callbackFunctionafterUserCreateupdateOperation=function(responseData){
 
-                $modalInstance.close(responseData);
+                $modalInstance.close(isCreatingNewUser);
             }
 
             sendUserDataToServer(formData,$scope,isCreatingNewUser,$http,callbackFunctionafterUserCreateupdateOperation);
@@ -1348,12 +1348,14 @@ $scope.fieldnames={
     });
 
 
-    modalInstance.result.then(function (responseDataAfterUserCreateUpdateOperation) {
-        console.log("Response data after user operation ->"+ responseDataAfterUserCreateUpdateOperation);
+    modalInstance.result.then(function (isCreatingNewUser) {
+        //console.log("Response data after user operation ->"+ responseDataAfterUserCreateUpdateOperation);
         //Now we submitted data succesfull - Show user second page confirmaing ongoing registration
 
         setUserFirstNameOnDisplay("Logout");
-        $scope.showSecondPage();
+
+        gotoSuccessfullRegistrationPage(isCreatingNewUser);
+        //$scope.showSecondPage();
         //                  $scope.selected = selectedItem;
     }, function () {
         $log.info('Registration Modal dismissed at: ' + new Date());
@@ -1361,6 +1363,57 @@ $scope.fieldnames={
 
 }
 
+    //Controller for completed registration view
+    var registrationCompletedViewController = function ($scope, $modalInstance, items) {
+
+//cancel and close this view
+   $scope.closeRegistrationModalView=function(){
+        $modalInstance.dismiss('cancel');
+   }
+        $scope.completedView={};
+
+
+        $scope.completedView.mainMessage=items?"Congratulations You have created new profile":"congrats your profile updates are now completed";
+        $scope.completedView.subMessage=items?"You can always create newp profile":"You can always update exisitng profiule by selecting update proile option from home page";
+
+
+//Get result and then close the current view
+       $scope.saveAndCloseModalView=function(){
+        $modalInstance.close();
+       }
+
+
+    }
+//End of controller for completed registration process
+
+    var gotoSuccessfullRegistrationPage=function(isCreatingNewUser){
+        var modalInstance = $modal.open({
+
+            templateUrl: 'registrationUpdateCompleteModalView',
+            controller: registrationCompletedViewController,
+            size: 'sm',
+            resolve: {
+                items: function () {
+                    return isCreatingNewUser;
+                }
+            }
+        });
+
+
+        modalInstance.result.then(function () {
+            //console.log("Response data after user operation ->"+ responseDataAfterUserCreateUpdateOperation);
+            //Now we submitted data succesfull - Show user second page confirmaing ongoing registration
+
+
+
+
+
+        }, function () {
+            $log.info('Registration completion Modal dismissed at: ' + new Date());
+        });
+
+
+    }
     openRegistrationDialogueService.setProperty(openRegistrationDialogue);
 
     $scope.regionName="Select Region";

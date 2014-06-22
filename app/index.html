@@ -1190,9 +1190,9 @@ Not needed for now
     </div>
 </div>
 
-
-<!-- Warning come back here Modal view for second page of registration -->
-<div class="modal fade" register-secondpage  id="gotoregistrationsecondpage" tabindex="-1" role="dialog" aria-labelledby="myModalLabelsecond view" aria-hidden="true" >
+<!--Imporatnt - How to implement modal view using directive approach and not using nasty approach which breaks MVC pattern -->
+<!-- Warning come back here Modal view for second page of registration xxx-->
+<!--<div class="modal fade" register-secondpage  id="gotoregistrationsecondpage" tabindex="-1" role="dialog" aria-labelledby="myModalLabelsecond view" aria-hidden="true" >
     <div class="modal-dialog modal-lg"  >
         <div class="modal-content">
             <div class="modal-header">
@@ -1204,21 +1204,44 @@ Not needed for now
                     <fieldset>
                         <legend>Create an account</legend>
                         <div class="form-actions navbar-right">
-                            <button type="submit"  class="btn btn-primary" data-title="go to next page" data-html="true" data-toggle="modal" data-dismiss="modal" data-target="#registerview">Back</button>
-                            <button type="submit"  class="btn btn-primary" data-title="go to next page" data-html="true" data-toggle="modal" data-target="#gotoregistrationsecondpage">Next</button>
-
+                            <button type="submit"  class="btn btn-primary" data-title="go to next page" data-html="true" data-toggle="modal">Back</button>
+                            <button type="submit"  class="btn btn-primary" data-title="go to next page" data-html="true" data-toggle="modal">Next</button>
                         </div>
                     </fieldset>
                 </form>
             </div>
             <div class="modal-footer center-block">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Save changes</button>
+                <button class="btn btn-default">Close</button>
+                <button class="btn btn-primary">Save changes</button>
             </div>
         </div>
     </div>
 </div>
+-->
+<script type="text/ng-template" id="registrationUpdateCompleteModalView">
+<div>
+    <div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-ng-click="closeRegistrationModalView();">&times;</button>
+                <h4 class="modal-title" id="myModalLabel">{{completedView.mainMessage}}</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal">
+                    <fieldset>
+                        <legend>{{completedView.subMessage}}t</legend>
 
+                    </fieldset>
+                </form>
+            </div>
+            <div class="modal-footer center-block">
+                <button class="btn btn-default" data-ng-click="closeRegistrationModalView();">Close</button>
+                <button class="btn btn-primary" data-ng-click="saveAndCloseModalView()">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
+</script>
 
 
 <!--
