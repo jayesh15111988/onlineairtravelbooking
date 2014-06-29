@@ -908,6 +908,7 @@ Not needed for now
             <!-- jjjkkk -->
             <p class="input-group">
                 <span class="label label-danger" data-ng-show="submitted && helpForm.birthdate.$error.required">Required!</span>
+            <span class="label label-danger" data-ng-show="submitted && helpForm.$error['date-disabled']">Birthdate Not Valid!</span>
                 <input type="text" id="dob" name="birthdate" ng-model="fieldnames.birthdate" class="form-control" datepicker-popup="{{format}}" is-open="opened" min="{{mindate}}" max="{{maxdate}}" datepicker-options="{{dateOptions}}" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" />
               <span class="input-group-btn">
                 <button class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>

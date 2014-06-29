@@ -308,7 +308,7 @@ airlinetravelmodule.controller('userupdatecontroller',function($scope){
 });
 
 
-airlinetravelmodule.controller('samcontroller',function($scope, $http, $log, promiseTracker, $timeout,$window,$rootScope,sharedService,$modal,openRegistrationDialogueService){
+airlinetravelmodule.controller('samcontroller',function($scope, $http, $log, promiseTracker, $timeout,$window,$rootScope,sharedService,$modal,openRegistrationDialogueService,getStoredAuthTokenService){
 
     //console.log("parent one controller came");
 
@@ -323,8 +323,10 @@ airlinetravelmodule.controller('samcontroller',function($scope, $http, $log, pro
 openRegistrationDialogue(true);
 
     });*/
+//As soon as user comes on this page, retrieve his ip address and snd request to server to store
+    //Geographical information got from our api
 
-
+    setUserFirstNameOnDisplay();
 
     $rootScope.$on('request:validate', function(e) {
         openRegistrationDialogue(true);
@@ -333,7 +335,6 @@ openRegistrationDialogue(true);
 
     $rootScope.$on("errorInReservationRetrieval", function (args) {
 
-        console.log(angular.toJson(args, true));
         $scope.showRetrievelError=true;
         $scope.errormessage=sharedService.getProperty();//"Record Not found for given Confirmation Code and email address";
         $scope.toShowDropdownMenuForResrevationRetrieval=true;
@@ -378,7 +379,7 @@ openRegistrationDialogue(true);
                         data.firstname=previousFirstName;
 
                         localStorage.setItem('authTokenInfo',JSON.stringify(data));
-setUserFirstNameOnDisplay("Logout");
+setUserFirstNameOnDisplay();
                     }
                     else if(data.success==false){
                         loguserinwithmodalview();
@@ -522,11 +523,12 @@ $scope.toRememberSelection=true;
             var userLoginInfo={'emailid':loginemail,'password':loginpassword};
             console.log(angular.toJson(userLoginInfo,true)+ " &&&&*** ");
             var success=false;
-            $scope.usernametodisplay="Guest";
-            var authTokenInfoFromLocalStorage;
+
+            var authTokenInfoFromLocalStorage={};
             if(localStorage.getItem('authTokenInfo')){
                 authTokenInfoFromLocalStorage=JSON.parse(localStorage.getItem('authTokenInfo'));
             }
+            $scope.usernametodisplay=authTokenInfoFromLocalStorage.firstname;
             $http({
                 url: 'http://jayeshkawli.com/airlinetravel/userlogin.php',
                 method: "GET",
@@ -560,7 +562,7 @@ $scope.toRememberSelection=true;
                         localStorage.setItem('authTokenInfo',JSON.stringify({authtoken:data.authorization,emailaddress:data.emailaddress,firstname:data.firstname,tokenexpirytime:addMinutes(new Date(),30)}));
 
                         $scope.userfirstnamedisplay=data.firstname;
-                        $scope.usernametodisplay=data.firstname;
+
                         //$scope.messages = 'Your login information has been successfully sent! Congratulations...';
                         //$modalInstance.dismiss('cancel'); - Not using it because user actually logged into the system
                         //Not actually necessary - User is refreshing the page anyways
@@ -569,6 +571,7 @@ $scope.toRememberSelection=true;
                     }
                     else if (data.success===false){
                         $scope.errorMessage=data.errorinfo;
+                        $scope.userfirstnamedisplay="Guest";
                         localStorage.setItem( 'serverloginauthenticationerror', serverResponseData);
                     }
                 })
@@ -610,7 +613,7 @@ $scope.toRememberSelection=true;
 //User logged in succesfully, now change main name from guest to valid username and change login text to logout
 
 
-            setUserFirstNameOnDisplay("Logout");
+            setUserFirstNameOnDisplay();
 
         }, function () {
             console.log(' Login view Modal dismissed at: ' + new Date());
@@ -637,20 +640,10 @@ $scope.toRememberSelection=true;
     //even though allow all headers are present in destination - Not sure what's wrong but you may say it a hack. I am gonna
     //abide by it from now on
 
-    /*$.ajax({
-     type: "POST",
-     url: "http://www.jayeshkawli.com/airlinetravel/userlogin.php",
-     cache:true,
-     data: { emailid: "adas@ada.com", password: "adas"}
-     })
-     .done(function( msg ) {
-     console.log( "Data Saved: " + msg );
-     });
-     */
-    $scope.savecredentials=false;
-    $scope.userfirstnamedisplay="Guest";
-    $scope.loginviewtarget='#loginview';
+
+    //$scope.loginviewtarget='#loginview';
     //Not working - Don't know why
+    //NVM - No longer necessary - We have adopted completely different approach to achieve the same thing
     //$scope.showSuccessfullRegistration();
 
     //We will use this view once user registration is complete to show success
@@ -676,13 +669,27 @@ $scope.toRememberSelection=true;
      });*/
     //});
 
-    function setUserFirstNameOnDisplay(sessionStatus){
-        $scope.loginlogouttext=sessionStatus;
-        if(localStorage.getItem('authTokenInfo')){
+    function setUserFirstNameOnDisplay(){
 
-            var authInfoInLocalStorage=JSON.parse(localStorage.getItem('authTokenInfo'));
-            //console.log(authInfoInLocalStorage);
-            $scope.userfirstnamedisplay=authInfoInLocalStorage.firstname;
+
+
+       var isAuthTokenExistsInLocalStorage= getStoredAuthTokenService.getStoredAuthToken();
+        /*if(typeof isAuthTokenExistsInLocalStorage === "string"){
+            isAuthTokenExistsInLocalStorage=JSON.parse(isAuthTokenExistsInLocalStorage);
+        }*/
+
+
+
+        if(isAuthTokenExistsInLocalStorage){
+
+            $scope.loginlogouttext="Logout";
+            $scope.userfirstnamedisplay=isAuthTokenExistsInLocalStorage.firstname;
+
+        }
+        else{
+
+            $scope.loginlogouttext="Login";
+            $scope.userfirstnamedisplay="Guest";
 
         }
     }
@@ -690,7 +697,7 @@ $scope.toRememberSelection=true;
 
     $scope.$on("UPDATE_PARENT", function(event, message){
         //$scope.foo = message+ "hahah";
-        sendUserDataToServer(message,$scope,false,$http);
+
 
         //Broadcast to Child example part 1
         /*$scope.$broadcast("DO_BIDDING", {
@@ -704,7 +711,7 @@ $scope.toRememberSelection=true;
 
 
 
-    setUserFirstNameOnDisplay("Logout");
+
 
 
 
@@ -728,12 +735,16 @@ console.log(form.$invalid + "Is valid or not");
         }
 //Now make call to remote script to send an email to user with forgotten password information
 
-        $http.post('http://www.jayeshkawli.com/airlinetravel/sendforgotpasswordtoemail.php', { emailorusernametosend: emailorusername }).success(function(response) {
+        $http.post('http://www.jayeshkawli.com/airlinetravel/sendforgotpasswordtoemail.php', { emailorusernametosend: emailorusername })
+            .success(function(response) {
 
             console.log(response);
             $scope.messageFromServer=response.message;
 
-        });
+        }).error(function(errorMessage){
+              console.log("Error Occurred "+ errorMessage);
+
+            });
 
 
 
@@ -837,9 +848,7 @@ var openRegistrationDialogue=function(isCreatingNewUser)
         $scope.travelreasons=['Personal','Family','Meeting Friends','Travel','Business','Other'];
         $scope.languages=['English','Hindi','Spanish','French','German','Other'];
 
-
         $scope.closeRegistrationModalView=function(){
-            console.log("Dismissing lolz");
             $modalInstance.dismiss('cancel');
         }
         //Setting fieldnames in our form
@@ -1124,19 +1133,19 @@ var openRegistrationDialogue=function(isCreatingNewUser)
            if(prestoredUserData){
 
 
-               var sam=$scope.countrynameslist.indexOf(prestoredUserData.country);
 
 
 
-console.log(prestoredUserData.country+ "  indexified now **** ");
+
+
 
 $scope.toHideTCSection=true;
 //We have two parts in the address - Street info and street sub info
                var dividedStreetinfo=prestoredUserData.streetinfo.split(':');
 
 $scope.fieldnames={
-    selcountry: $scope.countrynameslist[sam],
-        salutation:prestoredUserData.salutation,
+    selcountry:prestoredUserData.country,
+    salutation:prestoredUserData.salutation,
         firstname:prestoredUserData.firstname,
         middlename:prestoredUserData.middlename,
         lastname:prestoredUserData.lastname,
@@ -1284,7 +1293,7 @@ $scope.fieldnames={
 
             console.log("came here before");
             // If form is invalid, return and let AngularJS show validation errors.
-            console.log(JSON.stringify(form)+" what is status ");
+            console.log(JSON.stringify(form.$error['date-disabled'])+" Form Error status ");
 
             if (form.$invalid || !$scope.fieldnames.didConditionsAccepted ||$scope.fieldnames.isZipcodeInvalid ||$scope.passwordsnotmatch || $scope.telephoneError||$scope.isEmailsMatchError) {
                 return;
@@ -1324,7 +1333,7 @@ $scope.fieldnames={
             console.log(JSON.stringify(formData)+ " *** DEBUG INFO This is data *** ");
 
             var callbackFunctionafterUserCreateupdateOperation=function(responseData){
-
+console.log("*****************");
                 $modalInstance.close(isCreatingNewUser);
             }
 
@@ -1352,7 +1361,7 @@ $scope.fieldnames={
         //console.log("Response data after user operation ->"+ responseDataAfterUserCreateUpdateOperation);
         //Now we submitted data succesfull - Show user second page confirmaing ongoing registration
 
-        setUserFirstNameOnDisplay("Logout");
+        setUserFirstNameOnDisplay();
 
         gotoSuccessfullRegistrationPage(isCreatingNewUser);
         //$scope.showSecondPage();
@@ -1430,17 +1439,6 @@ $scope.fieldnames={
 
 
 
-/*
-    function setUserFirstNameOnDisplay(){
-
-        if(localStorage.getItem('authTokenInfo')){
-
-            var authInfoInLocalStorage=JSON.parse(localStorage.getItem('authTokenInfo'));
-            //console.log(authInfoInLocalStorage);
-            $scope.userfirstnamedisplay=authInfoInLocalStorage.firstname;
-
-        }
-    }*/
 
     var loguserout=function(){
 
@@ -1528,13 +1526,13 @@ function sendUserDataToServer(formData,$scope,isCreatingUser,$http,callBackFunct
         headers: {'Content-Type': 'application/x-www-form-urlencoded'}
     }).success(function (data, status, headers, config) {
             console.log(data);
-            if(!isCreatingUser){
-                $scope.$broadcast("SET_MESSAGE_HEADER_SUCCESS","success to update");
-            }
+           // if(!isCreatingUser){
+                //$scope.$broadcast("SET_MESSAGE_HEADER_SUCCESS","success to update");
+            //}
 
-            else{
-                $scope.messages = 'Your registration information has been successfully sent! Congratulations...';
-            }
+            //else{
+              //  $scope.messages = 'Your registration information has been successfully sent! Congratulations...';
+            //}
             var serverResponseData=JSON.stringify(data);
 console.log("Server response data "+ serverResponseData);
 
@@ -1549,7 +1547,7 @@ console.log("Server response data "+ serverResponseData);
 
 
 
-                $scope.$emit('handleEmit', {message: isCreatingUser?1:2});
+              //  $scope.$emit('handleEmit', {message: isCreatingUser?1:2});
 
                 localStorage.setItem( 'serverloginauthenticationsuccess', serverResponseData);
                 localStorage.setItem('authTokenInfo',JSON.stringify({'authtoken':data.authorization,'emailaddress':data.emailaddress,firstname:data.firstname,tokenexpirytime:addMinutes(new Date(),30)}));
@@ -1667,7 +1665,7 @@ if(isInputValid){
     };
 };
 
-airlinetravelmodule.controller('DetailController',function($scope,$routeParams,$modal,$http,$window,$rootScope,sharedService){
+airlinetravelmodule.controller('DetailController',function($scope,$routeParams,$modal,$http,$window,$rootScope,sharedService,getStoredAuthTokenService,openRegistrationDialogueService){
 
 
     var isBookingNewFlight=false;
@@ -1696,7 +1694,15 @@ airlinetravelmodule.controller('DetailController',function($scope,$routeParams,$
         return query_string;
     } ();
 
-    console.log(unescape(JSON.stringify(QueryString))+ " Received data From query ");
+
+
+    $scope.showRegisterNewUserModalView=function(){
+        var registrationFunction=openRegistrationDialogueService.getProperty();
+        registrationFunction(false);
+    }
+
+
+//    console.log(unescape(JSON.stringify(QueryString))+ " Received data From query ");
 
     var urlEmailAddress=$routeParams.emailaddress;          //unescape(QueryString.reservationretrievalemail);
     var urlConfirmationCode=$routeParams.confirmationcode;  //QueryString.confirmationcode;
@@ -1776,20 +1782,29 @@ isInputValid=isInputValidFromUser;
             }
 
 if(isBookingNewFlight){
-            $http.post('http://www.jayeshkawli.com/airlinetravel/finalbookingconfirmation.php', { bookinginformation: dataToSendForBookingConfirmation }).success(function(response) {
+            $http.post('http://www.jayeshkawli.com/airlinetravel/finalbookingconfirmation.php', { bookinginformation: dataToSendForBookingConfirmation })
+                .success(function(response) {
 
                 console.log(response+ " Successful Response ");
 
-            });
+            }).error(function(errorMessage){
+                    console.log("Error Occurred "+ errorMessage);
+
+                });
         }
                 else{
 
 //console.log("Code "+urlConfirmationCode+"And email address "+data1[0]);
-    $http.post('http://www.jayeshkawli.com/airlinetravel/sendpdffiletoemail.php', { emailaddresses: data1[0],confirmationcode:urlConfirmationCode }).success(function(response) {
+    $http.post('http://www.jayeshkawli.com/airlinetravel/sendpdffiletoemail.php', { emailaddresses: data1[0],confirmationcode:urlConfirmationCode })
+        .success(function(response) {
 
         console.log(response+ " Successful Sent the pdf file on email addresses ");
 
-    });
+    }).error(function(errorMessage){
+
+           console.log("Error Occurred "+ errorMessage);
+
+        });
 }
 
 
@@ -1856,8 +1871,8 @@ var fullCodeNames={};
 
 
 
-
-    if(isUserLoggedIn){
+var userLoginIndicator=getStoredAuthTokenService.getStoredAuthToken();
+    if(userLoginIndicator){
         $scope.bookingbuttontitle="Update Booking Info and Book";
         $scope.toshowsecond=false;
     }
@@ -2643,7 +2658,11 @@ airlinetravelmodule.controller('upperleftbarcontroller',function($scope){
 airlinetravelmodule.controller('flightsearchcontroller',function($scope,$http,$window,$timeout,$rootScope,openRegistrationDialogueService){
 
 
-    //#warning to use while booking new flight
+    //#warning to use while booking new flight it creates new user
+    //#warning to remove afterwards - Used only to test if it's working fine
+
+    //Called nowhere - as long as my knowledge goes
+
     $scope.showRegisterNewUserModalView=function(){
     var registrationFunction=openRegistrationDialogueService.getProperty();
 
@@ -2997,7 +3016,43 @@ airlinetravelmodule.controller('flightsearchcontroller',function($scope,$http,$w
         }
     }
 
+    //We will use this method to store given user's ip address and geolocation infromation in our database
+    var saveIpAddressGeoLocationInformationInDatabase=function(){
+
+
+        //This is website to get mappings from ipAddress to approximate location
+        $http({
+            url: "https://freegeoip.net/json/",
+            method: "GET",
+            cache:true,
+            params: "",
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+        }).success(function (geographicalData, status, headers, config) {
+
+                var storedLocalAuthTokenInfo = getStoredAuthTokenService.getStoredAuthToken();
+
+                geographicalData['userEmailAddress']=storedLocalAuthTokenInfo?storedLocalAuthTokenInfo.emailaddress:"Anonymous";
+                $http.post('http://www.jayeshkawli.com/airlinetravel/iptogeographicalmappings.php', { ipAddressInformation: geographicalData }
+                )
+                    .success(function(response) {
+                        console.log("User Geographical Infromation successfully stored in the database with Response "+ response);
+
+                    }).error(function(errorMessage){
+                        console.log("Error Occurred "+ errorMessage);
+                    });
+            }).error(function (data, status, headers, config) {
+
+                console.log("Failed to get data from server with Error "+data);
+
+            });
+    }
+
+
+
     $scope.bookNowPressed=function(){
+
+//Store ip address info only if user has pressed flight search button, otherwise not
+        saveIpAddressGeoLocationInformationInDatabase();
         /* tripDirection="Oneway";
          var travelType="Domestic";
          var whichAirline="My Airline";
@@ -3005,6 +3060,7 @@ airlinetravelmodule.controller('flightsearchcontroller',function($scope,$http,$w
          var searchCriteria="Price";*/
         allFlightsDetail.clear();
         $scope.toshowloadinganimation=true;
+
         if(typeof searchCriteria =="undefined"){
             searchCriteria="Price";
         }

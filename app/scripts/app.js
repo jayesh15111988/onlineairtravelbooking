@@ -109,4 +109,21 @@ angular.module('airtravelbookingappApp', [
                 registrationDialogueFunction = functionToAssign;
             }
         };
+    }).
+service('getStoredAuthTokenService',function(){
+
+
+
+       return {
+           getStoredAuthToken:function(){
+
+               var isAuthTokenExistsInLocalStorage = localStorage.getItem('authTokenInfo');
+               if(typeof isAuthTokenExistsInLocalStorage === "string"){
+                   isAuthTokenExistsInLocalStorage=JSON.parse(isAuthTokenExistsInLocalStorage);
+               }
+
+               return isAuthTokenExistsInLocalStorage;
+           }
+       }
+
     });

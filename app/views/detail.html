@@ -24,8 +24,6 @@ Passenger Details :
     <table ng-show="showreturningflights">
         <tr><th><div><h4> {{flightDetailsFirstPart}}</h4></div></th></tr>
 
-
-
         <tr> <td>Departing From </td> <td>{{getairportsindi(fullTravelDetails.departure.departureAirportFsCode)}}</td></tr>
         <tr><td>Departing Airport Code </td> <td>{{fullTravelDetails.departure.departureAirportFsCode}} </td></tr>
         <tr><td>Arriving To </td> <td>{{getairportsindi(fullTravelDetails.departure.arrivalAirportFsCode)}}</td></tr>
@@ -45,7 +43,9 @@ Passenger Details :
             <div>Arriving To:  {{getairportsindi(connectionDetail.arrivalAirportFsCode)}} ({{connectionDetail.arrivalAirportFsCode}})</div>
             <div>Arriving at:  {{connectionDetail.arrivalTime}}</div>
             <div>Terminal {{connectionDetail.arrivalTerminal}}</div>
-            <div>Carrier Airline {{getAirlineFullInfoFromCode(connectionDetail.carrierFsCode)}} ({{connectionDetail.carrierFsCode}})</div>
+            <div>Carrier Airline {{getAirlineFullInfoFromCode(connectionDetail.carrierFsCode)}} ({{connectionDetail.carrierFsCode}})
+                <img ng-src="http://www.mediawego.com/images/flights/airlines/120x40t/{{connectionDetail.carrierFsCode}}.gif">
+            </div>
             <div>Flight Number {{connectionDetail.flightNumber}}</div>
             <div>Day difference between source and destination {{connectionDetail.arrivalDateAdjustment}}</div>
             <div>Distance in Miles {{connectionDetail.distanceMiles}}</div>
@@ -78,7 +78,9 @@ Passenger Details :
             <div>Arriving At time:  {{connectionDetail.arrivalTime}}</div>
             <div>Arriving To :  {{getairportsindi(connectionDetail.arrivalAirportFsCode)}} ({{connectionDetail.arrivalAirportFsCode}})</div>
             <div>Terminal {{connectionDetail.arrivalTerminal}}</div>
-            <div>Carrier Airline {{getAirlineFullInfoFromCode(connectionDetail.carrierFsCode)}}({{connectionDetail.carrierFsCode}})</div>
+            <div>Carrier Airline {{getAirlineFullInfoFromCode(connectionDetail.carrierFsCode)}}({{connectionDetail.carrierFsCode}})
+                <img ng-src="http://www.mediawego.com/images/flights/airlines/120x40t/{{connectionDetail.carrierFsCode}}.gif">
+            </div>
             <div>Flight Number {{connectionDetail.flightNumber}}</div>
             <div>Day difference between source and destination {{connectionDetail.arrivalDateAdjustment}}</div>
             <div>Distance in Miles {{connectionDetail.distanceMiles}}</div>
@@ -91,11 +93,12 @@ Passenger Details :
 
     <div>{{arrivalstatus}}</div>
     <button data-ng-click="open('sm');" data-ng-show="toshowsendpdfdocbutton">Forward PDF copy on Email</button>
-    <button data-ng-click="showconfirmationorloginwindow();" data-ng-show="toshowfirst">{{bookingbuttontitle}}</button>
+    <button data-ng-click="showRegisterNewUserModalView();" data-ng-show="toshowfirst">{{bookingbuttontitle}}</button>
     <button data-ng-click="checkoutguest();" data-ng-show="toshowsecond">Checkout As Guest/Register</button>
     <button data-ng-click="open('sm')" data-ng-show="toshowconfirmbutton">Confirm Booking </button>
     <!--<button data-ng-click="open('sm')" ng-hidden="true">click me</button>-->
 <div>{{bottomarrivalstatus}}</div>
+
 
     <script type="text/ng-template" id="bookingconfirmation">
         <div class="modal-header">
@@ -135,7 +138,11 @@ Passenger Details :
             <button class="btn btn-primary" ng-disabled="{{isokdisabled}}" ng-click="ok(emailAddresses,phoneNumber)">OK</button>
             <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
         </div>
+
+
+
     </script>
+
 
 
 
