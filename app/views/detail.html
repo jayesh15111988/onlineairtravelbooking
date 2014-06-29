@@ -94,7 +94,7 @@ Passenger Details :
     <div>{{arrivalstatus}}</div>
     <button data-ng-click="open('sm');" data-ng-show="toshowsendpdfdocbutton">Forward PDF copy on Email</button>
     <button data-ng-click="showRegisterNewUserModalView();" data-ng-show="toshowfirst">{{bookingbuttontitle}}</button>
-    <button data-ng-click="checkoutguest();" data-ng-show="toshowsecond">Checkout As Guest/Register</button>
+    <button data-ng-click="openNewUserModalView();" data-ng-show="toshowsecond">Checkout As Guest/Register</button>
     <button data-ng-click="open('sm')" data-ng-show="toshowconfirmbutton">Confirm Booking </button>
     <!--<button data-ng-click="open('sm')" ng-hidden="true">click me</button>-->
 <div>{{bottomarrivalstatus}}</div>
@@ -107,17 +107,17 @@ Passenger Details :
 
         <div class="modal-body">
             Please enter addtional email addresses where you would like to recieve confirmation of your booking
-            <input type="text" class="form-control" id="emailAddress" placeholder="Enter email Addresses" ng-model="emailAddresses">
+            <input type="text" class="form-control" id="emailAddress" placeholder="Enter email Addresses" ng-model="fieldName.emailAddresses">
 
             Please enter phone number to recieve frequent updates about booking
-            <input type="text" class="form-control" id="phoneNumbeers" placeholder="Enter Phone Number" ng-model="phoneNumber">
+            <input type="text" class="form-control" id="phoneNumbeers" placeholder="Enter Phone Number" ng-model="fieldName.phoneNumber">
 
 
 
         </div>
         <div class="modal-footer">
             Please press ok to continue, cancel to discard reservation and update information:
-            <button class="btn btn-primary" ng-click="ok(emailAddresses,phoneNumber)">OK</button>
+            <button class="btn btn-primary" ng-click="ok(fieldName.emailAddresses,fieldName.phoneNumber)">OK</button>
             <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
         </div>
     </script>
@@ -129,17 +129,15 @@ Passenger Details :
 
         <div class="modal-body">
             Please enter additional email addresses where you would like to receive confirmation of your booking. If multiple email addresses, please separate them by a comma
-            <input type="text" class="form-control" id="emailAddress" placeholder="Enter email Addresses" ng-model="emailAddresses" ng-keyup="dothat(emailAddresses)">
+            <input type="text" class="form-control" id="emailAddress" placeholder="Enter email Addresses" ng-model="fieldName.emailAddresses">
 
 {{errormessage}}
         </div>
         <div class="modal-footer">
             Please press ok to continue, cancel to discard reservation and update information:
-            <button class="btn btn-primary" ng-disabled="{{isokdisabled}}" ng-click="ok(emailAddresses,phoneNumber)">OK</button>
+            <button class="btn btn-primary" ng-disabled="{{isokdisabled}}" ng-click="ok(fieldName.emailAddresses,fieldName.phoneNumber)">OK</button>
             <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
         </div>
-
-
 
     </script>
 

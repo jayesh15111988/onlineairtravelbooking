@@ -307,9 +307,9 @@ Filter By Airline
                             <div id="connectiondetails-{{$index+1}}">
                             <div ng-repeat="connectionDetail in flightDetail.flightLegs">
                                 <div>Departing From: <span  tooltip-html-unsafe="{{getairportsindi(connectionDetail.departureAirportFsCode,0)}}" popover-trigger="mouseenter"  popover-placement="right">{{connectionDetail.departureAirportFsCode}}</span> At {{connectionDetail.departureTime}} </div>
-                                <div>Terminal {{connectionDetail.departureTerminal}}</div>
+                                <div>Terminal {{connectionDetail.departureTerminal?connectionDetail.departureTerminal:"N/A"}}</div>
                                 <div>Arriving To:<span tooltip-html-unsafe="{{getairportsindi(connectionDetail.arrivalAirportFsCode,0)}}" popover-trigger="mouseenter" popover-placement="right"> {{connectionDetail.arrivalAirportFsCode}}</span> At {{connectionDetail.arrivalTime}}</div>
-                                <div>Terminal {{connectionDetail.arrivalTerminal}}</div>
+                                <div>Terminal {{connectionDetail.arrivalTerminal?connectionDetail.arrivalTerminal:"N/A"}}</div>
                                 <div>Carrier Airline {{connectionDetail.carrierFsCode}} <img ng-src="http://www.mediawego.com/images/flights/airlines/120x40t/{{connectionDetail.carrierFsCode}}.gif"></div>
                                 <div>Flight Number {{connectionDetail.flightNumber}}</div>
                                 <div>Day difference between source and destination {{connectionDetail.arrivalDateAdjustment}}</div>

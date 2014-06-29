@@ -111,9 +111,6 @@ angular.module('airtravelbookingappApp', [
         };
     }).
 service('getStoredAuthTokenService',function(){
-
-
-
        return {
            getStoredAuthToken:function(){
 
@@ -126,4 +123,15 @@ service('getStoredAuthTokenService',function(){
            }
        }
 
+    }).
+    service('loginUserFunction',function(){
+      var loginFunction;
+       return {
+           getLoginFunction:function(){
+               return loginFunction;
+           },
+           setLoginFunction:function(loginFunctionaValue){
+               loginFunction=loginFunctionaValue;
+           }
+       }
     });

@@ -308,7 +308,7 @@ airlinetravelmodule.controller('userupdatecontroller',function($scope){
 });
 
 
-airlinetravelmodule.controller('samcontroller',function($scope, $http, $log, promiseTracker, $timeout,$window,$rootScope,sharedService,$modal,openRegistrationDialogueService,getStoredAuthTokenService){
+airlinetravelmodule.controller('samcontroller',function($scope, $http, $log, promiseTracker, $timeout,$window,$rootScope,sharedService,$modal,openRegistrationDialogueService,getStoredAuthTokenService,loginUserFunction){
 
     //console.log("parent one controller came");
 
@@ -328,9 +328,7 @@ openRegistrationDialogue(true);
 
     setUserFirstNameOnDisplay();
 
-    $rootScope.$on('request:validate', function(e) {
-        openRegistrationDialogue(true);
-    });
+
 
 
     $rootScope.$on("errorInReservationRetrieval", function (args) {
@@ -423,7 +421,7 @@ $scope.showHideDropDownMenu=function(){
     $scope.toShowDropdownMenuForResrevationRetrieval=!$scope.toShowDropdownMenuForResrevationRetrieval;
 }
 
-    //$scope.$watch('recordlocator', function(newvalue, oldvalue){console.log("newvalue: " + newvalue);console.log("oldvalue: " + oldvalue);},true);
+
     $scope.keyPressed=function(keyEvent){
 //console.log((keyEvent.keyCode)+" **** ");
         //User Pressed Delete or backspace
@@ -513,8 +511,9 @@ $scope.toRememberSelection=true;
         }
 
 
-        $scope.loguserin=function(form,loginemail,loginpassword){
+        $scope.loguserin=function(form,loginemail,loginpassword,toSaveCredentialsOnDevice){
               console.log("user clicked login button"+ loginemail+ " "+loginpassword);
+            console.log("To save o not "+toSaveCredentialsOnDevice);
             $scope.userloggedin=true;
             if(form.$invalid){
                 return;
@@ -544,7 +543,11 @@ $scope.toRememberSelection=true;
                     }
 
                     success=true;
-                    if($scope.savecredentials===true){
+
+
+                    console.log("To save credential on local machine "+toSaveCredentialsOnDevice);
+
+                    if(toSaveCredentialsOnDevice===true){
                         localStorage.setItem('userauthinfo',JSON.stringify(userLoginInfo));
                     }
                     var serverResponseData = JSON.stringify(data);
@@ -561,17 +564,28 @@ $scope.toRememberSelection=true;
                         localStorage.setItem( 'serverloginauthenticationsuccess', serverResponseData);
                         localStorage.setItem('authTokenInfo',JSON.stringify({authtoken:data.authorization,emailaddress:data.emailaddress,firstname:data.firstname,tokenexpirytime:addMinutes(new Date(),30)}));
 
-                        $scope.userfirstnamedisplay=data.firstname;
+
+                        setUserFirstNameOnDisplay();
+
+                        //Now if user is on main flight details page, just update button status in order to allow
+                        //change in login status
+                        $rootScope.$broadcast("userLoginStatusChanged", { loggedIn:true});
 
                         //$scope.messages = 'Your login information has been successfully sent! Congratulations...';
                         //$modalInstance.dismiss('cancel'); - Not using it because user actually logged into the system
                         //Not actually necessary - User is refreshing the page anyways
                         $modalInstance.close(data);
+
+                        //To do warning
+                        //Send notification through rootscope to set flight details page with changed button attributes if
+                        //Login is successful
+                        //to be Continued
         //                $window.location.reload();
                     }
                     else if (data.success===false){
                         $scope.errorMessage=data.errorinfo;
-                        $scope.userfirstnamedisplay="Guest";
+                        setUserFirstNameOnDisplay();
+                        //$scope.userfirstnamedisplay="Guest";
                         localStorage.setItem( 'serverloginauthenticationerror', serverResponseData);
                     }
                 })
@@ -608,6 +622,9 @@ $scope.toRememberSelection=true;
             }
         });
 
+        console.log("kkkkkkkkkk");
+        //loginUserFunction.setLoginFunction(loginModalInstanceController);
+
 
         modalInstance.result.then(function (selectedItem) {
 //User logged in succesfully, now change main name from guest to valid username and change login text to logout
@@ -621,14 +638,13 @@ $scope.toRememberSelection=true;
         //$('#loginview').modal('show');
     }
 
-    $scope.showLoginViewOnClick=function(){
-
-//User is not logged in currently - Show login box to allow him to get into the account
+    var showLoginViewToUser=function(){
+        //User is not logged in currently - Show login box to allow him to get into the account
         if(!localStorage.getItem('authTokenInfo')){
-           //Show login view to user
+            //Show login view to user
             //This is bad - Breaking the MVC pattern in Ang JS
 
-           loguserinwithmodalview();
+            loguserinwithmodalview();
 
         }
         else{
@@ -636,6 +652,19 @@ $scope.toRememberSelection=true;
             console.log("You were already signed in and now forcibly logged out by our system");
         }
     }
+
+    $scope.showLoginViewOnClick=function(){
+
+showLoginViewToUser();
+    }
+
+
+
+
+
+    //swatiiiii
+
+    loginUserFunction.setLoginFunction(showLoginViewToUser);
     //We will be using ajax request using jQuery because Angular request mechanism is a piece of shit and gives access control allow origin error
     //even though allow all headers are present in destination - Not sure what's wrong but you may say it a hack. I am gonna
     //abide by it from now on
@@ -693,6 +722,11 @@ $scope.toRememberSelection=true;
 
         }
     }
+
+
+
+
+
 
 
     $scope.$on("UPDATE_PARENT", function(event, message){
@@ -789,14 +823,8 @@ $scope.setSelectedItem=function(index,item){
 console.log("Came here with variable is editing value is "+isEditing);
 
 
-            openRegistrationDialogue(!isEditing)
-         /*   if(localStorage.getItem('authTokenInfo')){
-                $scope.$broadcast("SET_MESSAGE_HEADER","Sample message");
-                $("#userupdateview").modal('show');
-            }
-            else{
-                console.log("sorry, you must sign in to go this menu");
-            }*/
+            openRegistrationDialogue(!isEditing);
+
         }
         else{
             console.log("Creating a new profile");
@@ -843,7 +871,6 @@ var openRegistrationDialogue=function(isCreatingNewUser)
 {
     var userRegistrationController = function ($scope, $modalInstance, items) {
 
-
         $scope.salutations=['Mr.','Ms.','Mrs.','Dear'];
         $scope.travelreasons=['Personal','Family','Meeting Friends','Travel','Business','Other'];
         $scope.languages=['English','Hindi','Spanish','French','German','Other'];
@@ -851,7 +878,6 @@ var openRegistrationDialogue=function(isCreatingNewUser)
         $scope.closeRegistrationModalView=function(){
             $modalInstance.dismiss('cancel');
         }
-        //Setting fieldnames in our form
 
         $scope.countrynameslist=[" ","United States of America",
             "Afganistan",
@@ -1225,10 +1251,6 @@ $scope.fieldnames={
             mm='0'+mm
         }
 
-
-
-
-
         today = mm+'/'+dd+'/'+yyyy;
         $scope.maxdate='\''+today+'\'';
 
@@ -1239,20 +1261,16 @@ $scope.fieldnames={
         $scope.fieldnames.didConditionsAccepted=false;
 
         $scope.conditionschanged=function(acceptFlag){
+
             $scope.fieldnames.didConditionsAccepted=!acceptFlag;
 
-            // console.log($scope.didConditionsAccepted+" final value accept reject ");
         }
 
 
 
 
         $scope.fieldnames.country=$scope.countrynameslist[0];
-        /*$scope.items = items;
-         $scope.selected = {
-         item: $scope.items[0]
-         };
-         */
+
 
 
         $scope.closeRegistrationView = function () {
@@ -1299,7 +1317,7 @@ $scope.fieldnames={
                 return;
             }
 
-            console.log("came here now");
+
 
             var authTokenInfoFromLocalStorage=JSON.parse(localStorage.getItem('authTokenInfo'));
             var authToken='';
@@ -1333,7 +1351,7 @@ $scope.fieldnames={
             console.log(JSON.stringify(formData)+ " *** DEBUG INFO This is data *** ");
 
             var callbackFunctionafterUserCreateupdateOperation=function(responseData){
-console.log("*****************");
+
                 $modalInstance.close(isCreatingNewUser);
             }
 
@@ -1360,8 +1378,21 @@ console.log("*****************");
     modalInstance.result.then(function (isCreatingNewUser) {
         //console.log("Response data after user operation ->"+ responseDataAfterUserCreateUpdateOperation);
         //Now we submitted data succesfull - Show user second page confirmaing ongoing registration
+//Warning - To work on this part - Upon successful regsitration update all fileds on screen to show relevant texts
+        //jayesh Kawli - To Work on this piece
 
-        setUserFirstNameOnDisplay();
+        if(isCreatingNewUser){
+
+
+          //Don't know why this ain't working
+            //User successfuly created now set it's name and logout text on the top
+            setUserFirstNameOnDisplay();
+
+            //This is applicable for page where user views current flights details
+            //Ready to book and send an email confirmation
+
+            $rootScope.$broadcast("userLoginStatusChanged", { loggedIn:true});
+        }
 
         gotoSuccessfullRegistrationPage(isCreatingNewUser);
         //$scope.showSecondPage();
@@ -1381,6 +1412,8 @@ console.log("*****************");
    }
         $scope.completedView={};
 
+        //Items - true mean we are creating new user
+        //If false means we are updating existing user
 
         $scope.completedView.mainMessage=items?"Congratulations You have created new profile":"congrats your profile updates are now completed";
         $scope.completedView.subMessage=items?"You can always create newp profile":"You can always update exisitng profiule by selecting update proile option from home page";
@@ -1388,7 +1421,15 @@ console.log("*****************");
 
 //Get result and then close the current view
        $scope.saveAndCloseModalView=function(){
-        $modalInstance.close();
+        console.log("is creatin user"+items);
+
+            ///swati
+           //Send notification is user is being update
+           if(!items){
+               $scope.$emit('someEvent', {message:-1});
+           }
+
+           $modalInstance.close();
        }
 
 
@@ -1409,10 +1450,9 @@ console.log("*****************");
         });
 
 
-        modalInstance.result.then(function () {
+        modalInstance.result.then(function (responseDataAfterUpdate) {
             //console.log("Response data after user operation ->"+ responseDataAfterUserCreateUpdateOperation);
             //Now we submitted data succesfull - Show user second page confirmaing ongoing registration
-
 
 
 
@@ -1465,14 +1505,19 @@ console.log("*****************");
                     if(localStorage.getItem('serverloginauthenticationerror')){
                         localStorage.removeItem('serverloginauthenticationerror');
                     }
+//Commented out don't know if we are using this function
 
+                    $rootScope.$broadcast("userLoginStatusChanged", { loggedIn:false});
                     $scope.$apply(function () {
 
                         $scope.userfirstnamedisplay="Guest"
                         $scope.loginlogouttext="Login";
-                        $scope.$emit('handleEmit', {message: -1});
+                        //$scope.$emit('handleEmit', {message: -1});
 
                     });
+
+                    //setUserFirstNameOnDisplay();
+
 
 
                     console.log( "User successfully logged out: " + msg );
@@ -1488,11 +1533,8 @@ console.log("*****************");
 
 
 
-    //Prototype method for replacing all occurrences of specific character in a string
-    /*String.prototype.replaceAll = function(str1, str2, ignore)
-    {
-        return this.replace(new RegExp(str1.replace(/([\,\!\\\^\$\{\}\[\]\(\)\.\*\+\?\|\<\>\-\&])/g, function(c){return "\\" + c;}), "g"+(ignore?"i":"")), str2);
-    };*/
+
+
 
 
 
@@ -1525,16 +1567,8 @@ function sendUserDataToServer(formData,$scope,isCreatingUser,$http,callBackFunct
         params: formData,
         headers: {'Content-Type': 'application/x-www-form-urlencoded'}
     }).success(function (data, status, headers, config) {
-            console.log(data);
-           // if(!isCreatingUser){
-                //$scope.$broadcast("SET_MESSAGE_HEADER_SUCCESS","success to update");
-            //}
 
-            //else{
-              //  $scope.messages = 'Your registration information has been successfully sent! Congratulations...';
-            //}
             var serverResponseData=JSON.stringify(data);
-console.log("Server response data "+ serverResponseData);
 
             if(data.success===true){
 
@@ -1542,17 +1576,15 @@ console.log("Server response data "+ serverResponseData);
 
                     localStorage.removeItem('serverloginauthenticationsuccess');
                     localStorage.removeItem('authTokenInfo');
-
                 }
-
-
 
               //  $scope.$emit('handleEmit', {message: isCreatingUser?1:2});
 
                 localStorage.setItem( 'serverloginauthenticationsuccess', serverResponseData);
                 localStorage.setItem('authTokenInfo',JSON.stringify({'authtoken':data.authorization,'emailaddress':data.emailaddress,firstname:data.firstname,tokenexpirytime:addMinutes(new Date(),30)}));
-                $scope.userfirstnamedisplay=data.firstname;
-                console.log("Success" + angular.toJson(data));
+
+
+
                 callBackFunctionToExecute(data);
                 /*if(isCreatingUser){
 
@@ -1623,49 +1655,8 @@ var numberOfResultsPerPage=10;
 var showSchedulesOnlyForAirline="";
 
 
-var ModalInstanceCtrl = function ($scope, $modalInstance, items) {
 
-
-
-    var isInputValid=false;
-
-
-
-$scope.errormessage="";
-
-    $scope.dothat=function(emailaddress){
-
-    //Each time user starts typing, cleat out previous error message
-        $scope.errormessage="";
-isInputValid=emailaddress.length>10;
-
-
-    }
-
-
-if(items){
-    $scope.emailAddresses=items;
-}
-
-
-    $scope.ok = function (emailAddresses,phoneNumber) {
-if(isInputValid){
-        var data=[emailAddresses,phoneNumber];
-        $modalInstance.close(data);
-}else{
-    $scope.errormessage="Please input valid email address";
-    console.log("Not valid input yet");
-}
-    };
-
-    $scope.cancel = function () {
-
-        $modalInstance.dismiss('cancel');
-
-    };
-};
-
-airlinetravelmodule.controller('DetailController',function($scope,$routeParams,$modal,$http,$window,$rootScope,sharedService,getStoredAuthTokenService,openRegistrationDialogueService){
+airlinetravelmodule.controller('DetailController',function($scope,$routeParams,$modal,$http,$window,$rootScope,sharedService,getStoredAuthTokenService,openRegistrationDialogueService,loginUserFunction){
 
 
     var isBookingNewFlight=false;
@@ -1695,14 +1686,81 @@ airlinetravelmodule.controller('DetailController',function($scope,$routeParams,$
     } ();
 
 
+    var userLoginIndicator={};
+    userLoginIndicator = getStoredAuthTokenService.getStoredAuthToken();
 
-    $scope.showRegisterNewUserModalView=function(){
-        var registrationFunction=openRegistrationDialogueService.getProperty();
-        registrationFunction(false);
+    //console.log("type of email whole info "+  JSON.parse(localStorage.getItem('authTokenInfo')).emailaddress);
+    //console.log("type Of email address must work now "+userLoginIndicator.emailaddress);
+
+
+    var setupButtons=function(isLoggedInAlready){
+
+        console.log(isLoggedInAlready + " should say true or false");
+        $scope.bookingbuttontitle=isLoggedInAlready?"Update Booking Info and Book":"Login";
+        $scope.toshowsecond=!isLoggedInAlready;
     }
 
+    //Call this method on new user registration or upon login new user
+    //var updateButtonOnLoginLogoutActions=function(isLoggedIn){
 
-//    console.log(unescape(JSON.stringify(QueryString))+ " Received data From query ");
+      //  setupButtons(isLoggedIn);
+
+    //}
+
+    $rootScope.$on("userLoginStatusChanged", function (event,loginStatusValue) {
+console.log("Login status value is final "+angular.toJson(loginStatusValue));
+        //$scope.bookingbuttontitle="asdasdasdasd";
+       // setupButtons(loginStatusValue.loggedIn);
+        $scope.bookingbuttontitle=loginStatusValue.loggedIn?"Update Booking Info and Book":"Login";
+        $scope.toshowsecond=!loginStatusValue.loggedIn;
+        $scope.toshowconfirmbutton=loginStatusValue.loggedIn;
+
+    });
+
+
+
+    setupButtons(userLoginIndicator);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   //If user already logged in?
+
+
+    var registrationFunction=openRegistrationDialogueService.getProperty();
+$scope.openNewUserModalView=function(){
+
+    registrationFunction(true);
+}
+
+    $scope.showRegisterNewUserModalView=function(){
+
+        //Send notifications for showing login view
+        userLoginIndicator = getStoredAuthTokenService.getStoredAuthToken();
+        if(!userLoginIndicator){
+            var showLoginViewFunction=loginUserFunction.getLoginFunction();
+            showLoginViewFunction();
+        }
+        //Send notification for register view
+else{
+        registrationFunction(false);
+        $scope.toshowconfirmbutton=true;
+        }
+    }
+
+    //Add listener once user registers or logs into an account
+
 
     var urlEmailAddress=$routeParams.emailaddress;          //unescape(QueryString.reservationretrievalemail);
     var urlConfirmationCode=$routeParams.confirmationcode;  //QueryString.confirmationcode;
@@ -1729,17 +1787,73 @@ airlinetravelmodule.controller('DetailController',function($scope,$routeParams,$
 
 
     var isInputValid=false;
+
+
+
+    var sendPDFCopyToAnEmailConfirmation = function ($scope, $modalInstance, items) {
+
+        console.log("Entered now haha" + typeof items);
+        var isInputValid=false;
+        $scope.errormessage="";
+
+        /*$scope.dothat=function(emailaddress){
+
+         //Each time user starts typing, cleat out previous error message
+
+         $scope.errormessage="";
+
+         console.log("Typeing email address"+ isInputValid);
+
+         }*/
+        //console.log(angular.toJson(items.emailaddress)+ "Email occurred");
+console.log(typeof items + " type of email address info ");
+        $scope.fieldName={emailAddresses:items};
+
+
+        $scope.$watch('fieldName.emailAddresses',function(n,o){
+
+            isInputValid=$scope.fieldName.emailAddresses.length>10;
+            console.log("Email addres entered is input valid "+isInputValid);
+
+
+        },true);
+
+
+        if(items){
+            $scope.fieldName.emailAddresses=items;
+        }
+
+
+        $scope.ok = function (emailAddresses,phoneNumber) {
+            if(isInputValid){
+                var data=[emailAddresses,phoneNumber];
+                $modalInstance.close(data);
+            }else{
+                $scope.errormessage="Please input valid email address";
+                console.log("Not valid input yet");
+            }
+        };
+
+        $scope.cancel = function () {
+
+            $modalInstance.dismiss('cancel');
+
+        };
+    };
+
+
+
     $scope.open = function () {
 
         var modalInstance = $modal.open({
             templateUrl: isBookingNewFlight?'bookingconfirmation':'sendpdfdoctoemailaddress',
-            controller: ModalInstanceCtrl,
+            controller: sendPDFCopyToAnEmailConfirmation,
             size: 'sm',
             resolve: {
                 items:function () {
-                    if(!isBookingNewFlight){
-                        return urlEmailAddress;
-                    }
+                   // if(!isBookingNewFlight){
+                        return userLoginIndicator.emailaddress;
+                    //}
                 }
             }
         });
@@ -1758,7 +1872,7 @@ isInputValid=isInputValidFromUser;
                 dataToSendForBookingConfirmation.push(JSON.parse(localStorage.getItem('authTokenInfo')));
             }
             else{
-                console.log("This is to fix ASAP - This is special case as descried below");
+                console.log("This is to fix ASAP - This is special case as described below");
                 //User did not login, nor does it have an account - This option falls into case where user is doing guest checkout and
                 //We need some mechanism to keep track of user informaiton. Probably auto enroll him in the registration while checking out
                 //As a guest. That seems closest possible approach to follow
@@ -1781,13 +1895,16 @@ isInputValid=isInputValidFromUser;
                 dataToSendForBookingConfirmation.push(JSON.parse(localStorage.getItem('comingindetails')));
             }
 
+                console.log("Is booking new flight "+dataToSendForBookingConfirmation);
 if(isBookingNewFlight){
+
             $http.post('http://www.jayeshkawli.com/airlinetravel/finalbookingconfirmation.php', { bookinginformation: dataToSendForBookingConfirmation })
                 .success(function(response) {
 
                 console.log(response+ " Successful Response ");
 
             }).error(function(errorMessage){
+
                     console.log("Error Occurred "+ errorMessage);
 
                 });
@@ -1844,6 +1961,7 @@ var fullCodeNames={};
     var arrayForAllAirlinesInfo= JSON.parse(localStorage.getItem('airlines'));
 
     $scope.toshowconfirmbutton=false;
+
         var storedUserHistorydata=JSON.parse(localStorage.getItem('historySearchData'));
         tripDirection=storedUserHistorydata.travelDirection;
         var numberOfKeys=Object.keys(arrivalDetailsglobal).length;
@@ -1856,14 +1974,14 @@ var fullCodeNames={};
         }
         airportsDeepDetailsGlobal=JSON.parse(localStorage.getItem('allAvailableAirportDetailsWithFullNames'));
         $scope.toshowfirst=true;
-        $scope.toshowsecond=true;
+
     }
     else{
 
 
         $scope.toshowconfirmbutton=false;
         $scope.toshowfirst=false;
-        $scope.toshowsecond=false;
+
 
 
 
@@ -1871,19 +1989,13 @@ var fullCodeNames={};
 
 
 
-var userLoginIndicator=getStoredAuthTokenService.getStoredAuthToken();
-    if(userLoginIndicator){
-        $scope.bookingbuttontitle="Update Booking Info and Book";
-        $scope.toshowsecond=false;
-    }
-    else{
-        $scope.bookingbuttontitle="Login"
-    }
+
 
     $scope.checkoutguest=function(){
+
         //Not sure if it will wotk or now - But will see it
         openRegistrationDialogue(true);
-        //$("#registerview").modal('show');
+
     }
 
     //User has either logged in/Updated information/created new registration account
@@ -1893,8 +2005,11 @@ var userLoginIndicator=getStoredAuthTokenService.getStoredAuthToken();
 
     //This block is applicable only when user creates new account or updates account details
 
-    $scope.$on('handleBroadcast', function(event, args) {
-        if(args.message==-1){
+
+    //$scope.$on('handleBroadcast', function(event, args) {
+    $scope.$on('someEvent', function(event, args) {
+
+        if(args.message!=-1){
             $scope.bookingbuttontitle="Login"
             $scope.toshowsecond=true;
             isUserLoggedIn=localStorage.getItem('authTokenInfo');
@@ -1923,6 +2038,7 @@ var userLoginIndicator=getStoredAuthTokenService.getStoredAuthToken();
             $('#loginview').modal('show');
         }
     }
+
 
     $scope.getairportsindi=function(iatacode){
 if(isBookingNewFlight){
@@ -2466,7 +2582,7 @@ airlinetravelmodule.controller('showflightscontroller',function($scope,$http,$ro
             totalP=Math.ceil(flightDetails.length/numberOfResultsPerPage);
         }
 
-        console.log("*******"+JSON.stringify(flightDetails[20].flightLegs[0].arrivalTerminal));
+        //console.log("*******"+JSON.stringify(flightDetails[20].flightLegs[0].arrivalTerminal));
         $scope.totalPages=Array();
         for(var i=0;i<totalP;i++){
             $scope.totalPages.push(i);
@@ -2655,7 +2771,7 @@ airlinetravelmodule.controller('upperleftbarcontroller',function($scope){
 
 })
 
-airlinetravelmodule.controller('flightsearchcontroller',function($scope,$http,$window,$timeout,$rootScope,openRegistrationDialogueService){
+airlinetravelmodule.controller('flightsearchcontroller',function($scope,$http,$window,$timeout,$rootScope,openRegistrationDialogueService,getStoredAuthTokenService){
 
 
     //#warning to use while booking new flight it creates new user
@@ -2663,13 +2779,14 @@ airlinetravelmodule.controller('flightsearchcontroller',function($scope,$http,$w
 
     //Called nowhere - as long as my knowledge goes
 
+    /*
     $scope.showRegisterNewUserModalView=function(){
     var registrationFunction=openRegistrationDialogueService.getProperty();
 
         registrationFunction(true);
-    //    $rootScope.$emit('request:validate');
-        //$rootScope.$broadcast("createNewUserAccount", { });
+
     }
+    */
 
     $scope.defaultValue="N/A";
     $scope.sample=function(){
@@ -3016,7 +3133,33 @@ airlinetravelmodule.controller('flightsearchcontroller',function($scope,$http,$w
         }
     }
 
+
+
+
+
+
+
+
+
+
+    var storedLocalAuthTokenInfo = getStoredAuthTokenService.getStoredAuthToken();
+
     //We will use this method to store given user's ip address and geolocation infromation in our database
+
+
+    function sendIPAddressAndGeographicalInformationToServer(geographicalInformationData){
+        $http.post('http://www.jayeshkawli.com/airlinetravel/iptogeographicalmappings.php', { ipAddressInformation: geographicalInformationData }
+        )
+            .success(function(response) {
+                console.log("User Geographical Infromation successfully stored in the database with Response "+ response);
+
+            }).error(function(errorMessage){
+                console.log("Error Occurred "+ errorMessage);
+            });
+    }
+
+
+
     var saveIpAddressGeoLocationInformationInDatabase=function(){
 
 
@@ -3029,23 +3172,24 @@ airlinetravelmodule.controller('flightsearchcontroller',function($scope,$http,$w
             headers: {'Content-Type': 'application/x-www-form-urlencoded'}
         }).success(function (geographicalData, status, headers, config) {
 
-                var storedLocalAuthTokenInfo = getStoredAuthTokenService.getStoredAuthToken();
+
 
                 geographicalData['userEmailAddress']=storedLocalAuthTokenInfo?storedLocalAuthTokenInfo.emailaddress:"Anonymous";
-                $http.post('http://www.jayeshkawli.com/airlinetravel/iptogeographicalmappings.php', { ipAddressInformation: geographicalData }
-                )
-                    .success(function(response) {
-                        console.log("User Geographical Infromation successfully stored in the database with Response "+ response);
 
-                    }).error(function(errorMessage){
-                        console.log("Error Occurred "+ errorMessage);
-                    });
+
+                sendIPAddressAndGeographicalInformationToServer(geographicalData);
+
             }).error(function (data, status, headers, config) {
 
                 console.log("Failed to get data from server with Error "+data);
 
             });
     }
+
+
+
+
+
 
 
 
