@@ -46,7 +46,7 @@ Passenger Details :
             <div>Carrier Airline {{getAirlineFullInfoFromCode(connectionDetail.carrierFsCode)}} ({{connectionDetail.carrierFsCode}})
                 <img ng-src="http://www.mediawego.com/images/flights/airlines/120x40t/{{connectionDetail.carrierFsCode}}.gif">
             </div>
-            <div>Flight Number {{connectionDetail.flightNumber}}</div>
+            <div>Flight Number {{connectionDetail.flightNumber}}</div> <button ng-click="getDelayRatingsForAirport(connectionDetail.departureAirportFsCode,getairportsindi(connectionDetail.departureAirportFsCode))"> Delay Rating </button>
             <div>Day difference between source and destination {{connectionDetail.arrivalDateAdjustment}}</div>
             <div>Distance in Miles {{connectionDetail.distanceMiles}}</div>
             <div>Flight Duration {{connectionDetail.flightDurationMinutes}}</div>
@@ -79,9 +79,10 @@ Passenger Details :
             <div>Arriving To :  {{getairportsindi(connectionDetail.arrivalAirportFsCode)}} ({{connectionDetail.arrivalAirportFsCode}})</div>
             <div>Terminal {{connectionDetail.arrivalTerminal}}</div>
             <div>Carrier Airline {{getAirlineFullInfoFromCode(connectionDetail.carrierFsCode)}}({{connectionDetail.carrierFsCode}})
+              <!-- this is temporary source to import airline images -->
                 <img ng-src="http://www.mediawego.com/images/flights/airlines/120x40t/{{connectionDetail.carrierFsCode}}.gif">
             </div>
-            <div>Flight Number {{connectionDetail.flightNumber}}</div>
+            <div>Flight Number {{connectionDetail.flightNumber}}</div> <button ng-click="getDelayRatingsForAirport(connectionDetail.departureAirportFsCode,getairportsindi(connectionDetail.departureAirportFsCode))"> Delay Ratings </button>
             <div>Day difference between source and destination {{connectionDetail.arrivalDateAdjustment}}</div>
             <div>Distance in Miles {{connectionDetail.distanceMiles}}</div>
             <div>Flight Duration {{connectionDetail.flightDurationMinutes}}</div>
@@ -99,7 +100,14 @@ Passenger Details :
     <!--<button data-ng-click="open('sm')" ng-hidden="true">click me</button>-->
 <div>{{bottomarrivalstatus}}</div>
 
+<div data-ng-show="showAdditionalInformation">
 
+    <br/>
+
+    <button ng-click="openWeatherInformationPopUpFor(sourcecity)">Get Weather Information at {{sourcecity}} </button>
+    <br/><br/>
+    <button ng-click="openWeatherInformationPopUpFor(destinationcity)">Get Weather Information at {{destinationcity}}</button>
+</div>
     <script type="text/ng-template" id="bookingconfirmation">
         <div class="modal-header">
             <h3 class="modal-title">You are about to book selected flight</h3>
@@ -141,6 +149,127 @@ Passenger Details :
 
     </script>
 
+<!-- This is view for delay index - Nothing to do with an existing UI of reservation status -->
+
+        <script type="text/ng-template" id="delayIndexView">
+
+            <div class="modal-header">
+                <h3 class="modal-title">Delay statistics for {{airportFullName}} </h3>
+            </div>
+            <div class="modal-body">
+                Name: {{delayIndexParameters['airport']['name']}} <br/>
+                IATA Code:{{delayIndexParameters['airport']['iata']}}<br/>
+                Full Address:{{delayIndexParameters['airport']['street1']}} {{delayIndexParameters['airport']['street2']}} , {{delayIndexParameters['airport']['city']}}<br/>
+                City:{{delayIndexParameters['airport']['city']}}<br/>
+                Country Code:{{delayIndexParameters['airport']['countryCode']}}<br/>
+                Local Time:{{delayIndexParameters['airport']['localTime']}}<br/>
+                Elevation:{{delayIndexParameters['airport']['elevationFeet']?delayIndexParameters['airport']['elevationFeet']:0}} Feet<br/>
+                Raw Delay index score:{{delayIndexParameters['rawScore']}}<br/>
+                Normalized index score:{{delayIndexParameters['normalizedScore']}}<br/>
+                Observation Started:{{getFormattedDate(delayIndexParameters['dateStart'])}}<br/>
+                Observation Ended:{{getFormattedDate(delayIndexParameters['dateEnd'])}}<br/>
+                Number of Flights In two days:{{delayIndexParameters['flights']}}<br/>
+                Number of Flights Observed:{{delayIndexParameters['observations']}}<br/>
+                Number of Flights cancelled:{{delayIndexParameters['canceled']}}<br/>
+                On time arrivals:{{delayIndexParameters['onTime']}}<br/>
+                Flights delaying more than 15 minutes:{{delayIndexParameters['delayed15']}}<br/>
+                Flights delaying more than 30 minutes:{{delayIndexParameters['delayed30']}}<br/>
+                Flights delaying more than 45 minutes:{{delayIndexParameters['delayed45']}}<br/>
+                Delta (Don't know what this is):{{delayIndexParameters['delta']}}<br/>
+
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-primary" ng-click="ok()">OK</button>
+                <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+            </div>
+
+        </script>
+
+    <!-- This is code for weather api for our purposes -->
+    <script type="text/ng-template" id="weatherReportView">
+
+        <div class="modal-header">
+            <h3 class="modal-title">Weather report for {{airportFullName}} </h3>
+        </div>
+        <div class="modal-body">
+<div class="offset-up-and-down">Metar Forecast: (Retrieve the most current available METAR weather report for the aerodrome around a given airport. METAR reports describe current conditions and are updated about once an hour.)</div>
+
+Possibility of Precipitation: {{(tags[0]['value']==1)?"Yes":"No"}} <br/>
+Current Prevailing Conditions:{{tags[2]['value']?tags[2]['value']:"N/A"}}<br/>
+            Wind Speed (Knots): {{conditions['wind']['speedKnots']}}<br/>
+            Visibility (Miles):{{conditions['visibility']['miles']}}<br/>
+
+           <div class="offset-up-and-down"> Sky Condition: </div>
+            <div ng-repeat="skyCondition in conditions['skyConditions']">
+                Height: {{skyCondition['base']}}
+                Coverage:{{skyCondition['coverage']}}
+                <br/>
+            </div>
+
+
+
+            Pressure (Inches): {{conditions['pressureInchesHg']}}
+            Temperature (Celsius):{{metar['temperatureCelsius']}}
+            Dew Point (Celsius):{{metar['dewPointCelsius']}}
+
+            <div class="offset-up-and-down">
+            Zone Forecast: (Retrieve the most current available zone forecast for the airport. Zone forecasts can cover several days, and apply to a more extensive area around the airport)
+</div>
+            Zone Codes:
+            <div ng-repeat="individualZone in zoneForecast['zones']">
+            {{individualZone}}
+                </div>
+
+
+            Report Time:{{zoneForecast['reportTime']}}
+            Cities Included in Zone:
+            <div ng-repeat="individualCity in zoneForecast['cities']">
+            {{individualCity}}
+</div>
+
+
+            <div class="offset-up-and-down">
+            Forecast for next days. Please choose from drop down options below
+
+                <select ng-change="forecastDayChanged();" ng-model="individualDayForecastValue.airline" ng-options="individualDayForecast['day'] as individualDayForecast['day'] for individualDayForecast in subsequentDaysInfo">
+
+                </select>
+
+
+
+
+
+
+
+
+
+<div class="offset-up-and-down">
+    Day Chosen: {{dayChosen}}<br/>
+    Forecast: {{forecastInfo}}<br/>
+    Start Date and time: {{startDate}}<br/>
+    End Date and time: {{endDate}} <br/>
+
+    Extra Information:
+
+
+    <div class="offset-up-and-down" ng-repeat="weatherInformation in extraWeatherInformation">
+
+        {{weatherInformation['key']}} - {{ weatherInformation['value']}};
+    </div>
+
+    </div>
+</div>
+
+
+        </div>
+
+        <div class="modal-footer">
+            <button class="btn btn-primary" ng-click="ok()">OK</button>
+            <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+        </div>
+
+    </script>
 
 
 

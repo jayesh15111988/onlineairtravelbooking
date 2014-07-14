@@ -1658,7 +1658,8 @@ var showSchedulesOnlyForAirline="";
 
 airlinetravelmodule.controller('DetailController',function($scope,$routeParams,$modal,$http,$window,$rootScope,sharedService,getStoredAuthTokenService,openRegistrationDialogueService,loginUserFunction){
 
-
+    //This function is to check if we have active internet connection
+    //console.log(checkNetConnection()+ "this is val of internet connection");
     var isBookingNewFlight=false;
     isBookingNewFlight = $routeParams.id;
     $scope.showbookingdetails=!isBookingNewFlight;
@@ -1717,23 +1718,7 @@ console.log("Login status value is final "+angular.toJson(loginStatusValue));
 
     });
 
-
-
     setupButtons(userLoginIndicator);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
    //If user already logged in?
 
@@ -1841,6 +1826,215 @@ console.log(typeof items + " type of email address info ");
         };
     };
 
+//start of controllers code for delay index for specific airport
+
+    //Get delay ratings for given airport
+    $scope.getDelayRatingsForAirport=function(airportFSCode,fullAirportName){
+
+        var delayIndexModalInstance = $modal.open({
+            templateUrl: 'delayIndexView',
+            controller: delayIndexController,
+            size: 'sm',
+            resolve: {
+                airportFSCodeValue: function () {
+                    return [airportFSCode,fullAirportName];
+                }
+            }
+        });
+
+        delayIndexModalInstance.result.then(function (selectedItem) {
+            console.log("Delay index item box closed with ok button");
+        }, function () {
+            console.log('Delay index modal dismissed at: ' + new Date());
+        });
+    };
+
+
+//Actual controller for delay index controller on our view
+    var delayIndexController = function ($scope, $modalInstance, airportFSCodeValue) {
+
+        $scope.airportFullName=airportFSCodeValue[1];
+
+        //Load all data from php script based on the airport FS code in picture
+        $http({
+            url: 'http://jayeshkawli.com/airlinetravel/getdelayindexbyparameter.php',
+            method: "GET",
+            cache:true,
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+            params: {"airportFSCode":airportFSCodeValue[0]}
+        }).success(function (data, status, headers, config) {
+
+            $scope.delayIndexParameters = data['delayIndexes'][0];
+
+            }).error(function (data, status, headers, config) {
+
+
+
+            });
+
+
+
+        //Empty implementation - Not needed for now
+        $scope.ok = function () {
+            $modalInstance.close(airportFSCodeValue);
+        };
+
+        $scope.cancel = function () {
+            $modalInstance.dismiss('cancel');
+        };
+//This should probably be global - But it's here for time being
+        var monthNames = [ "January", "February", "March", "April", "May", "June",
+            "July", "August", "September", "October", "November", "December" ];
+
+
+        $scope.getFormattedDate=function(dateToFormat){
+
+
+            if(dateToFormat){
+             //   var pattern = /(\d{4})-(\d{2})-(\d{2})/;
+                var dt = new Date(dateToFormat);
+    var fullDateInFormat = monthNames[dt.getMonth()]+ ", "+dt.getDate()+ " "+dt.getFullYear();
+    return fullDateInFormat;
+            }
+
+        }
+
+    }
+
+
+
+    //End of delay index code
+
+//Code for weather info at given source and destination
+
+
+    $scope.openWeatherInformationPopUpFor=function(sourceAirportName){
+
+        var delayIndexModalInstance = $modal.open({
+            templateUrl: 'weatherReportView',
+            controller: weatherReportController,
+            size: 'sm',
+            resolve: {
+                airportFullNameValue: function () {
+                    return sourceAirportName;
+                }
+            }
+        });
+
+        delayIndexModalInstance.result.then(function (selectedAirportName) {
+            console.log("Weather report box closed with ok button "+ selectedAirportName);
+        }, function () {
+            console.log('Weather report modal dismissed at: ' + new Date());
+        });
+    }
+
+var  weatherReportController = function ($scope, $modalInstance, airportFullNameValue) {
+
+
+        $scope.airportFullName="Weather Report for "+ airportFullNameValue;
+
+        $scope.$watch('indiDayForecastValue', function (newValueOfDay, oldValueOfDay) {
+
+            console.log('oldValue=' + oldValueOfDay);
+            console.log('newValue=' + newValueOfDay);
+
+        },true);
+
+
+
+    $scope.zoneForecast=[];
+    $scope.subsequentDaysInfo=[];
+    $scope.indiDayForecastValue={};
+
+    $scope.individualDayForecastValue={};
+    $scope.individualDayForecastValue.airline={};
+
+
+    var temporaryLookupMapping={};
+
+//$scope.individualDayForecastValue={};
+
+
+
+    function setupWeatherInfoForSpecificDayWithData(weatherInfoData){
+        $scope.dayChosen=weatherInfoData['day'];
+        $scope.forecastInfo=weatherInfoData['forecast'];
+        $scope.startDate=weatherInfoData['start'];
+        $scope.endDate=weatherInfoData['end'];
+
+        $scope.extraWeatherInformation=weatherInfoData['tags'];
+    }
+
+    //Load all data from php script based on the airport FS code in picture
+        $http({
+            url: 'http://jayeshkawli.com/airlinetravel/getweatherbyairportname.php',
+            method: "GET",
+            cache:true,
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+            params: {"airportFullName":airportFullNameValue}
+        }).success(function (data, status, headers, config) {
+
+                $scope.metar=data['metar'];
+                $scope.tags=data['metar']['tags'];
+                $scope.conditions=data['metar']['conditions'];
+
+
+                $scope.zoneForecast=data['zoneForecast'];
+
+                $scope.subsequentDaysInfo=data['zoneForecast']['dayForecasts'];
+
+
+                $scope.individualDayForecastValue.airline=$scope.subsequentDaysInfo[0]['day'];
+                setupWeatherInfoForSpecificDayWithData($scope.subsequentDaysInfo[0]);
+                //$scope.individualDayForecastValue= $scope.subsequentDaysInfo[0];
+
+//Now fill in lookup object with name as key
+
+                for(var individualDayWeatherObject in $scope.subsequentDaysInfo){
+
+                    var tempObjectUnderSelection=$scope.subsequentDaysInfo[individualDayWeatherObject];
+
+
+                    temporaryLookupMapping[tempObjectUnderSelection['day']]=tempObjectUnderSelection;
+                }
+
+
+
+
+                console.log(data+ "returned by the server");
+
+
+            }).error(function (data, status, headers, config) {
+
+
+
+            });
+
+
+    $scope.forecastDayChanged=function(){
+        var weatherDataForSelectedDay = temporaryLookupMapping[$scope.individualDayForecastValue.airline];
+
+        setupWeatherInfoForSpecificDayWithData(weatherDataForSelectedDay);
+
+    }
+
+
+        //Empty implementation - Not needed for now
+        $scope.ok = function () {
+            $modalInstance.close(airportFullNameValue);
+        };
+
+        $scope.cancel = function () {
+            $modalInstance.dismiss('cancel');
+        };
+//This code for in case user toggles dropdown menu to check weather on some different day
+
+
+}
+
+
+
+    //End of code for weather information
 
 
     $scope.open = function () {
@@ -1851,9 +2045,12 @@ console.log(typeof items + " type of email address info ");
             size: 'sm',
             resolve: {
                 items:function () {
-                   // if(!isBookingNewFlight){
+                    if(isBookingNewFlight){
                         return userLoginIndicator.emailaddress;
-                    //}
+                    }
+                    else{
+                        return  $scope.emailaddress;
+                    }
                 }
             }
         });
@@ -1957,6 +2154,13 @@ var fullCodeNames={};
 
     var isUserLoggedIn;
     if(isBookingNewFlight){
+
+
+
+
+
+
+
     var dataWithFullNameForAirportsAndAirlines={};
     var arrayForAllAirlinesInfo= JSON.parse(localStorage.getItem('airlines'));
 
@@ -1978,11 +2182,11 @@ var fullCodeNames={};
     }
     else{
 
-
+$scope.showAdditionalInformation=true;
         $scope.toshowconfirmbutton=false;
         $scope.toshowfirst=false;
-
-
+        //It says checkout as a guest or register option which should not be available if retreiving booking
+$scope.toshowsecond=false;
 
 
     }
@@ -2121,17 +2325,15 @@ if(isBookingNewFlight){
         $http({method: 'GET', url: 'http://www.jayeshkawli.com/airlinetravel/retrievepreviousbookings.php',params:{emailaddress:urlEmailAddress,confirmationcodetoquerywith:urlConfirmationCode}}).
         success(function(data, status, headers, config) {
 
-               console.log("Failed to get data from server ****  "+JSON.stringify(data));
+               //console.log("Failed to get data from server ****  "+JSON.stringify(data));
                if(data.success===false){
                    $window.location.href = "#/";
                    sharedService.setProperty(data.message);
                    $rootScope.$broadcast("errorInReservationRetrieval", { });
-                   //$scope.$emit('errorInReservationRetrieval', args);
                    return;
                }
 
                 $scope.toshowsendpdfdocbutton=true;
-
                 var passengerbookingdetails=data.booking_details;
                 //$scope.fullTravelDetails.departure
                 //$scope.fullTravelDetails.arrival
@@ -3061,7 +3263,7 @@ airlinetravelmodule.controller('flightsearchcontroller',function($scope,$http,$w
     $scope.numberOfAdults=$scope.numberAdult[0];
     $scope.numberOfInfants=$scope.numberOfChildren=$scope.numberChildren[0];
 
-
+//jjj
     $scope.whichAirline=function(){
         whichAirline="My Airline";
     }
