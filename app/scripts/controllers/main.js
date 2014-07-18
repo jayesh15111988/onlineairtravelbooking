@@ -35,6 +35,7 @@ airlinetravelmodule.directive('registerFirstpage', function() {
         }
     }
 });
+//Directive to add focus for particular text field on screen
 
 
 
@@ -511,6 +512,7 @@ $scope.toRememberSelection=true;
         }
 
 
+
         $scope.loguserin=function(form,loginemail,loginpassword,toSaveCredentialsOnDevice){
               console.log("user clicked login button"+ loginemail+ " "+loginpassword);
             console.log("To save o not "+toSaveCredentialsOnDevice);
@@ -583,9 +585,14 @@ $scope.toRememberSelection=true;
         //                $window.location.reload();
                     }
                     else if (data.success===false){
-                        $scope.errorMessage=data.errorinfo;
+                        $scope.errorMessage=data.errorinfo
+                        $scope.errorResolutionMessage = "Please select forgot password option if you have forgotten your email address";
+
+
+
                         setUserFirstNameOnDisplay();
-                        //$scope.userfirstnamedisplay="Guest";
+
+
                         localStorage.setItem( 'serverloginauthenticationerror', serverResponseData);
                     }
                 })
@@ -622,7 +629,7 @@ $scope.toRememberSelection=true;
             }
         });
 
-        console.log("kkkkkkkkkk");
+
         //loginUserFunction.setLoginFunction(loginModalInstanceController);
 
 
@@ -871,261 +878,21 @@ var openRegistrationDialogue=function(isCreatingNewUser)
 {
     var userRegistrationController = function ($scope, $modalInstance, items) {
 
-        $scope.salutations=['Mr.','Ms.','Mrs.','Dear'];
-        $scope.travelreasons=['Personal','Family','Meeting Friends','Travel','Business','Other'];
-        $scope.languages=['English','Hindi','Spanish','French','German','Other'];
+        console.log("Registration opened");
+
+        $scope.salutations=listOfSalutations;
+        $scope.travelreasons=travelReasons;
+        $scope.languages=availableLanguages;
 
         $scope.closeRegistrationModalView=function(){
             $modalInstance.dismiss('cancel');
         }
+//jjjj
 
-        $scope.countrynameslist=[" ","United States of America",
-            "Afganistan",
-            "Albania",
-            "Algeria",
-            "American Samoa",
-            "Andorra",
-            "Angola",
-            "Anguilla",
-            "Antigua & Barbuda",
-            "Argentina",
-            "Armenia",
-            "Aruba",
-            "Australia",
-            "Austria",
-            "Azerbaijan",
-            "Bahamas",
-            "Bahrain",
-            "Bangladesh",
-            "Barbados",
-            "Belarus",
-            "Belgium",
-            "Belize",
-            "Benin",
-            "Bermuda",
-            "Bhutan",
-            "Bolivia",
-            "Bonaire",
-            "Bosnia & Herzegovina",
-            "Botswana",
-            "Brazil",
-            "British Indian Ocean Ter",
-            "Brunei",
-            "Bulgaria",
-            "Burkina Faso",
-            "Burundi",
-            "Cambodia",
-            "Cameroon",
-            "Canada",
-            "Canary Islands",
-            "Cape Verde",
-            "Cayman Islands",
-            "Central African Republic",
-            "Chad",
-            "Channel Islands",
-            "Chile",
-            "China",
-            "Christmas Island",
-            "Cocos Island",
-            "Colombia",
-            "Comoros",
-            "Congo",
-            "Cook Islands",
-            "Costa Rica",
-            "Cote DIvoire",
-            "Croatia",
-            "Cuba",
-            "Curaco",
-            "Cyprus",
-            "Czech Republic",
-            "Denmark",
-            "Djibouti",
-            "Dominica",
-            "Dominican Republic",
-            "East Timor",
-            "Ecuador",
-            "Egypt",
-            "El Salvador",
-            "Equatorial Guinea",
-            "Eritrea",
-            "Estonia",
-            "Ethiopia",
-            "Falkland Islands",
-            "Faroe Islands",
-            "Fiji",
-            "Finland",
-            "France",
-            "French Guiana",
-            "French Polynesia",
-            "French Southern Ter",
-            "Gabon",
-            "Gambia",
-            "Georgia",
-            "Germany",
-            "Ghana",
-            "Gibraltar",
-            "Great Britain",
-            "Greece",
-            "Greenland",
-            "Grenada",
-            "Guadeloupe",
-            "Guam",
-            "Guatemala",
-            "Guinea",
-            "Guyana",
-            "Haiti",
-            "Hawaii",
-            "Honduras",
-            "Hong Kong",
-            "Hungary",
-            "Iceland",
-            "India",
-            "Indonesia",
-            "Iran",
-            "Iraq",
-            "Ireland",
-            "Isle of Man",
-            "Israel",
-            "Italy",
-            "Jamaica",
-            "Japan",
-            "Jordan",
-            "Kazakhstan",
-            "Kenya",
-            "Kiribati",
-            "Korea North",
-            "Korea Sout",
-            "Kuwait",
-            "Kyrgyzstan",
-            "Laos",
-            "Latvia",
-            "Lebanon",
-            "Lesotho",
-            "Liberia",
-            "Libya",
-            "Liechtenstein",
-            "Lithuania",
-            "Luxembourg",
-            "Macau",
-            "Macedonia",
-            "Madagascar",
-            "Malaysia",
-            "Malawi",
-            "Maldives",
-            "Mali",
-            "Malta",
-            "Marshall Islands",
-            "Martinique",
-            "Mauritania",
-            "Mauritius",
-            "Mayotte",
-            "Mexico",
-            "Midway Islands",
-            "Moldova",
-            "Monaco",
-            "Mongolia",
-            "Montserrat",
-            "Morocco",
-            "Mozambique",
-            "Myanmar",
-            "Nambia",
-            "Nauru",
-            "Nepal",
-            "Netherland Antilles",
-            "Netherlands",
-            "Nevis",
-            "New Caledonia",
-            "New Zealand",
-            "Nicaragua",
-            "Niger",
-            "Nigeria",
-            "Niue",
-            "Norfolk Island",
-            "Norway",
-            "Oman",
-            "Pakistan",
-            "Palau Island",
-            "Palestine",
-            "Panama",
-            "Papua New Guinea",
-            "Paraguay",
-            "Peru",
-            "Phillipines",
-            "Pitcairn Island",
-            "Poland",
-            "Portugal",
-            "Puerto Rico",
-            "Qatar",
-            "Republic of Montenegro",
-            "Republic of Serbia",
-            "Reunion",
-            "Romania",
-            "Russia",
-            "Rwanda",
-            "St Barthelemy",
-            "St Eustatius",
-            "St Helena",
-            "St Kitts-Nevis",
-            "St Lucia",
-            "St Maarten",
-            "St Pierre & Miquelon",
-            "St Vincent & Grenadines",
-            "Saipan",
-            "Samoa",
-            "Samoa American",
-            "San Marino",
-            "Sao Tome & Principe",
-            "Saudi Arabia",
-            "Senegal",
-            "Serbia",
-            "Seychelles",
-            "Sierra Leone",
-            "Singapore",
-            "Slovakia",
-            "Slovenia",
-            "Solomon Islands",
-            "Somalia",
-            "South Africa",
-            "Spain",
-            "Sri Lanka",
-            "Sudan",
-            "Suriname",
-            "Swaziland",
-            "Sweden",
-            "Switzerland",
-            "Syria",
-            "Tahiti",
-            "Taiwan",
-            "Tajikistan",
-            "Tanzania",
-            "Thailand",
-            "Togo",
-            "Tokelau",
-            "Tonga",
-            "Trinidad & Tobago",
-            "Tunisia",
-            "Turkey",
-            "Turkmenistan",
-            "Turks & Caicos Is",
-            "Tuvalu",
-            "Uganda",
-            "Ukraine",
-            "United Arab Erimates",
-            "United Kingdom",
-            "Uraguay",
-            "Uzbekistan",
-            "Vanuatu",
-            "Vatican City State",
-            "Venezuela",
-            "Vietnam",
-            "Virgin Islands (Brit)",
-            "Virgin Islands (USA)",
-            "Wake Island",
-            "Wallis & Futana Is",
-            "Yemen",
-            "Zaire",
-            "Zambia",
-            "Zimbabwe"];
+
+       $scope.countrynameslist = countryNames;
+
+
 
 
        if(isCreatingNewUser){
@@ -1135,7 +902,7 @@ var openRegistrationDialogue=function(isCreatingNewUser)
             middlename:$scope.middlename,
             lastname:$scope.lastname,
             birthdate:$scope.birthdate,
-            selcountry:$scope.country,
+            selcountry:$scope.countrynameslist[0],
             streetname:$scope.streetname,
             streetsubname:$scope.streetsubname,
             zipcode:$scope.zipcode,
@@ -1269,7 +1036,7 @@ $scope.fieldnames={
 
 
 
-        $scope.fieldnames.country=$scope.countrynameslist[0];
+
 
 
 
@@ -1883,8 +1650,7 @@ console.log(typeof items + " type of email address info ");
             $modalInstance.dismiss('cancel');
         };
 //This should probably be global - But it's here for time being
-        var monthNames = [ "January", "February", "March", "April", "May", "June",
-            "July", "August", "September", "October", "November", "December" ];
+        var monthNames =listOfMonths;
 
 
         $scope.getFormattedDate=function(dateToFormat){
@@ -1985,6 +1751,9 @@ var  weatherReportController = function ($scope, $modalInstance, airportFullName
 
 
                 $scope.individualDayForecastValue.airline=$scope.subsequentDaysInfo[0]['day'];
+
+                $scope.areaInformation=$scope.zoneForecast['header'];
+
                 setupWeatherInfoForSpecificDayWithData($scope.subsequentDaysInfo[0]);
                 //$scope.individualDayForecastValue= $scope.subsequentDaysInfo[0];
 
@@ -2565,7 +2334,7 @@ airlinetravelmodule.controller('showflightscontroller',function($scope,$http,$ro
 
 
     $scope.sortparamterscontainer=[{displayName:"Departure Time",backGroundName:"departureTime"},{displayName:"Arrival Time",backGroundName:"arrivalTime"},{displayName:"Distance Miles",backGroundName:"distanceMiles"},{displayName:"Flight Duration Minutes",backGroundName:"flightDurationMinutes"}];
-    $scope.backgroundsortparamters=["1","2","3","4","5","6","7"];
+    $scope.backgroundsortparamters=backgroundSortParametersValues;
     $scope.orderParametersArray=[{displayName:"Ascending",backGroundName:1},{displayName:"Descending",backGroundName:-1}];
     $scope.sortparameter=$scope.sortparamterscontainer[0];
     $scope.orderTypeForOptions=$scope.orderParametersArray[0];

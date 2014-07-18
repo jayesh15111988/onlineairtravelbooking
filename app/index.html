@@ -232,6 +232,7 @@
 <script src="scripts/utilities.js"></script>
 <script src="scripts/controllers/main.js"></script>
 <script src="scripts/controllers/sample.js"></script>
+<script src="scripts/controllers/constants.js"></script>
 <!-- endbuild -->
 
 <!--For X-Editable plugin for popover and tooltips -->
@@ -729,7 +730,7 @@ Not needed for now
 
                     </div>
                     <!--<div ng-show="showRetrievelError" class="help-block">{{errorMessage}}</div>-->
-                    <div class="error-class">{{errormessage}}</div>
+                    <div class="error-class">{{errormessage}}<br/> {{errorResolutionMessage}}</div>
                     <div class='checkbox'>
                         <label class='col-sm-8 control-label'>
                             <input type='checkbox' ng-model='toRememberSelection' ng-change='toremember();'> Remember Reservation
@@ -839,6 +840,7 @@ Not needed for now
                     <button type="submit" class="btn btn-primary" data-toggle="modal" ng-click="hideloginshowregistration();">Register New User</button>
                     </div>
                     <div>{{errorMessage}}</div>
+                    <div>{{errorResolutionMessage}}</div>
                 </form></div></div></script>
 
 
