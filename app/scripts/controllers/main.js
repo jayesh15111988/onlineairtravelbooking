@@ -4,11 +4,9 @@
 /* This is the main controller module. We will store all controllers used in our code in this module */
 
 
-var numberOfDaysToRetrieveFlight=1;
-var preferredAirlinesName="";
-var connectionType='';//'connection';
-var airportsDeepDetailsGlobal={};
-var isEditingUserRegistrationInfo=false;
+
+
+
 
 var airlinetravelmodule=angular.module('airtravelbookingappApp');
 
@@ -309,7 +307,7 @@ airlinetravelmodule.controller('userupdatecontroller',function($scope){
 });
 
 
-airlinetravelmodule.controller('samcontroller',function($scope, $http, $log, promiseTracker, $timeout,$window,$rootScope,sharedService,$modal,openRegistrationDialogueService,getStoredAuthTokenService,loginUserFunction){
+airlinetravelmodule.controller('samcontroller',function($scope, $http, $log, promiseTracker, $timeout,$window,$rootScope,sharedService,$modal,openRegistrationDialogueService,getStoredAuthTokenService,loginUserFunction,flightsGlobalParameters){
 
     //console.log("parent one controller came");
 
@@ -562,7 +560,8 @@ $scope.toRememberSelection=true;
                         }
                         //Emit the message that user is successfully logged in this is useful on details controller where user
                         // is ready to finalize his selection
-                        isLoggedInOnConfirmationScreen=true;
+
+                        flightsGlobalParameters.setIsLoggedInParameter(true);// isLoggedInOnConfirmationScreen=true;
                         localStorage.setItem( 'serverloginauthenticationsuccess', serverResponseData);
                         localStorage.setItem('authTokenInfo',JSON.stringify({authtoken:data.authorization,emailaddress:data.emailaddress,firstname:data.firstname,tokenexpirytime:addMinutes(new Date(),30)}));
 
@@ -689,7 +688,7 @@ showLoginViewToUser();
     //Set country names in related select-options structure
 
 
-//console.log(isEditingUserRegistrationInfo+ "this is value");
+
 
     /*$scope.$on("UPDATE_PARENT", function(event, formData){
      // $scope.foo = message;
@@ -824,7 +823,7 @@ $scope.setSelectedItem=function(index,item){
 
 
 
-        isEditingUserRegistrationInfo=isEditing;
+        flightsGlobalParameters.setIsEditingUserRegistrationInfoParameter(isEditing);// isEditingUserRegistrationInfo=isEditing;
 
         if(isEditing===true){
 console.log("Came here with variable is editing value is "+isEditing);
@@ -887,7 +886,7 @@ var openRegistrationDialogue=function(isCreatingNewUser)
         $scope.closeRegistrationModalView=function(){
             $modalInstance.dismiss('cancel');
         }
-//jjjj
+
 
 
        $scope.countrynameslist = countryNames;
@@ -1218,8 +1217,8 @@ $scope.fieldnames={
 
 
         modalInstance.result.then(function (responseDataAfterUpdate) {
-            //console.log("Response data after user operation ->"+ responseDataAfterUserCreateUpdateOperation);
-            //Now we submitted data succesfull - Show user second page confirmaing ongoing registration
+            console.log("Response data after user operation ->"+ responseDataAfterUserCreateUpdateOperation);
+            //Now we submitted data successful - Show user second page confirming ongoing registration
 
 
 
@@ -1237,13 +1236,6 @@ $scope.fieldnames={
         $scope.regionName=regionname;
 
     }
-
-
-    $scope.disabled = function(date, mode) {
-        //  return ( mode === 'day' && ( date.getDay() === 0 || date.getDay() === 6 ) );
-    };
-
-
 
 
 
@@ -1309,9 +1301,7 @@ $scope.fieldnames={
 
 })
 
-function addMinutes(date, minutes) {
-    return new Date(date.getTime() + minutes*60000);
-}
+
 
 function sendUserDataToServer(formData,$scope,isCreatingUser,$http,callBackFunctionToExecute){
 
@@ -1404,29 +1394,29 @@ airlinetravelmodule.controller('MyCtrl1', function($scope){
 
 /* real global variable */
 
-var isLoggedInOnConfirmationScreen=false;
-var tripDirection="OneWay";
-var allFlightsDetail=Array();
-var appendixDictionary={};
-var totalPagesCount=Array();
-var totalP;
-var filteredArrayAfterAirlineSelection=[];
-var tempHolderForAllFlights=[];
-var isFilteringBasedOnAirline=false;
-var bookbuttontitletext='Book Now';
-var getParameteresDictionary;
-var travelDetails={};
+/*
+--var isLoggedInOnConfirmationScreen=false;
+--var tripDirection="OneWay";
+--var bookbuttontitletext='Book Now';
+--var numberOfResultsPerPage=10;
+
+//In progess ->
+var getParameteresDictionary={};
+ var allFlightsDetail=Array();
+ var appendixDictionary={};
+ var filteredArrayAfterAirlineSelection=[];
+ var tempHolderForAllFlights=[];
 var departureDetailsGlobal=[];
 var arrivalDetailsglobal=[];
-var numberOfResultsPerPage=10;
-var showSchedulesOnlyForAirline="";
+
+*/
 
 
 
-airlinetravelmodule.controller('DetailController',function($scope,$routeParams,$modal,$http,$window,$rootScope,sharedService,getStoredAuthTokenService,openRegistrationDialogueService,loginUserFunction){
+airlinetravelmodule.controller('DetailController',function($scope,$routeParams,$modal,$http,$window,$rootScope,sharedService,getStoredAuthTokenService,openRegistrationDialogueService,loginUserFunction,flightsGlobalParameters,flightsGlobalContainers){
 
     //This function is to check if we have active internet connection
-    //console.log(checkNetConnection()+ "this is val of internet connection");
+
     var isBookingNewFlight=false;
     isBookingNewFlight = $routeParams.id;
     $scope.showbookingdetails=!isBookingNewFlight;
@@ -1519,6 +1509,8 @@ else{
 
     $scope.getAirlineFullInfoFromCode=function(airlineFSCode){
 
+        var temporaryAirportsDeepDetailsData=flightsGlobalContainers.getFlightsGlobalContainersParameters().airportsDeepDetailsGlobal;
+
         //It mean we came on this page while making booking - AND NOT while retrieving it from database from previous activity
         if(isBookingNewFlight){
         for (var i in arrayForAllAirlinesInfo) {
@@ -1530,8 +1522,8 @@ else{
         }
         }
         else{
-            if(airportsDeepDetailsGlobal[airlineFSCode]){
-                return airportsDeepDetailsGlobal[airlineFSCode].fullname;
+            if(temporaryAirportsDeepDetailsData[airlineFSCode]){
+                return temporaryAirportsDeepDetailsData[airlineFSCode].fullname;
             }
         }
         return airlineFSCode;
@@ -1668,7 +1660,6 @@ console.log(typeof items + " type of email address info ");
     }
 
 
-
     //End of delay index code
 
 //Code for weather info at given source and destination
@@ -1755,9 +1746,9 @@ var  weatherReportController = function ($scope, $modalInstance, airportFullName
                 $scope.areaInformation=$scope.zoneForecast['header'];
 
                 setupWeatherInfoForSpecificDayWithData($scope.subsequentDaysInfo[0]);
-                //$scope.individualDayForecastValue= $scope.subsequentDaysInfo[0];
 
-//Now fill in lookup object with name as key
+
+            //Now fill in lookup object with name as key
 
                 for(var individualDayWeatherObject in $scope.subsequentDaysInfo){
 
@@ -1857,7 +1848,7 @@ isInputValid=isInputValidFromUser;
             dataToSendForBookingConfirmation.push(JSON.parse(localStorage.getItem('goingoutdetails')));
 
 
-            if(tripDirection=="Round Trip"){
+            if(flightsGlobalParameters.getFlightSearchParameters().tripDirection=="Round Trip"){
                 dataToSendForBookingConfirmation.push(JSON.parse(localStorage.getItem('comingindetails')));
             }
 
@@ -1901,19 +1892,8 @@ if(isBookingNewFlight){
 
     };
 
-    Date.prototype.addDays = function(days){
-        var dat = new Date(this.valueOf());
-        dat.setDate(dat.getDate() + days);
-        return dat;
-    }
 
-    var getStandardDate=function(originalDate,numberOfDaysOffset){
-        //console.log(originalDate+ " yoyo ");
-        var pattern = /(\d{4})-(\d{2})-(\d{2})/;
-        var dt = new Date(originalDate.replace(pattern,'$1-$2-$3'));
-        return  new Date(dt.addDays(numberOfDaysOffset)).toISOString();
 
-    }
 
     //Put logic to check if user has valid auth token or not
     $scope.fullTravelDetails=[];
@@ -1925,27 +1905,29 @@ var fullCodeNames={};
     if(isBookingNewFlight){
 
 
-
-
-
-
-
     var dataWithFullNameForAirportsAndAirlines={};
     var arrayForAllAirlinesInfo= JSON.parse(localStorage.getItem('airlines'));
 
     $scope.toshowconfirmbutton=false;
 
         var storedUserHistorydata=JSON.parse(localStorage.getItem('historySearchData'));
-        tripDirection=storedUserHistorydata.travelDirection;
-        var numberOfKeys=Object.keys(arrivalDetailsglobal).length;
+        flightsGlobalParameters.setTripDirectionParameter(storedUserHistorydata.travelDirection);
+        //tripDirection=storedUserHistorydata.travelDirection;
+
+        var preStoredGlobalArrivalDetailsDetails=flightsGlobalContainers.getFlightsGlobalContainersParameters().arrivalDetailsglobal;
+
+        var preStoredAirportsDeepDetailsData=flightsGlobalContainers.getFlightsGlobalContainersParameters().airportsDeepDetailsGlobal
+
+        var numberOfKeys=Object.keys(preStoredGlobalArrivalDetailsDetails).length;
         isUserLoggedIn=localStorage.getItem('authTokenInfo');
-        if(Object.keys(airportsDeepDetailsGlobal).length>0){
+        if(Object.keys(preStoredAirportsDeepDetailsData).length>0){
             if(localStorage.getItem('allAvailableAirportDetailsWithFullNames')){
                 localStorage.removeItem('allAvailableAirportDetailsWithFullNames');
             }
-            localStorage.setItem( 'allAvailableAirportDetailsWithFullNames', JSON.stringify(airportsDeepDetailsGlobal) );
+            localStorage.setItem( 'allAvailableAirportDetailsWithFullNames', JSON.stringify(preStoredAirportsDeepDetailsData) );
         }
-        airportsDeepDetailsGlobal=JSON.parse(localStorage.getItem('allAvailableAirportDetailsWithFullNames'));
+       // airportsDeepDetailsGlobal=JSON.parse(localStorage.getItem('allAvailableAirportDetailsWithFullNames'));
+        flightsGlobalContainers.setAirportsDeepDetailsGlobalParameter(JSON.parse(localStorage.getItem('allAvailableAirportDetailsWithFullNames')));
         $scope.toshowfirst=true;
 
     }
@@ -1994,7 +1976,8 @@ $scope.toshowsecond=false;
 
     //This block applicable only when user logs in on cofirmation page, waiting to finalize booking
 
-    if(isLoggedInOnConfirmationScreen){
+
+    if(flightsGlobalParameters.getFlightSearchParameters().isLoggedInOnConfirmationScreen){// isLoggedInOnConfirmationScreen){
         $scope.toshowconfirmbutton=true;
     }
 
@@ -2014,15 +1997,22 @@ $scope.toshowsecond=false;
 
 
     $scope.getairportsindi=function(iatacode){
+
+
+        //console.log("now stored iata code data is  "+iatacode);
+        var previouslyStoredAirportsDeepDetailsData=flightsGlobalContainers.getFlightsGlobalContainersParameters().airportsDeepDetailsGlobal
+
+
+
 if(isBookingNewFlight){
-        if(airportsDeepDetailsGlobal.hasOwnProperty(iatacode)){
-            dataWithFullNameForAirportsAndAirlines[iatacode]=airportsDeepDetailsGlobal[iatacode].name
+        if(previouslyStoredAirportsDeepDetailsData.hasOwnProperty(iatacode)){
+            dataWithFullNameForAirportsAndAirlines[iatacode]=previouslyStoredAirportsDeepDetailsData[iatacode].name
             return dataWithFullNameForAirportsAndAirlines[iatacode];
         }
 
 }else{
-    if(airportsDeepDetailsGlobal[iatacode]){
- return airportsDeepDetailsGlobal[iatacode].fullname;
+    if(previouslyStoredAirportsDeepDetailsData[iatacode]){
+ return previouslyStoredAirportsDeepDetailsData[iatacode].fullname;
     }
 }
         return "";
@@ -2031,7 +2021,7 @@ if(isBookingNewFlight){
 
     function setupTripDetailsForOneWayFlight(){
 
-        if(tripDirection=="OneWay"){
+        if(flightsGlobalParameters.getFlightSearchParameters().tripDirection=="OneWay"){
 
             $scope.showsecondpartofflightbooking=false;
             $scope.showreturningflights=true;
@@ -2049,7 +2039,7 @@ if(isBookingNewFlight){
             $scope.bottomarrivalstatus="Have a nice flight1";
         }
 
-        else if(tripDirection=="Round Trip"){
+        else if(flightsGlobalParameters.getFlightSearchParameters().tripDirection=="Round Trip"){
             $scope.arrivalstatus="Arrival Flight Details";
             $scope.showsecondpartofflightbooking=true;
             $scope.showreturningflights=true;
@@ -2061,8 +2051,10 @@ if(isBookingNewFlight){
             //Going two way first part
             //We are removing any stale entries that might be lingering in local storage
 
-            if(Object.keys(departureDetailsGlobal).length>0 || Object.keys(arrivalDetailsglobal).length>0){
-                localStorage.setItem( 'goingoutdetails', JSON.stringify(departureDetailsGlobal) );
+            var preStoredDepartureDetails=flightsGlobalContainers.getFlightsGlobalContainersParameters().departureDetailsGlobal;
+
+            if(Object.keys(preStoredDepartureDetails).length>0 || Object.keys(arrivalDetailsglobal).length>0){
+                localStorage.setItem( 'goingoutdetails', JSON.stringify(preStoredDepartureDetails) );
                 localStorage.setItem( 'comingindetails', JSON.stringify(arrivalDetailsglobal) );
             }
 
@@ -2087,8 +2079,7 @@ if(isBookingNewFlight){
 
     function retrieveTripDetailsFromBackEnd(){
 
-        console.log(urlEmailAddress+ " email address ");
-        console.log(urlConfirmationCode+ " confirmation code ");
+
 
         $scope.showreturningflights=true;
         $http({method: 'GET', url: 'http://www.jayeshkawli.com/airlinetravel/retrievepreviousbookings.php',params:{emailaddress:urlEmailAddress,confirmationcodetoquerywith:urlConfirmationCode}}).
@@ -2101,14 +2092,23 @@ if(isBookingNewFlight){
                    $rootScope.$broadcast("errorInReservationRetrieval", { });
                    return;
                }
+                console.log(urlEmailAddress+ " email address ");
+                console.log(urlConfirmationCode+ " confirmation code ");
 
+//Make sure we set airport deep details before any iata code could query on them to get full airport name
+
+                //console.log(JSON.stringify(data.code_names_with_fullform)+ " Airport data with codes and full name");
+                flightsGlobalContainers.setAirportsDeepDetailsGlobalParameter(data.code_names_with_fullform);
+                //console.log("Now verifying previously stored information "+JSON.stringify(flightsGlobalContainers.getFlightsGlobalContainersParameters()().airportsDeepDetailsGlobal));//.);
+                //console.log("Now verifying previously stored information sample "+sharedService.setProperty("Jayesh Kawli"));//.airportsDeepDetailsGlobal);
+                //console.log("Now verifying previously stored information sample 2 "+sharedService.getProperty());
                 $scope.toshowsendpdfdocbutton=true;
+
+
                 var passengerbookingdetails=data.booking_details;
-                //$scope.fullTravelDetails.departure
-                //$scope.fullTravelDetails.arrival
-                //console.log("One of that wwanter by us"+data.going_out_details+ "Ane one more thing ");
-                //$scope.updateDeparture="Roger Federer";
-                //$scope.masa="surmai1234455";
+
+                console.log("Passenger booking details in normal form "+JSON.stringify(passengerbookingdetails));
+
 //SetUp passenger details before showing their flight details on screen
                 $scope.fullname=passengerbookingdetails.userfullname;
                 $scope.emailaddress=passengerbookingdetails.useremailaddress;
@@ -2123,11 +2123,19 @@ if(isBookingNewFlight){
 
 
                 $scope.fullTravelDetails.departure=data.going_out_details;
-                $scope.updateDeparture=passengerbookingdetails.dateofcomingin;
-                $scope.updateDeparture1=getStandardDate( $scope.updateDeparture,$scope.fullTravelDetails.departure.arrivalDateAdjustment);
+                $scope.updateDeparture=passengerbookingdetails.dateofgoingout;
 
+//We want date in yyyy/mm/dd format and not in the format javascript puts forth
+
+                $scope.updateDeparture1=getFormattedDateForDisplay(getStandardDate( $scope.updateDeparture,$scope.fullTravelDetails.departure.arrivalDateAdjustment),0);
+
+
+                console.log("updated departure  "+passengerbookingdetails.dateofgoingout);
               //  fullCodeNames=data.code_names_with_fullform;
-                airportsDeepDetailsGlobal=data.code_names_with_fullform;
+                //airportsDeepDetailsGlobal=data.code_names_with_fullform;
+
+
+
                 $scope.flightDetailsSecondPart="One way flight details";
                 //console.log(" Full Name    "+JSON.stringify(airportsDeepDetailsGlobal));
 
@@ -2195,9 +2203,13 @@ Array.prototype.clear = function() {
     }
 };
 
-airlinetravelmodule.controller('showflightscontroller',function($scope,$http,$routeParams,$location,$window,$timeout){
+airlinetravelmodule.controller('showflightscontroller',function($scope,$http,$routeParams,$location,$window,$timeout,flightsGlobalParameters,flightsGlobalContainers){
     //var baseUrl='http://jayeshkawli.com/airlinetravel/airportsapi.php?';
     // baseUrl=baseUrl+'searchString='+searchStringToPass;
+
+//This really shouldn't be a global variable, will see what happens next
+    //Will fix if doesn't seem to be working after it
+
 
 
     //Remove all previous entries for departure and arrival date
@@ -2240,11 +2252,7 @@ airlinetravelmodule.controller('showflightscontroller',function($scope,$http,$ro
         $("#connectiondetails-"+divIdentifier).fadeToggle();
     }
 
-    var getStandardDate=function(originalDate,numberOfDaysOffset){
-        var pattern = /(\d{4})-(\d{2})-(\d{2})/;
-        var dt = new Date(originalDate.replace(pattern,'$1-$2-$3'));
-        return  new Date(dt.addDays(numberOfDaysOffset)).toISOString();
-    }
+
 
     $scope.daysRange=[{displayDay:'-2 Days',backgroundDay:-2},{displayDay:'-1 Day',backgroundDay:-1},{displayDay:'Current Day',backgroundDay:0},{displayDay:'+1 Day',backgroundDay:1},{displayDay:'+2 days',backgroundDay:2}];
 
@@ -2257,18 +2265,24 @@ airlinetravelmodule.controller('showflightscontroller',function($scope,$http,$ro
 
         $scope.departureDate=getStandardDate(previouslySelectedDate,backgroundDay);
         //after updating date send another request with new departure Date
-        console.log(getParameteresDictionary.source+ " hahaha ");
+
         $scope.loadingToDisplay=true;
+
+
+        var previouslyStoredGetParametersInfo=flightsGlobalContainers.getFlightsGlobalContainersParameters().getParameteresDictionary;
         if(!isBookingReturnFlight){
-            getParameteresDictionary.leavingdate=$scope.departureDate;
+            previouslyStoredGetParametersInfo.leavingdate=$scope.departureDate;
         }
         else{
-            getParameteresDictionary.comingindate=$scope.departureDate;
+            previouslyStoredGetParametersInfo.comingindate=$scope.departureDate;
         }
+        flightsGlobalContainers.setGetParameteresDictionaryValueParameter(previouslyStoredGetParametersInfo);
 
 
 
         var previouslyStoredHistorySearchData=JSON.parse(localStorage.getItem('historySearchData'));
+
+
         if(!isBookingReturnFlight){
 
 
@@ -2288,30 +2302,26 @@ airlinetravelmodule.controller('showflightscontroller',function($scope,$http,$ro
         localStorage.setItem('historySearchData',JSON.stringify(previouslyStoredHistorySearchData));
 
 
+var previouslyStoredFlightSearchParameters=flightsGlobalContainers.getFlightsGlobalContainersParameters().getParameteresDictionary;
+
         if(isBookingReturnFlight){
-            getFlightFromGivenParameters(getParameteresDictionary.destination,getParameteresDictionary.source,$scope.departureDate,getParameteresDictionary.comingindate,connectionType,numberOfDaysToRetrieveFlight);
+            getFlightFromGivenParameters(previouslyStoredFlightSearchParameters.destination,previouslyStoredFlightSearchParameters.source,$scope.departureDate,previouslyStoredFlightSearchParameters.comingindate,flightsGlobalParameters.getFlightSearchParameters().connectionType,flightsGlobalParameters.getFlightSearchParameters().numberOfDaysToRetrieveFlight);
         }
         else{
-            getFlightFromGivenParameters(getParameteresDictionary.source,getParameteresDictionary.destination,$scope.departureDate,getParameteresDictionary.comingindate,connectionType,numberOfDaysToRetrieveFlight);
+            getFlightFromGivenParameters(previouslyStoredFlightSearchParameters.source,previouslyStoredFlightSearchParameters.destination,$scope.departureDate,previouslyStoredFlightSearchParameters.comingindate,flightsGlobalParameters.getFlightSearchParameters().connectionType,flightsGlobalParameters.getFlightSearchParameters().numberOfDaysToRetrieveFlight);
         }
 
-        //console.log(isoDate);
+
     }
 
 
-    Date.prototype.addDays = function(days)
-    {
-        var dat = new Date(this.valueOf());
-        dat.setDate(dat.getDate() + days);
-        return dat;
-    }
 
     $scope.day=$scope.daysRange[2];
     $scope.availableflightparameters="";
     $scope.departureDate='';
     $scope.loadingToDisplay=true;
-    var airline,airports;//=Array();
-    var airlines=Array();//[{"name":"abs","iata":"xyz","icao":"asda"}];
+    var airline,airports;
+    var airlines=Array();
     $scope.airportsDeepDetails={};
 
     var sortParamsEnum = {
@@ -2364,41 +2374,46 @@ airlinetravelmodule.controller('showflightscontroller',function($scope,$http,$ro
         console.log(airlineName+ "actual name");
 
 
-
-        airlineName==='clearall'?(isFilteringBasedOnAirline=false):(isFilteringBasedOnAirline=true);
+        flightsGlobalParameters.setIsFilteringBasedOnAirlineParameter(!(airlineName==='clearall'));
+        //airlineName==='clearall'?(isFilteringBasedOnAirline=false):(isFilteringBasedOnAirline=true);
 
         console.log(allFlightsDetail.length+ "this was the orifginal length");
+        var preStoredTempFolderForAllFlights=flightsGlobalContainers.getFlightsGlobalContainersParameters().tempHolderForAllFlights;
+        var previouslyStoredFilteredArrayAfterAirlineSelection=flightsGlobalContainers.getFlightsGlobalContainersParameters().filteredArrayAfterAirlineSelection;
+        var previouslyStoredAllFlightsDetails=flightsGlobalContainers.getFlightsGlobalContainersParameters().allFlightsDetail;
 
-        if(isFilteringBasedOnAirline){
+        if(flightsGlobalParameters.getFlightSearchParameters().isFilteringBasedOnAirline){
 
-            if(tempHolderForAllFlights.length==0){
 
-                tempHolderForAllFlights=allFlightsDetail;
-                console.log("This is temp holder's length"+tempHolderForAllFlights.length);
+            if(preStoredTempFolderForAllFlights.length==0){
+
+                //tempHolderForAllFlights=allFlightsDetail;
+                flightsGlobalContainers.setTempHolderForAllFlightsValueParameter(previouslyStoredAllFlightsDetails);
             }
-            console.log(tempHolderForAllFlights[1]+ " high level scrutiny ");
+
             //Filter all connections based on a airline name
             if(searchType==2 && isFilterParameter!==false){
 
-                console.log(tempHolderForAllFlights.length+ "   Number of Flights ");
-                console.log("Ok search type is 2 now and search parameter is "+ airlineName+ "An filter parameter is "+ isFilterParameter);
 
 
 
-                var numberOfFlights = tempHolderForAllFlights.length;
+
+
+                var numberOfFlights = preStoredTempFolderForAllFlights.length;
                 var flightLegsFromSavedData=[];
                 var connectionDetailObject={};
                 var individualFlightsRecord={};
                 var connections={};
-                console.log(tempHolderForAllFlights[1]+ "object under scrutiny 11")
-                console.log("sizeo f filtered "+ filteredArrayAfterAirlineSelection.length);
-                if(filteredArrayAfterAirlineSelection.length>0){
-                    filteredArrayAfterAirlineSelection.clear();
+
+
+
+                if(previouslyStoredFilteredArrayAfterAirlineSelection.length>0){
+                    previouslyStoredFilteredArrayAfterAirlineSelection.clear();
                 }
 
 
                 for (var i = 0; i < numberOfFlights; i++) {
-                    individualFlightsRecord=clone(tempHolderForAllFlights[i]);
+                    individualFlightsRecord=clone(preStoredTempFolderForAllFlights[i]);
                     if(isFilterParameter=='airlineName'){
                         flightLegsFromSavedData=individualFlightsRecord.flightLegs;
                         var connectionLength=flightLegsFromSavedData.length;
@@ -2407,7 +2422,7 @@ airlinetravelmodule.controller('showflightscontroller',function($scope,$http,$ro
                             connectionDetailObject= flightLegsFromSavedData[connections];
                             console.log("Verification actual "+connectionDetailObject.carrierFsCode+ "And parameter given to function "+ airlineName);
                             if(connectionDetailObject.carrierFsCode===airlineName){
-                                filteredArrayAfterAirlineSelection.push(individualFlightsRecord);
+                                previouslyStoredFilteredArrayAfterAirlineSelection.push(individualFlightsRecord);
                                 break;
                             }
                         }
@@ -2417,27 +2432,30 @@ airlinetravelmodule.controller('showflightscontroller',function($scope,$http,$ro
                         console.log("flighttype"+airlineName+ "  "+isFilterParameter+" last "+individualFlightsRecord.flightType);
                         if(individualFlightsRecord.flightType==airlineName){
 
-                            filteredArrayAfterAirlineSelection.push(individualFlightsRecord);
+                            previouslyStoredFilteredArrayAfterAirlineSelection.push(individualFlightsRecord);
                         }
                     }
                     else if(isFilterParameter=='arrivalDateAdjustment'){
                         if(individualFlightsRecord.arrivalDateAdjustment==airlineName){
-                            filteredArrayAfterAirlineSelection.push(individualFlightsRecord);
+                            previouslyStoredFilteredArrayAfterAirlineSelection.push(individualFlightsRecord);
                         }
                     }
 
                 }
 
+//Now update priviusly stored flights details with updatedo one
+                flightsGlobalContainers.setFilteredArrayAfterAirlineSelectionValueParameter(previouslyStoredFilteredArrayAfterAirlineSelection);
 
-                console.log(tempHolderForAllFlights.length+ "length of holder first one and second one in "+ filteredArrayAfterAirlineSelection.length);
             }
             else if(searchType==0){
                 localStorage.setItem('lastUsedSortParameter',airlineName);
                 //Sort by specific parameter check if filetred array contains any data first
-                var arrayToOperateOn=filteredArrayAfterAirlineSelection.length?filteredArrayAfterAirlineSelection.slice(0):tempHolderForAllFlights.slice(0);
-                console.log("Problem creator"+ $scope.orderTypeForOptions.backGroundName);
-                filteredArrayAfterAirlineSelection=arrayToOperateOn.sort(dynamicSort(airlineName,$scope.orderTypeForOptions.backGroundName));
+               //var preStoredFilteredArray=flightsGlobalContainers.getFlightsGlobalContainersParameters().filteredArrayAfterAirlineSelection;
 
+                var arrayToOperateOn=previouslyStoredFilteredArrayAfterAirlineSelection.length?previouslyStoredFilteredArrayAfterAirlineSelection.slice(0):preStoredTempFolderForAllFlights.slice(0);
+
+                //filteredArrayAfterAirlineSelection=arrayToOperateOn.sort(dynamicSort(airlineName,$scope.orderTypeForOptions.backGroundName));
+                flightsGlobalContainers.setFilteredArrayAfterAirlineSelectionValueParameter(arrayToOperateOn.sort(dynamicSort(airlineName,$scope.orderTypeForOptions.backGroundName)));
             }
 
         }
@@ -2446,22 +2464,32 @@ airlinetravelmodule.controller('showflightscontroller',function($scope,$http,$ro
             //Come here only if user has previously sorted flight search results now we want to clear ALL previous search filters
             //And return all flights from original list - There is reason for not putting any filters on home screen
 
-            if(tempHolderForAllFlights.length>0)
+            if(preStoredTempFolderForAllFlights.length>0)
             {
-                filteredArrayAfterAirlineSelection.clear();
-                console.log(tempHolderForAllFlights.length+ "length of holder last one");
+                //filteredArrayAfterAirlineSelection.clear();
+                var tempPreviouslyStoredFilteredData= previouslyStoredFilteredArrayAfterAirlineSelection.clear();
+                flightsGlobalContainers.setFilteredArrayAfterAirlineSelectionValueParameter(tempPreviouslyStoredFilteredData);
+
                 //filteredArrayAfterAirlineSelection.concat(tempHolderForAllFlights);
-                filteredArrayAfterAirlineSelection.push.apply(filteredArrayAfterAirlineSelection, tempHolderForAllFlights);
-                console.log(filteredArrayAfterAirlineSelection.length+ "length of holder last one");
-                tempHolderForAllFlights.clear();
-                tempHolderForAllFlights= clone(filteredArrayAfterAirlineSelection);
-                console.log("Verification for temp holder"+ tempHolderForAllFlights[1]);
+
+
+                previouslyStoredFilteredArrayAfterAirlineSelection.push.apply(previouslyStoredFilteredArrayAfterAirlineSelection, preStoredTempFolderForAllFlights);
+
+
+                //tempHolderForAllFlights.clear();
+                flightsGlobalContainers.setTempHolderForAllFlightsValueParameter([]);
+
+                var clonedTempHolderForAllFlights= clone(previouslyStoredFilteredArrayAfterAirlineSelection);
+                flightsGlobalContainers.setTempHolderForAllFlightsValueParameter(clonedTempHolderForAllFlights);
+
+
+                flightsGlobalContainers.setFilteredArrayAfterAirlineSelectionValueParameter(previouslyStoredFilteredArrayAfterAirlineSelection);
             }
         }
 
 
 
-        setupPageWithAllFlightDetails(filteredArrayAfterAirlineSelection);
+        setupPageWithAllFlightDetails(previouslyStoredFilteredArrayAfterAirlineSelection);
 
 
 
@@ -2469,8 +2497,8 @@ airlinetravelmodule.controller('showflightscontroller',function($scope,$http,$ro
 
 
         $scope.loadingToDisplay=false;
-        console.log(filteredArrayAfterAirlineSelection.length);
-        //console.log("hahhhaha");
+        console.log(previouslyStoredFilteredArrayAfterAirlineSelection.length);
+
     }
 
     function dynamicSort(property,sortOrder) {
@@ -2483,30 +2511,51 @@ airlinetravelmodule.controller('showflightscontroller',function($scope,$http,$ro
     }
 
     $scope.bookorgotoreturingflights=function(index){
-        console.log("pressed");
-        if($scope.bookbuttontitle=="Book Now"){
-            arrivalDetailsglobal=allFlightsDetail[index];
-            var numberOfKeys=Object.keys(arrivalDetailsglobal).length;
-            console.log("&&&&"+arrivalDetailsglobal.flightDurationMinutes);
 
-            if(tripDirection=="Round Trip"){
+
+
+
+        var previouslyStoredAllflightDetails=flightsGlobalContainers.getFlightsGlobalContainersParameters().allFlightsDetail;
+        if($scope.bookbuttontitle=="Book Now"){
+
+
+
+
+
+            flightsGlobalContainers.setArrivalDetailsglobalValueParameter(previouslyStoredAllflightDetails[index]);
+
+            var preStoredArrivalDetails=flightsGlobalContainers.getFlightsGlobalContainersParameters().arrivalDetailsglobal;
+
+            var numberOfKeys=Object.keys(preStoredArrivalDetails).length;
+
+
+            if(flightsGlobalParameters.getFlightSearchParameters().tripDirection=="Round Trip"){
                 console.log("two way flight")
 
             }
-            else if(tripDirection=="OneWay"){
+            else if(flightsGlobalParameters.getFlightSearchParameters().tripDirection=="OneWay"){
                 console.log("One way flight this is");
             }
             $window.location.href="#/view/"+numberOfKeys;
-            //console.log(Object.keys(travelDetails).length+ " aaarrival");
+
         }
         else if($scope.bookbuttontitle=="Select Returning Flight"){
             isBookingReturnFlight=1;
             $scope.day=$scope.daysRange[2];
-            bookbuttontitletext="Book Now";
+            //bookbuttontitletext="Book Now";
+            flightsGlobalParameters.setBookButtonTitleParameter("Book Now");
             console.log(index +"departure");
-            departureDetailsGlobal=allFlightsDetail[index];
-            console.log(departureDetailsGlobal.flightType+ "departure");
-            allFlightsDetail.clear();
+
+
+            //departureDetailsGlobal=allFlightsDetail[index];
+            flightsGlobalContainers.setdepartureDetailsGlobalValueParameter(previouslyStoredAllflightDetails[index]);
+
+
+            previouslyStoredAllflightDetails.clear();
+
+            //allFlightsDetail.clear();//
+            flightsGlobalContainers.setAllFlightsDetailValueParameter(previouslyStoredAllflightDetails);
+
             $scope.loadingToDisplay=true;
 
             var prestoredComingIndate=JSON.parse(localStorage.getItem('historySearchData')).comingInOn;
@@ -2519,10 +2568,12 @@ airlinetravelmodule.controller('showflightscontroller',function($scope,$http,$ro
             }
 
             $scope.departuredate=originalDepartureDate;
-            console.log(originalDepartureDate+ "///");
+
             //localStorage.setItem('updatedcomingindetail',JSON.stringify({updatedcomingindetail:originalDepartureDate}));
 
-            getFlightFromGivenParameters(getParameteresDictionary.destination,getParameteresDictionary.source,getParameteresDictionary.comingindate,getParameteresDictionary.leavingdate,connectionType,numberOfDaysToRetrieveFlight);
+            var previouslyStoredGetParameters=flightsGlobalContainers.getFlightsGlobalContainersParameters().getParameteresDictionary;
+
+            getFlightFromGivenParameters(previouslyStoredGetParameters.destination,previouslyStoredGetParameters.source,previouslyStoredGetParameters.comingindate,previouslyStoredGetParameters.leavingdate,flightsGlobalParameters.getFlightSearchParameters().connectionType,flightsGlobalParameters.getFlightSearchParameters().numberOfDaysToRetrieveFlight);
 
         }
     }
@@ -2530,41 +2581,49 @@ airlinetravelmodule.controller('showflightscontroller',function($scope,$http,$ro
     //console.log($routeParams.id+ " id "+ (parseInt($routeParams.id)+9));
 
     // console.log(get('source')+"babab");
-    if(allFlightsDetail.length>0){
-        //   console.log("yesss***");
-        //source destination leavingdate comingindate direction
-        $scope.flightDetails = allFlightsDetail.slice($routeParams.id*numberOfResultsPerPage,parseInt($routeParams.id*numberOfResultsPerPage)+numberOfResultsPerPage);
-        $scope.bookbuttontitle=bookbuttontitletext;
-        $scope.totalPages=totalPagesCount;
-        $scope.airlines=appendixDictionary.airlines;
-        //  $scope.airline=$scope.airlines[0];
-        $scope.airports=appendixDictionary.airports;
-        $scope.equipments=appendixDictionary.equipments;
+    var previouslyStoredAllflightDetails=flightsGlobalContainers.getFlightsGlobalContainersParameters().allFlightsDetail;
+    if(previouslyStoredAllflightDetails.length>0){
+
+
+        var prestoredAppendixDictionary=flightsGlobalContainers.getFlightsGlobalContainersParameters().appendixDictionary;
+
+        $scope.flightDetails = previouslyStoredAllflightDetails.slice($routeParams.id*flightsGlobalParameters.getFlightSearchParameters().numberOfResultsPerPage,parseInt($routeParams.id*flightsGlobalParameters.getFlightSearchParameters().numberOfResultsPerPage)+flightsGlobalParameters.getFlightSearchParameters().numberOfResultsPerPage);
+        $scope.bookbuttontitle= flightsGlobalParameters.getFlightSearchParameters().bookbuttontitletext;
+        $scope.totalPages=flightsGlobalParameters.getFlightSearchParameters().totalPagesCount;// totalPagesCount;
+        $scope.airlines=prestoredAppendixDictionary.airlines;
+
+        $scope.airports=prestoredAppendixDictionary.airports;
+        $scope.equipments=prestoredAppendixDictionary.equipments;
         $scope.loadingToDisplay=false;
-        console.log($scope.flightDetails.length);
+
     }
 
 
     var setupPageWithAllFlightDetails=function(flightDetails){
-        if(numberOfResultsPerPage=='all'){
-            totalP=flightDetails.length;
+
+
+        var preStoredGetParametersDictionary=flightsGlobalContainers.getFlightsGlobalContainersParameters().getParameteresDictionary;
+
+        if(flightsGlobalParameters.getFlightSearchParameters().numberOfResultsPerPage=='all'){
+            flightsGlobalParameters.setTotalPParameter(flightDetails.length); //totalP=;
         }
         else{
-            totalP=Math.ceil(flightDetails.length/numberOfResultsPerPage);
+            //totalP=Math.ceil(flightDetails.length/numberOfResultsPerPage);
+            flightsGlobalParameters.setTotalPParameter(Math.ceil(flightDetails.length/flightsGlobalParameters.getFlightSearchParameters().numberOfResultsPerPage));
         }
 
-        //console.log("*******"+JSON.stringify(flightDetails[20].flightLegs[0].arrivalTerminal));
+
         $scope.totalPages=Array();
-        for(var i=0;i<totalP;i++){
+        for(var i=0;i<flightsGlobalParameters.getFlightSearchParameters().totalP;i++){
             $scope.totalPages.push(i);
         }
-        $scope.bookbuttontitle=bookbuttontitletext;
-        totalPagesCount=$scope.totalPages;
-
+        $scope.bookbuttontitle=flightsGlobalParameters.getFlightSearchParameters().bookbuttontitletext;
+        //totalPagesCount=$scope.totalPages;
+        flightsGlobalParameters.setTotalPagesCountParameter($scope.totalPages);
         var travelDate;
         if(!isBookingReturnFlight){
-            if(getParameteresDictionary.leavingdate){
-                travelDate=new Date(getParameteresDictionary.leavingdate);
+            if(preStoredGetParametersDictionary.leavingdate){
+                travelDate=new Date(preStoredGetParametersDictionary.leavingdate);
 
             }
             else{
@@ -2576,8 +2635,8 @@ airlinetravelmodule.controller('showflightscontroller',function($scope,$http,$ro
         else{
 
             ///
-            if(getParameteresDictionary.comingindate){
-                travelDate=new Date(getParameteresDictionary.comingindate);
+            if(preStoredGetParametersDictionary.comingindate){
+                travelDate=new Date(preStoredGetParametersDictionary.comingindate);
 
             }
             else{
@@ -2586,27 +2645,21 @@ airlinetravelmodule.controller('showflightscontroller',function($scope,$http,$ro
 
             }
 
-            ////
+
         }
-        console.log("should not come here");
+
         $scope.departureDate=((travelDate.getMonth()+1)+"/"+travelDate.getDate()+ "/"+travelDate.getFullYear());
-        allFlightsDetail=flightDetails;
-        console.log("should refresh page with new result");
-        $scope.flightDetails = allFlightsDetail.slice(0,numberOfResultsPerPage);
+        flightsGlobalContainers.setAllFlightsDetailValueParameter(flightDetails);
+
+
+        $scope.flightDetails = flightDetails.slice(0,flightsGlobalParameters.getFlightSearchParameters().numberOfResultsPerPage);
         $scope.loadingToDisplay=false;
 
-
-
-
-
-        //$timeout(function () {
-
-        // }, 3000);
 
     }
 
     function addToAirportDetails(airportsArray){
-        console.log("full airport details in the array"+ airportsArray);
+
         var airportsArrayLength=airportsArray.length;
 //sdfsd
         for(var i =0;i<airportsArrayLength;i++){
@@ -2616,20 +2669,20 @@ airlinetravelmodule.controller('showflightscontroller',function($scope,$http,$ro
 
             console.log($scope.airportsDeepDetails[airportCode]);
         }
-        airportsDeepDetailsGlobal=$scope.airportsDeepDetails;
-        console.log("Length of full airports "+ Object.keys(airportsDeepDetailsGlobal).length);
+         //airportsDeepDetailsGlobal=$scope.airportsDeepDetails;
+        flightsGlobalContainers.setAirportsDeepDetailsGlobalParameter($scope.airportsDeepDetails);
+
     }
 
 
     $scope.getairportsindi=function(iatacode,isTitle){
         $scope.airportTitle=iatacode;
-        //console.log(iatacode+ "iata code");
-        //console.log($scope.airportsDeepDetails[iatacode]+ "airport details");
-        //console.log("airprot length"+ Object.keys($scope.airportsDeepDetails).length);
-        //console.log("airprot dummy length"+ Object.keys(airportsDeepDetailsGlobal).length);
+
+
+var previouslyStoredAirportDeepDetails=flightsGlobalContainers.getFlightsGlobalContainersParameters().airportsDeepDetailsGlobal;
 
         if(Object.keys($scope.airportsDeepDetails).length==0){
-            $scope.airportsDeepDetails=airportsDeepDetailsGlobal;
+            $scope.airportsDeepDetails=previouslyStoredAirportDeepDetails;
         }
 
         if(isTitle==1){
@@ -2643,29 +2696,32 @@ airlinetravelmodule.controller('showflightscontroller',function($scope,$http,$ro
     }
 
     var getFlightFromGivenParameters=function(source,destination,leavingdate,comingindate,contype,numberofdays){
-        console.log("Another Web Request with URL "+"http://jayeshkawli.com/airlinetravel/flightsearchapi.php?source="+source+"&destination="+destination+"&leavingdate="+leavingdate+"&comingindate="+comingindate+"&numberofdays="+numberofdays+"&connectiontype="+contype+"&airlinepreferred="+preferredAirlinesName);
+        console.log("Another Web Request with URL "+"http://jayeshkawli.com/airlinetravel/flightsearchapi.php?source="+source+"&destination="+destination+"&leavingdate="+leavingdate+"&comingindate="+comingindate+"&numberofdays="+numberofdays+"&connectiontype="+contype+"&airlinepreferred="+flightsGlobalParameters.getFlightSearchParameters().preferredAirlinesName);
         var start = new Date().getTime();
-        $http({method: 'GET', url: 'http://jayeshkawli.com/airlinetravel/flightsearchapi.php?source='+source+"&destination="+destination+"&leavingdate="+leavingdate+"&comingindate="+comingindate+"&numberofdays="+numberofdays+"&connectiontype="+contype+"&airlinepreferred="+preferredAirlinesName,
+        $http({method: 'GET', url: 'http://jayeshkawli.com/airlinetravel/flightsearchapi.php?source='+source+"&destination="+destination+"&leavingdate="+leavingdate+"&comingindate="+comingindate+"&numberofdays="+numberofdays+"&connectiontype="+contype+"&airlinepreferred="+flightsGlobalParameters.getFlightSearchParameters().preferredAirlinesName,
             params: {}
         }).
             success(function(flightslist, status, headers, config) {
 
                 if(flightslist.flights){
-                    appendixDictionary=flightslist.appendix;
-                    // console.log(appendixDictionary);
-                    console.log("Verification of date Important ---->"+flightslist.request.date.interpreted);
-                    if(typeof appendixDictionary !='undefined' && appendixDictionary!=null){
-                        if(appendixDictionary.airlines.length>0){
-                            appendixDictionary.airlines.unshift(getSampleAllAirlinesObject());
-                            $scope.airlines=appendixDictionary.airlines;
+                    //appendixDictionary=flightslist.appendix;
+                    flightsGlobalContainers.setAppendixDictionaryValueParameter(flightslist.appendix);
+
+                    var prestoredAppendixInformation=flightsGlobalContainers.getFlightsGlobalContainersParameters().appendixDictionary;
+
+
+                    if(typeof prestoredAppendixInformation !='undefined' && prestoredAppendixInformation!=null){
+                        if(prestoredAppendixInformation.airlines.length>0){
+                            prestoredAppendixInformation.airlines.unshift(getSampleAllAirlinesObject());
+                            $scope.airlines=prestoredAppendixInformation.airlines;
                             $scope.airline=$scope.airlines[0];
                         }
-                        if(appendixDictionary.airports.length>0){
-                            $scope.airports=appendixDictionary.airports;
-                            addToAirportDetails(appendixDictionary.airports);
+                        if(prestoredAppendixInformation.airports.length>0){
+                            $scope.airports=prestoredAppendixInformation.airports;
+                            addToAirportDetails(prestoredAppendixInformation.airports);
                         }
-                        if(appendixDictionary.equipments.length>0){
-                            $scope.equipments=appendixDictionary.equipments;
+                        if(prestoredAppendixInformation.equipments.length>0){
+                            $scope.equipments=prestoredAppendixInformation.equipments;
                         }
                     }
                     setupPageWithAllFlightDetails(flightslist.flights);
@@ -2678,9 +2734,9 @@ airlinetravelmodule.controller('showflightscontroller',function($scope,$http,$ro
                     //We are doing it only once for each web request - New web request mean flushing of previous data and overlapping it with new one
                     // if(!localStorage.getItem("recentlyReturnedFlightData")){
                     localStorage.setItem('recentlyReturnedFlightData',JSON.stringify(flightslist.flights));
-                    localStorage.setItem('airlines',JSON.stringify(appendixDictionary.airlines));
-                    localStorage.setItem('airports',JSON.stringify(appendixDictionary.airports));
-                    localStorage.setItem('equipments',JSON.stringify(appendixDictionary.equipments));
+                    localStorage.setItem('airlines',JSON.stringify(prestoredAppendixInformation.airlines));
+                    localStorage.setItem('airports',JSON.stringify(prestoredAppendixInformation.airports));
+                    localStorage.setItem('equipments',JSON.stringify(prestoredAppendixInformation.equipments));
                     //}
                     var end = new Date().getTime();
                     var time = end - start;
@@ -2704,11 +2760,13 @@ airlinetravelmodule.controller('showflightscontroller',function($scope,$http,$ro
 
 
 
-    getParameteresDictionary=$location.search();
+    //getParameteresDictionary=$location.search();
+
+    flightsGlobalContainers.setGetParameteresDictionaryValueParameter($location.search());
 
     if(localStorage.getItem("recentlyReturnedFlightData")){
-        allFlightsDetail=JSON.parse(localStorage.getItem("recentlyReturnedFlightData"));
 
+        flightsGlobalContainers.setAllFlightsDetailValueParameter(JSON.parse(localStorage.getItem("recentlyReturnedFlightData")));
         $scope.airlines=JSON.parse(localStorage.getItem('airlines'));
 
         //to remove - We are adding all airlines twice just to be safe because we already have cached data in we didnt propogate changes to it
@@ -2718,13 +2776,14 @@ airlinetravelmodule.controller('showflightscontroller',function($scope,$http,$ro
         addToAirportDetails($scope.airports);
         $scope.equipments=JSON.parse(localStorage.getItem('equipments'));
 
-        setupPageWithAllFlightDetails(allFlightsDetail);
+        setupPageWithAllFlightDetails(flightsGlobalContainers.getFlightsGlobalContainersParameters().allFlightsDetail);
     }
     else{
-        if(allFlightsDetail.length==0){
-            console.log("cont type"+ connectionType);
-            console.log("number of days "+ numberOfDaysToRetrieveFlight);
-            getFlightFromGivenParameters(getParameteresDictionary.source,getParameteresDictionary.destination,getParameteresDictionary.leavingdate,getParameteresDictionary.comingindate,connectionType,numberOfDaysToRetrieveFlight);
+        var previouslyStoredAllFlightDetails=flightsGlobalContainers.getFlightsGlobalContainersParameters().allFlightsDetail;
+
+        if(previouslyStoredAllFlightDetails.length==0){
+
+            getFlightFromGivenParameters(flightsGlobalContainers.getFlightsGlobalContainersParameters().getParameteresDictionary.source,flightsGlobalContainers.getFlightsGlobalContainersParameters().getParameteresDictionary.destination,flightsGlobalContainers.getFlightsGlobalContainersParameters().getParameteresDictionary.leavingdate,flightsGlobalContainers.getFlightsGlobalContainersParameters().getParameteresDictionary.comingindate,flightsGlobalParameters.getFlightSearchParameters().connectionType,flightsGlobalParameters.getFlightSearchParameters().numberOfDaysToRetrieveFlight);
         }
     }
 
@@ -2734,15 +2793,14 @@ airlinetravelmodule.controller('showflightscontroller',function($scope,$http,$ro
         $('div[id^="connectiondetails-"]').hide();
 
     },0.0);
-    //hideDivs();
-    console.log("****///");
+
 });
 
 airlinetravelmodule.controller('upperleftbarcontroller',function($scope){
 
 })
 
-airlinetravelmodule.controller('flightsearchcontroller',function($scope,$http,$window,$timeout,$rootScope,openRegistrationDialogueService,getStoredAuthTokenService){
+airlinetravelmodule.controller('flightsearchcontroller',function($scope,$http,$window,$timeout,$rootScope,openRegistrationDialogueService,getStoredAuthTokenService,flightsGlobalParameters,flightsGlobalContainers){
 
 
     //#warning to use while booking new flight it creates new user
@@ -2762,10 +2820,20 @@ airlinetravelmodule.controller('flightsearchcontroller',function($scope,$http,$w
     $scope.defaultValue="N/A";
     $scope.sample=function(){
 
-        preferredAirlinesName=$scope.preferredairline.iata?$scope.preferredairline.iata:""
-
+        //preferredAirlinesName=$scope.preferredairline.iata?$scope.preferredairline.iata:""
+        flightsGlobalParameters.setPreferredAirlinesNameParameter($scope.preferredairline.iata?$scope.preferredairline.iata:"");
     }
 
+    //We keep watch on destination airport - When it's different from source we set it as an international flight,
+    //else as a domestic one
+    $scope.$watch('destcodenew',function(newCountryCode,oldCountryCode){
+
+
+        var isDomesticFlight = +(!($scope.sourcecodenew.toUpperCase()===newCountryCode.toUpperCase()));
+           $scope.setpref(isDomesticFlight);
+
+
+    },true);
 
     //Get list of all active airports and populate it in a $scope array variable
     $http({
@@ -2778,7 +2846,7 @@ airlinetravelmodule.controller('flightsearchcontroller',function($scope,$http,$w
             $scope.preferredairlineslist=data;
             $scope.preferredairlineslist.unshift({'name':"All Airlines","iata":"","icao":""});
             $scope.preferredairline=$scope.preferredairlineslist[0];
-            // console.log("Received data "+ data);
+
 
         }).error(function (data, status, headers, config) {
 
@@ -2791,8 +2859,8 @@ airlinetravelmodule.controller('flightsearchcontroller',function($scope,$http,$w
 
     $scope.toshowloadinganimation=false;
     $(function(){
-        //var currencies = [{ data:'AD',value:'Andorra'},{ data:'AE',value:'United Arab Emirates'},{ data:'AF',value:'Afghanistan'},{ data:'AG',value:'Antigua and Barbuda'},{ data:'AI',value:'Anguilla'},{ data:'AL',value:'Albania'},{ data:'AM',value:'Armenia'},{ data:'AO',value:'Angola'},{ data:'AQ',value:'Antarctica'},{ data:'AR',value:'Argentina'},{ data:'AS',value:'American Samoa'},{ data:'AT',value:'Austria'},{ data:'AU',value:'Australia'},{ data:'AW',value:'Aruba'},{ data:'AX',value:'Åland Islands'},{ data:'AZ',value:'Azerbaijan'},{ data:'BA',value:'Bosnia and Herzegovina'},{ data:'BB',value:'Barbados'},{ data:'BD',value:'Bangladesh'},{ data:'BE',value:'Belgium'},{ data:'BF',value:'Burkina Faso'},{ data:'BG',value:'Bulgaria'},{ data:'BH',value:'Bahrain'},{ data:'BI',value:'Burundi'},{ data:'BJ',value:'Benin'},{ data:'BL',value:'Saint Barthélemy'},{ data:'BM',value:'Bermuda'},{ data:'BN',value:'Brunei Darussalam'},{ data:'BO',value:'Bolivia, Plurinational State of'},{ data:'BQ',value:'Bonaire, Sint Eustatius and Saba'},{ data:'BR',value:'Brazil'},{ data:'BS',value:'Bahamas'},{ data:'BT',value:'Bhutan'},{ data:'BV',value:'Bouvet Island'},{ data:'BW',value:'Botswana'},{ data:'BY',value:'Belarus'},{ data:'BZ',value:'Belize'},{ data:'CA',value:'Canada'},{ data:'CC',value:'Cocos (Keeling) Islands'},{ data:'CD',value:'Congo, the Democratic Republic of the'},{ data:'CF',value:'Central African Republic'},{ data:'CG',value:'Congo'},{ data:'CH',value:'Switzerland'},{ data:'CI',value:'Côte d Ivoire'},{ data:'CK',value:'Cook Islands'},{ data:'CL',value:'Chile'},{ data:'CM',value:'Cameroon'},{ data:'CN',value:'China'},{ data:'CO',value:'Colombia'},{ data:'CR',value:'Costa Rica'},{ data:'CU',value:'Cuba'},{ data:'CV',value:'Cape Verde'},{ data:'CW',value:'Curaçao'},{ data:'CX',value:'Christmas Island'},{ data:'CY',value:'Cyprus'},{ data:'CZ',value:'Czech Republic'},{ data:'DE',value:'Germany'},{ data:'DJ',value:'Djibouti'},{ data:'DK',value:'Denmark'},{ data:'DM',value:'Dominica'},{ data:'DO',value:'Dominican Republic'},{ data:'DZ',value:'Algeria'},{ data:'EC',value:'Ecuador'},{ data:'EE',value:'Estonia'},{ data:'EG',value:'Egypt'},{ data:'EH',value:'Western Sahara'},{ data:'ER',value:'Eritrea'},{ data:'ES',value:'Spain'},{ data:'ET',value:'Ethiopia'},{ data:'FI',value:'Finland'},{ data:'FJ',value:'Fiji'},{ data:'FK',value:'Falkland Islands (Malvinas)'},{ data:'FM',value:'Micronesia, Federated States of'},{ data:'FO',value:'Faroe Islands'},{ data:'FR',value:'France'},{ data:'GA',value:'Gabon'},{ data:'GB',value:'United Kingdom'},{ data:'GD',value:'Grenada'},{ data:'GE',value:'Georgia'},{ data:'GF',value:'French Guiana'},{ data:'GG',value:'Guernsey'},{ data:'GH',value:'Ghana'},{ data:'GI',value:'Gibraltar'},{ data:'GL',value:'Greenland'},{ data:'GM',value:'Gambia'},{ data:'GN',value:'Guinea'},{ data:'GP',value:'Guadeloupe'},{ data:'GQ',value:'Equatorial Guinea'},{ data:'GR',value:'Greece'},{ data:'GS',value:'South Georgia and the South Sandwich Islands'},{ data:'GT',value:'Guatemala'},{ data:'GU',value:'Guam'},{ data:'GW',value:'Guinea-Bissau'},{ data:'GY',value:'Guyana'},{ data:'HK',value:'Hong Kong'},{ data:'HM',value:'Heard Island and McDonald Islands'},{ data:'HN',value:'Honduras'},{ data:'HR',value:'Croatia'},{ data:'HT',value:'Haiti'},{ data:'HU',value:'Hungary'},{ data:'ID',value:'Indonesia'},{ data:'IE',value:'Ireland'},{ data:'IL',value:'Israel'},{ data:'IM',value:'Isle of Man'},{ data:'IN',value:'India'},{ data:'IO',value:'British Indian Ocean Territory'},{ data:'IQ',value:'Iraq'},{ data:'IR',value:'Iran, Islamic Republic of'},{ data:'IS',value:'Iceland'},{ data:'IT',value:'Italy'},{ data:'JE',value:'Jersey'},{ data:'JM',value:'Jamaica'},{ data:'JO',value:'Jordan'},{ data:'JP',value:'Japan'},{ data:'KE',value:'Kenya'},{ data:'KG',value:'Kyrgyzstan'},{ data:'KH',value:'Cambodia'},{ data:'KI',value:'Kiribati'},{ data:'KM',value:'Comoros'},{ data:'KN',value:'Saint Kitts and Nevis'},{ data:'KP',value:'Korea, Democratic Peoples Republic of'},{ data:'KR',value:'Korea, Republic of'},{ data:'KW',value:'Kuwait'},{ data:'KY',value:'Cayman Islands'},{ data:'KZ',value:'Kazakhstan'},{ data:'LA',value:'Lao Peoples Democratic Republic'},{ data:'LB',value:'Lebanon'},{ data:'LC',value:'Saint Lucia'},{ data:'LI',value:'Liechtenstein'},{ data:'LK',value:'Sri Lanka'},{ data:'LR',value:'Liberia'},{ data:'LS',value:'Lesotho'},{ data:'LT',value:'Lithuania'},{ data:'LU',value:'Luxembourg'},{ data:'LV',value:'Latvia'},{ data:'LY',value:'Libya'},{ data:'MA',value:'Morocco'},{ data:'MC',value:'Monaco'},{ data:'MD',value:'Moldova, Republic of'},{ data:'ME',value:'Montenegro'},{ data:'MF',value:'Saint Martin (French part)'},{ data:'MG',value:'Madagascar'},{ data:'MH',value:'Marshall Islands'},{ data:'MK',value:'Macedonia, the former Yugoslav Republic of'},{ data:'ML',value:'Mali'},{ data:'MM',value:'Myanmar'},{ data:'MN',value:'Mongolia'},{ data:'MO',value:'Macao'},{ data:'MP',value:'Northern Mariana Islands'},{ data:'MQ',value:'Martinique'},{ data:'MR',value:'Mauritania'},{ data:'MS',value:'Montserrat'},{ data:'MT',value:'Malta'},{ data:'MU',value:'Mauritius'},{ data:'MV',value:'Maldives'},{ data:'MW',value:'Malawi'},{ data:'MX',value:'Mexico'},{ data:'MY',value:'Malaysia'},{ data:'MZ',value:'Mozambique'},{ data:'NA',value:'Namibia'},{ data:'NC',value:'New Caledonia'},{ data:'NE',value:'Niger'},{ data:'NF',value:'Norfolk Island'},{ data:'NG',value:'Nigeria'},{ data:'NI',value:'Nicaragua'},{ data:'NL',value:'Netherlands'},{ data:'NO',value:'Norway'},{ data:'NP',value:'Nepal'},{ data:'NR',value:'Nauru'},{ data:'NU',value:'Niue'},{ data:'NZ',value:'New Zealand'},{ data:'OM',value:'Oman'},{ data:'PA',value:'Panama'},{ data:'PE',value:'Peru'},{ data:'PF',value:'French Polynesia'},{ data:'PG',value:'Papua New Guinea'},{ data:'PH',value:'Philippines'},{ data:'PK',value:'Pakistan'},{ data:'PL',value:'Poland'},{ data:'PM',value:'Saint Pierre and Miquelon'},{ data:'PN',value:'Pitcairn'},{ data:'PR',value:'Puerto Rico'},{ data:'PS',value:'Palestine, State of'},{ data:'PT',value:'Portugal'},{ data:'PW',value:'Palau'},{ data:'PY',value:'Paraguay'},{ data:'QA',value:'Qatar'},{ data:'RE',value:'Réunion'},{ data:'RO',value:'Romania'},{ data:'RS',value:'Serbia'},{ data:'RU',value:'Russian Federation'},{ data:'RW',value:'Rwanda'},{ data:'SA',value:'Saudi Arabia'},{ data:'SB',value:'Solomon Islands'},{ data:'SC',value:'Seychelles'},{ data:'SD',value:'Sudan'},{ data:'SE',value:'Sweden'},{ data:'SG',value:'Singapore'},{ data:'SH',value:'Saint Helena, Ascension and Tristan da Cunha'},{ data:'SI',value:'Slovenia'},{ data:'SJ',value:'Svalbard and Jan Mayen'},{ data:'SK',value:'Slovakia'},{ data:'SL',value:'Sierra Leone'},{ data:'SM',value:'San Marino'},{ data:'SN',value:'Senegal'},{ data:'SO',value:'Somalia'},{ data:'SR',value:'Suriname'},{ data:'SS',value:'South Sudan'},{ data:'ST',value:'Sao Tome and Principe'},{ data:'SV',value:'El Salvador'},{ data:'SX',value:'Sint Maarten (Dutch part)'},{ data:'SY',value:'Syrian Arab Republic'},{ data:'SZ',value:'Swaziland'},{ data:'TC',value:'Turks and Caicos Islands'},{ data:'TD',value:'Chad'},{ data:'TF',value:'French Southern Territories'},{ data:'TG',value:'Togo'},{ data:'TH',value:'Thailand'},{ data:'TJ',value:'Tajikistan'},{ data:'TK',value:'Tokelau'},{ data:'TL',value:'Timor-Leste'},{ data:'TM',value:'Turkmenistan'},{ data:'TN',value:'Tunisia'},{ data:'TO',value:'Tonga'},{ data:'TR',value:'Turkey'},{ data:'TT',value:'Trinidad and Tobago'},{ data:'TV',value:'Tuvalu'},{ data:'TW',value:'Taiwan, Province of China'},{ data:'TZ',value:'Tanzania, United Republic of'},{ data:'UA',value:'Ukraine'},{ data:'UG',value:'Uganda'},{ data:'UM',value:'United States Minor Outlying Islands'},{ data:'US',value:'United States'},{ data:'UY',value:'Uruguay'},{ data:'UZ',value:'Uzbekistan'},{ data:'VA',value:'Holy See (Vatican City State)'},{ data:'VC',value:'Saint Vincent and the Grenadines'},{ data:'VE',value:'Venezuela, Bolivarian Republic of'},{ data:'VG',value:'Virgin Islands, British'},{ data:'VI',value:'Virgin Islands, U.S.'},{ data:'VN',value:'Viet Nam'},{ data:'VU',value:'Vanuatu'},{ data:'WF',value:'Wallis and Futuna'},{ data:'WS',value:'Samoa'},{ data:'YE',value:'Yemen'},{ data:'YT',value:'Mayotte'},{ data:'ZA',value:'South Africa'},{ data:'ZM',value:'Zambia'},{ data:'ZW',value:'Zimbabwe'}];
-        var currencies=[{ data:'AD',value:'Andorra - AD'},{ data:'AE',value:'United Arab Emirates - AE'},{ data:'AF',value:'Afghanistan - AF'},{ data:'AG',value:'Antigua and Barbuda - AG'},{ data:'AI',value:'Anguilla - AI'},{ data:'AL',value:'Albania - AL'},{ data:'AM',value:'Armenia - AM'},{ data:'AO',value:'Angola - AO'},{ data:'AQ',value:'Antarctica - AQ'},{ data:'AR',value:'Argentina - AR'},{ data:'AS',value:'American Samoa - AS'},{ data:'AT',value:'Austria - AT'},{ data:'AU',value:'Australia - AU'},{ data:'AW',value:'Aruba - AW'},{ data:'AX',value:'Åland Islands - AX'},{ data:'AZ',value:'Azerbaijan - AZ'},{ data:'BA',value:'Bosnia and Herzegovina - BA'},{ data:'BB',value:'Barbados - BB'},{ data:'BD',value:'Bangladesh - BD'},{ data:'BE',value:'Belgium - BE'},{ data:'BF',value:'Burkina Faso - BF'},{ data:'BG',value:'Bulgaria - BG'},{ data:'BH',value:'Bahrain - BH'},{ data:'BI',value:'Burundi - BI'},{ data:'BJ',value:'Benin - BJ'},{ data:'BL',value:'Saint Barthélemy - BL'},{ data:'BM',value:'Bermuda - BM'},{ data:'BN',value:'Brunei Darussalam - BN'},{ data:'BO',value:'Bolivia, Plurinational State of - BO'},{ data:'BQ',value:'Bonaire, Sint Eustatius and Saba - BQ'},{ data:'BR',value:'Brazil - BR'},{ data:'BS',value:'Bahamas - BS'},{ data:'BT',value:'Bhutan - BT'},{ data:'BV',value:'Bouvet Island - BV'},{ data:'BW',value:'Botswana - BW'},{ data:'BY',value:'Belarus - BY'},{ data:'BZ',value:'Belize - BZ'},{ data:'CA',value:'Canada - CA'},{ data:'CC',value:'Cocos (Keeling) Islands - CC'},{ data:'CD',value:'Congo, the Democratic Republic of the - CD'},{ data:'CF',value:'Central African Republic - CF'},{ data:'CG',value:'Congo - CG'},{ data:'CH',value:'Switzerland - CH'},{ data:'CI',value:'Côte dIvoire - CI'},{ data:'CK',value:'Cook Islands - CK'},{ data:'CL',value:'Chile - CL'},{ data:'CM',value:'Cameroon - CM'},{ data:'CN',value:'China - CN'},{ data:'CO',value:'Colombia - CO'},{ data:'CR',value:'Costa Rica - CR'},{ data:'CU',value:'Cuba - CU'},{ data:'CV',value:'Cape Verde - CV'},{ data:'CW',value:'Curaçao - CW'},{ data:'CX',value:'Christmas Island - CX'},{ data:'CY',value:'Cyprus - CY'},{ data:'CZ',value:'Czech Republic - CZ'},{ data:'DE',value:'Germany - DE'},{ data:'DJ',value:'Djibouti - DJ'},{ data:'DK',value:'Denmark - DK'},{ data:'DM',value:'Dominica - DM'},{ data:'DO',value:'Dominican Republic - DO'},{ data:'DZ',value:'Algeria - DZ'},{ data:'EC',value:'Ecuador - EC'},{ data:'EE',value:'Estonia - EE'},{ data:'EG',value:'Egypt - EG'},{ data:'EH',value:'Western Sahara - EH'},{ data:'ER',value:'Eritrea - ER'},{ data:'ES',value:'Spain - ES'},{ data:'ET',value:'Ethiopia - ET'},{ data:'FI',value:'Finland - FI'},{ data:'FJ',value:'Fiji - FJ'},{ data:'FK',value:'Falkland Islands (Malvinas) - FK'},{ data:'FM',value:'Micronesia, Federated States of - FM'},{ data:'FO',value:'Faroe Islands - FO'},{ data:'FR',value:'France - FR'},{ data:'GA',value:'Gabon - GA'},{ data:'GB',value:'United Kingdom - GB'},{ data:'GD',value:'Grenada - GD'},{ data:'GE',value:'Georgia - GE'},{ data:'GF',value:'French Guiana - GF'},{ data:'GG',value:'Guernsey - GG'},{ data:'GH',value:'Ghana - GH'},{ data:'GI',value:'Gibraltar - GI'},{ data:'GL',value:'Greenland - GL'},{ data:'GM',value:'Gambia - GM'},{ data:'GN',value:'Guinea - GN'},{ data:'GP',value:'Guadeloupe - GP'},{ data:'GQ',value:'Equatorial Guinea - GQ'},{ data:'GR',value:'Greece - GR'},{ data:'GS',value:'South Georgia and the South Sandwich Islands - GS'},{ data:'GT',value:'Guatemala - GT'},{ data:'GU',value:'Guam - GU'},{ data:'GW',value:'Guinea-Bissau - GW'},{ data:'GY',value:'Guyana - GY'},{ data:'HK',value:'Hong Kong - HK'},{ data:'HM',value:'Heard Island and McDonald Islands - HM'},{ data:'HN',value:'Honduras - HN'},{ data:'HR',value:'Croatia - HR'},{ data:'HT',value:'Haiti - HT'},{ data:'HU',value:'Hungary - HU'},{ data:'ID',value:'Indonesia - ID'},{ data:'IE',value:'Ireland - IE'},{ data:'IL',value:'Israel - IL'},{ data:'IM',value:'Isle of Man - IM'},{ data:'IN',value:'India - IN'},{ data:'IO',value:'British Indian Ocean Territory - IO'},{ data:'IQ',value:'Iraq - IQ'},{ data:'IR',value:'Iran, Islamic Republic of - IR'},{ data:'IS',value:'Iceland - IS'},{ data:'IT',value:'Italy - IT'},{ data:'JE',value:'Jersey - JE'},{ data:'JM',value:'Jamaica - JM'},{ data:'JO',value:'Jordan - JO'},{ data:'JP',value:'Japan - JP'},{ data:'KE',value:'Kenya - KE'},{ data:'KG',value:'Kyrgyzstan - KG'},{ data:'KH',value:'Cambodia - KH'},{ data:'KI',value:'Kiribati - KI'},{ data:'KM',value:'Comoros - KM'},{ data:'KN',value:'Saint Kitts and Nevis - KN'},{ data:'KP',value:'Korea, Democratic Peoples Republic of - KP'},{ data:'KR',value:'Korea, Republic of - KR'},{ data:'KW',value:'Kuwait - KW'},{ data:'KY',value:'Cayman Islands - KY'},{ data:'KZ',value:'Kazakhstan - KZ'},{ data:'LA',value:'Lao Peoples Democratic Republic - LA'},{ data:'LB',value:'Lebanon - LB'},{ data:'LC',value:'Saint Lucia - LC'},{ data:'LI',value:'Liechtenstein - LI'},{ data:'LK',value:'Sri Lanka - LK'},{ data:'LR',value:'Liberia - LR'},{ data:'LS',value:'Lesotho - LS'},{ data:'LT',value:'Lithuania - LT'},{ data:'LU',value:'Luxembourg - LU'},{ data:'LV',value:'Latvia - LV'},{ data:'LY',value:'Libya - LY'},{ data:'MA',value:'Morocco - MA'},{ data:'MC',value:'Monaco - MC'},{ data:'MD',value:'Moldova, Republic of - MD'},{ data:'ME',value:'Montenegro - ME'},{ data:'MF',value:'Saint Martin (French part) - MF'},{ data:'MG',value:'Madagascar - MG'},{ data:'MH',value:'Marshall Islands - MH'},{ data:'MK',value:'Macedonia, the former Yugoslav Republic of - MK'},{ data:'ML',value:'Mali - ML'},{ data:'MM',value:'Myanmar - MM'},{ data:'MN',value:'Mongolia - MN'},{ data:'MO',value:'Macao - MO'},{ data:'MP',value:'Northern Mariana Islands - MP'},{ data:'MQ',value:'Martinique - MQ'},{ data:'MR',value:'Mauritania - MR'},{ data:'MS',value:'Montserrat - MS'},{ data:'MT',value:'Malta - MT'},{ data:'MU',value:'Mauritius - MU'},{ data:'MV',value:'Maldives - MV'},{ data:'MW',value:'Malawi - MW'},{ data:'MX',value:'Mexico - MX'},{ data:'MY',value:'Malaysia - MY'},{ data:'MZ',value:'Mozambique - MZ'},{ data:'NA',value:'Namibia - NA'},{ data:'NC',value:'New Caledonia - NC'},{ data:'NE',value:'Niger - NE'},{ data:'NF',value:'Norfolk Island - NF'},{ data:'NG',value:'Nigeria - NG'},{ data:'NI',value:'Nicaragua - NI'},{ data:'NL',value:'Netherlands - NL'},{ data:'NO',value:'Norway - NO'},{ data:'NP',value:'Nepal - NP'},{ data:'NR',value:'Nauru - NR'},{ data:'NU',value:'Niue - NU'},{ data:'NZ',value:'New Zealand - NZ'},{ data:'OM',value:'Oman - OM'},{ data:'PA',value:'Panama - PA'},{ data:'PE',value:'Peru - PE'},{ data:'PF',value:'French Polynesia - PF'},{ data:'PG',value:'Papua New Guinea - PG'},{ data:'PH',value:'Philippines - PH'},{ data:'PK',value:'Pakistan - PK'},{ data:'PL',value:'Poland - PL'},{ data:'PM',value:'Saint Pierre and Miquelon - PM'},{ data:'PN',value:'Pitcairn - PN'},{ data:'PR',value:'Puerto Rico - PR'},{ data:'PS',value:'Palestine, State of - PS'},{ data:'PT',value:'Portugal - PT'},{ data:'PW',value:'Palau - PW'},{ data:'PY',value:'Paraguay - PY'},{ data:'QA',value:'Qatar - QA'},{ data:'RE',value:'Réunion - RE'},{ data:'RO',value:'Romania - RO'},{ data:'RS',value:'Serbia - RS'},{ data:'RU',value:'Russian Federation - RU'},{ data:'RW',value:'Rwanda - RW'},{ data:'SA',value:'Saudi Arabia - SA'},{ data:'SB',value:'Solomon Islands - SB'},{ data:'SC',value:'Seychelles - SC'},{ data:'SD',value:'Sudan - SD'},{ data:'SE',value:'Sweden - SE'},{ data:'SG',value:'Singapore - SG'},{ data:'SH',value:'Saint Helena, Ascension and Tristan da Cunha - SH'},{ data:'SI',value:'Slovenia - SI'},{ data:'SJ',value:'Svalbard and Jan Mayen - SJ'},{ data:'SK',value:'Slovakia - SK'},{ data:'SL',value:'Sierra Leone - SL'},{ data:'SM',value:'San Marino - SM'},{ data:'SN',value:'Senegal - SN'},{ data:'SO',value:'Somalia - SO'},{ data:'SR',value:'Suriname - SR'},{ data:'SS',value:'South Sudan - SS'},{ data:'ST',value:'Sao Tome and Principe - ST'},{ data:'SV',value:'El Salvador - SV'},{ data:'SX',value:'Sint Maarten (Dutch part) - SX'},{ data:'SY',value:'Syrian Arab Republic - SY'},{ data:'SZ',value:'Swaziland - SZ'},{ data:'TC',value:'Turks and Caicos Islands - TC'},{ data:'TD',value:'Chad - TD'},{ data:'TF',value:'French Southern Territories - TF'},{ data:'TG',value:'Togo - TG'},{ data:'TH',value:'Thailand - TH'},{ data:'TJ',value:'Tajikistan - TJ'},{ data:'TK',value:'Tokelau - TK'},{ data:'TL',value:'Timor-Leste - TL'},{ data:'TM',value:'Turkmenistan - TM'},{ data:'TN',value:'Tunisia - TN'},{ data:'TO',value:'Tonga - TO'},{ data:'TR',value:'Turkey - TR'},{ data:'TT',value:'Trinidad and Tobago - TT'},{ data:'TV',value:'Tuvalu - TV'},{ data:'TW',value:'Taiwan, Province of China - TW'},{ data:'TZ',value:'Tanzania, United Republic of - TZ'},{ data:'UA',value:'Ukraine - UA'},{ data:'UG',value:'Uganda - UG'},{ data:'UM',value:'United States Minor Outlying Islands - UM'},{ data:'US',value:'United States - US'},{ data:'UY',value:'Uruguay - UY'},{ data:'UZ',value:'Uzbekistan - UZ'},{ data:'VA',value:'Holy See (Vatican City State) - VA'},{ data:'VC',value:'Saint Vincent and the Grenadines - VC'},{ data:'VE',value:'Venezuela, Bolivarian Republic of - VE'},{ data:'VG',value:'Virgin Islands, British - VG'},{ data:'VI',value:'Virgin Islands, U.S. - VI'},{ data:'VN',value:'Viet Nam - VN'},{ data:'VU',value:'Vanuatu - VU'},{ data:'WF',value:'Wallis and Futuna - WF'},{ data:'WS',value:'Samoa - WS'},{ data:'YE',value:'Yemen - YE'},{ data:'YT',value:'Mayotte - YT'},{ data:'ZA',value:'South Africa - ZA'},{ data:'ZM',value:'Zambia - ZM'},{ data:'ZW',value:'Zimbabwe - ZW'}];
+
+
         // setup autocomplete function pulling from currencies[] array
         $('#autocomplete1').autocomplete({
             lookup: currencies,
@@ -2823,20 +2891,12 @@ airlinetravelmodule.controller('flightsearchcontroller',function($scope,$http,$w
         }
     });
 
-    $scope.$watch('leavingOut', function(){
-
-    });
-
-    $scope.$watch('sourcecodenew', function(){
-        //  $scope.sourcecodenew=document.getElementById('autocomplete1').value;
-        //console.log($scope.sourcecodenew);
-    });
 
 
-    $scope.$watch('destcodenew', function(){
-        //$scope.destcodenew=document.getElementById('autocomplete').value;
-        //  console.log($scope.destcodenew);
-    });
+
+
+
+
 
     $scope.firstdatechanged=function(){
         $scope.leavingOut='';
@@ -2866,35 +2926,23 @@ airlinetravelmodule.controller('flightsearchcontroller',function($scope,$http,$w
 
     $scope.movies = [];
     var userHistorydata={};
-    console.log("about to enter ")
+
 
 //Settings for our datepicker
 
     var today = new Date();
-    var dd = today.getDate();
-    var mm = today.getMonth()+1; //January is 0!
-    var yyyy = today.getFullYear();
 
-    var lastMonth=mm;
-    if(dd<10) {
-        dd='0'+dd
-    }
+    var dateAfterAddingThreeMonths=today.addMonthsToDate(3);
 
-    if(mm<10) {
-        mm='0'+mm
-    }
-    var dd1=dd+'10';
-    var today1= mm+'/'+dd1+'/'+yyyy;
-    today = mm+'/'+dd+'/'+yyyy;
-    var afterThreeMonths=(lastMonth+3)+'/'+dd+'/'+yyyy;
-    console.log(today);
+    var afterThreeMonthsFormattedDate=getFormattedDateForDisplay(dateAfterAddingThreeMonths,1);//(lastMonth+3)+'/'+dd+'/'+yyyy;
+
     $scope.mindate='\''+today+'\'';
-    $scope.maxdate1='\''+afterThreeMonths+'\'';
+    $scope.maxdate1='\''+afterThreeMonthsFormattedDate+'\'';
 
 
     $scope.mindate2='\''+today+'\'';
 
-    $scope.format = 'MM/dd/yyyy';//$scope.formats[2];
+    $scope.format = 'MM/dd/yyyy';
 
 
 
@@ -2934,7 +2982,6 @@ airlinetravelmodule.controller('flightsearchcontroller',function($scope,$http,$w
     $scope.open = function($event) {
         $event.preventDefault();
         $event.stopPropagation();
-
         $scope.opened = true;
     };
 
@@ -2971,19 +3018,22 @@ airlinetravelmodule.controller('flightsearchcontroller',function($scope,$http,$w
         $scope.searchStringDestination=userHistorydata.destinationCity;
         $scope.leavingOut=userHistorydata.leavingOutOn;
         $scope.comingIn=userHistorydata.comingInOn;
-        tripDirection==userHistorydata.travelDirection;
+        flightsGlobalParameters.setTripDirectionParameter(userHistorydata.travelDirection);
+        //tripDirection=userHistorydata.travelDirection;
 
-        console.log("Travel direction correct "+tripDirection);
+
 
         if(userHistorydata.travelDirection==='Round Trip'){
             $scope.isOneWayFlight=false;
             $scope.isVisibleReturningDate=true;
 
-            bookbuttontitletext="Select Returning Flight";
+            flightsGlobalParameters.setBookButtonTitleParameter("Select Returning Flight")
+
         }
         else{
             $scope.isOneWayFlight=true;
-            bookbuttontitletext="Book Now";
+            flightsGlobalParameters.setBookButtonTitleParameter("Book Now");
+            //bookbuttontitletext="Book Now";
         }
 
         if(userHistorydata.travelType==='International'){
@@ -2993,14 +3043,7 @@ airlinetravelmodule.controller('flightsearchcontroller',function($scope,$http,$w
             console.log("naaahhhh");
         }
     }
-    // gives another movie array on change
-    /*$scope.updateMovies = function(typed){
-     // MovieRetriever could be some service returning a promise
-     // $scope.newmovies = MovieRetriever.getmovies(typed);
-     // $scope.newmovies.then(function(data){
-     //  $scope.movies = data;
-     //});
-     }*/
+
 
     /*Global Variable */
 
@@ -3032,22 +3075,27 @@ airlinetravelmodule.controller('flightsearchcontroller',function($scope,$http,$w
     $scope.numberOfAdults=$scope.numberAdult[0];
     $scope.numberOfInfants=$scope.numberOfChildren=$scope.numberChildren[0];
 
-//jjj
+
     $scope.whichAirline=function(){
         whichAirline="My Airline";
     }
 
     $scope.isRoundTrip=function(val){
 
-        console.log("Lolll --- >");
+
+
         if(!val){
-            tripDirection="OneWay";
-            bookbuttontitletext="Book Now";
+            //tripDirection="OneWay";
+            //bookbuttontitletext="Book Now";
+            flightsGlobalParameters.setTripDirectionParameter("OneWay");
+            flightsGlobalParameters.setBookButtonTitleParameter("Book Now");
             $scope.isVisibleReturningDate=false;
         }
         else{
-            tripDirection="Round Trip";
-            bookbuttontitletext="Select Returning Flight";
+            //tripDirection="Round Trip";
+            //bookbuttontitletext="Select Returning Flight";
+            flightsGlobalParameters.setTripDirectionParameter("Round Trip");
+            flightsGlobalParameters.setBookButtonTitleParameter("Select Returning Flight");
             $scope.isVisibleReturningDate=true;
         }
     }
@@ -3073,20 +3121,23 @@ airlinetravelmodule.controller('flightsearchcontroller',function($scope,$http,$w
         $scope.flighttypedesireddirect=$scope.flighttypedesiredwithstops=false;
 
         if(connectiontype==1){
-            connectionType='non_stop';
+            //connectionType='non_stop';
+            flightsGlobalParameters.setConnectionTypeParameter('non_stop');
             $scope.flighttypedesireddirect=true;
         }
         else{
-            connectionType='connection';
+            //connectionType='connection';
+            flightsGlobalParameters.setConnectionTypeParameter('Connection');
             $scope.flighttypedesiredwithstops=true;
         }
-        console.log("connection type "+connectionType);
+        console.log("connection type "+flightsGlobalParameters.getFlightSearchParameters().connectionType);
     } //1 for direct flight and 2 for flights with stop
 
     $scope.numberOfResultsPerPage=function(numberofresultsinput){
         $scope.ten=$scope.twenty=$scope.thirty=$scope.all=$scope.five=false;
 
-        numberOfResultsPerPage=numberofresultsinput;
+        //numberOfResultsPerPage=numberofresultsinput;
+        flightsGlobalParameters.setNumberOfResultsPerPageParameter(numberofresultsinput);
         if(numberofresultsinput==5){
             $scope.five=true;
         }
@@ -3152,7 +3203,7 @@ airlinetravelmodule.controller('flightsearchcontroller',function($scope,$http,$w
 
             }).error(function (data, status, headers, config) {
 
-                console.log("Failed to get data from server with Error "+data);
+                console.log("Failed to get data from server with Error "+data+"Status "+status+"And Configuration "+config);
 
             });
     }
@@ -3173,7 +3224,14 @@ airlinetravelmodule.controller('flightsearchcontroller',function($scope,$http,$w
          var whichAirline="My Airline";
          var travelClass="Economy Class";
          var searchCriteria="Price";*/
-        allFlightsDetail.clear();
+
+
+
+        var tempAllFlightsData= flightsGlobalContainers.getFlightsGlobalContainersParameters().allFlightsDetail;
+tempAllFlightsData.clear();
+
+        //allFlightsDetail.clear();
+        flightsGlobalContainers.setAllFlightsDetailValueParameter(tempAllFlightsData);
         $scope.toshowloadinganimation=true;
 
         if(typeof searchCriteria =="undefined"){
@@ -3190,8 +3248,8 @@ airlinetravelmodule.controller('flightsearchcontroller',function($scope,$http,$w
         userHistorydata.destinationCountry=$scope.destcodenew;
         userHistorydata.sourceCity=$scope.searchStringSource;
         userHistorydata.destinationCity=$scope.searchStringDestination;
-        userHistorydata.travelDirection=tripDirection;
-        console.log("Expected travel direction"+tripDirection);
+        userHistorydata.travelDirection= flightsGlobalParameters.getFlightSearchParameters().tripDirection;//tripDirection;
+        console.log("Expected travel direction"+flightsGlobalParameters.getFlightSearchParameters().tripDirection);
         userHistorydata.travelType=(userHistorydata.sourceCountry===userHistorydata.destinationCountry)?"Domestic":"International";
 
         //var modelDate = $filter('date')($scope.leavingOut, "YYYY-MM-DD");
@@ -3205,7 +3263,7 @@ airlinetravelmodule.controller('flightsearchcontroller',function($scope,$http,$w
 
 
 
-        console.log(tripDirection);
+        console.log(flightsGlobalParameters.getFlightSearchParameters().tripDirection);
         console.log(travelType);
         console.log(destcode);
         console.log($scope.searchStringSource);
@@ -3215,7 +3273,7 @@ airlinetravelmodule.controller('flightsearchcontroller',function($scope,$http,$w
         console.log($scope.numberOfAdults.number);
         console.log($scope.numberOfChildren.number);
         console.log($scope.numberOfInfants.number);
-        console.log(numberOfDaysToRetrieveFlight);
+        console.log(flightsGlobalParameters.getFlightSearchParameters().numberOfDaysToRetrieveFlight);
         console.log(travelClass);
         console.log(whichAirline);
         console.log(searchCriteria);
@@ -3224,7 +3282,7 @@ airlinetravelmodule.controller('flightsearchcontroller',function($scope,$http,$w
         console.log($scope.destcodenew);
 
         var formData = {
-            'tripdirection' 				: tripDirection,
+            'tripdirection' 				: flightsGlobalParameters.getFlightSearchParameters().tripDirection,
             'travelType':travelType,
             'sourcecode':$scope.sourcecodenew,
             'destcode':$scope.destcodenew,
@@ -3238,8 +3296,8 @@ airlinetravelmodule.controller('flightsearchcontroller',function($scope,$http,$w
             'travelclass':travelClass,
             'travelAirline':whichAirline,
             'serachcriteria':searchCriteria,
-            'connectiontype':connectionType,
-            'numberofresultsperpage':numberOfResultsPerPage
+            'connectiontype':flightsGlobalParameters.getFlightSearchParameters().connectionType,
+            'numberofresultsperpage':flightsGlobalParameters.getFlightSearchParameters().numberOfResultsPerPage
         };
 
 
@@ -3268,7 +3326,7 @@ airlinetravelmodule.controller('flightsearchcontroller',function($scope,$http,$w
             params: formData
         }).success(function (data, status, headers, config) {
                 console.log(data);
-                $window.location.href = "#/showavailableflights/0?source="+$scope.searchStringSource+"&destination="+$scope.searchStringDestination+"&direction="+tripDirection+"&leavingdate="+$scope.leavingOut+"&comingindate="+$scope.comingIn+"&numberofdays="+numberOfDaysToRetrieveFlight;
+                $window.location.href = "#/showavailableflights/0?source="+$scope.searchStringSource+"&destination="+$scope.searchStringDestination+"&direction="+flightsGlobalParameters.getFlightSearchParameters().tripDirection+"&leavingdate="+$scope.leavingOut+"&comingindate="+$scope.comingIn+"&numberofdays="+flightsGlobalParameters.getFlightSearchParameters().numberOfDaysToRetrieveFlight;
 
             }).error(function (data, status, headers, config) {
                 $scope.status = status;
@@ -3283,21 +3341,26 @@ airlinetravelmodule.controller('flightsearchcontroller',function($scope,$http,$w
         }
         else if(val==2){
             searchCriteria="Variable Dates";
-            numberOfDaysToRetrieveFlight=3;
+            //numberOfDaysToRetrieveFlight=3;
+            flightsGlobalParameters.setNumberOfDaysToRetrieveFlightParameter(3);
             $scope.searchByVariableDates=true;
         }
         else if (val==3){
             searchCriteria="Specific Dates";
-            numberOfDaysToRetrieveFlight=1;
+            //numberOfDaysToRetrieveFlight=1;
+            flightsGlobalParameters.setNumberOfDaysToRetrieveFlightParameter(1);
             $scope.searchBySpecificDates=true;
 
         }
-        console.log(numberOfDaysToRetrieveFlight+ "total number");
+        console.log(flightsGlobalParameters.getFlightSearchParameters().numberOfDaysToRetrieveFlight+ "total number days to retrieev flight records");
+
     }
 
 
 
     $scope.setpref=function(val){
+
+
         if(val==0){
             travelType="Domestic";
             $scope.isFlightButtonClicked=true;
@@ -3349,7 +3412,7 @@ airlinetravelmodule.controller('flightsearchcontroller',function($scope,$http,$w
         }
 
         else if(typeof $scope.searchStringDestination !== "undefined" && isSource==false){
-            console.log("destination");
+
             $scope.destinationvisible=true;
             searchStringToPass=$scope.searchStringDestination;
             countryCode=document.getElementById('autocomplete').value;

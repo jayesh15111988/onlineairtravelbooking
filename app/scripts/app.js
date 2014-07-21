@@ -134,4 +134,126 @@ service('getStoredAuthTokenService',function(){
                loginFunction=loginFunctionaValue;
            }
        }
+    }).
+    service('flightsGlobalParameters',function(){
+        var isLoggedInOnConfirmationScreenValue=false;
+        var tripDirectionValue="OneWay";
+        var isFilteringBasedOnAirlineValue=false;
+        var bookbuttontitletextValue='Book Now';
+        var numberOfResultsPerPageValue=10;
+        var numberOfDaysToRetrieveFlightValue=1;
+        var preferredAirlinesNameValue="";
+        var connectionTypeValue='';
+        var isEditingUserRegistrationInfoValue=false;
+        var totalPValue;
+        var totalPagesCountValue=10;
+        //These parameters to maintain serach state while filtering flight search data
+        //To do keep all of them in separate service - Intention is to separate out containers and simple variables
+        //into respective services to avoid the possible confusion
+
+        return {
+            getFlightSearchParameters:function(){
+        return {
+            isLoggedInOnConfirmationScreen:isLoggedInOnConfirmationScreenValue,
+            tripDirection:tripDirectionValue,
+            isFilteringBasedOnAirline:isFilteringBasedOnAirlineValue,
+            bookbuttontitletext:bookbuttontitletextValue,
+            numberOfResultsPerPage:numberOfResultsPerPageValue,
+            numberOfDaysToRetrieveFlight:numberOfDaysToRetrieveFlightValue,
+            preferredAirlinesName:preferredAirlinesNameValue,
+            connectionType:connectionTypeValue,
+            isEditingUserRegistrationInfo:isEditingUserRegistrationInfoValue,
+            totalP:totalPValue,
+            totalPagesCount:totalPagesCountValue
+        }
+            },
+            setIsLoggedInParameter:function(isLoggedIn){
+isLoggedInOnConfirmationScreenValue=isLoggedIn;
+            },
+            setTripDirectionParameter:function(tripDirection){
+                tripDirectionValue=tripDirection;
+            },
+            setBookButtonTitleParameter:function(bookButtonTitle){
+                bookbuttontitletextValue=bookButtonTitle;
+            },
+            setNumberOfResultsPerPageParameter:function(numberOfResults){
+                numberOfResultsPerPageValue=numberOfResults;
+            },
+        setIsFilteringBasedOnAirlineParameter:function(isFilteringOnairline){
+            isFilteringBasedOnAirlineValue=isFilteringOnairline;
+            },
+            setNumberOfDaysToRetrieveFlightParameter:function(numberOfDaysToRetrieveFlightFor){
+                numberOfDaysToRetrieveFlightValue=numberOfDaysToRetrieveFlightFor;
+            },
+            setPreferredAirlinesNameParameter:function(airlineName){
+                preferredAirlinesNameValue=  airlineName;
+            },
+            setConnectionTypeParameter:function(connectionType){
+                connectionTypeValue=connectionType;
+            },
+            setIsEditingUserRegistrationInfoParameter:function(isEditingUserInfo){
+                isEditingUserRegistrationInfoValue=isEditingUserInfo;
+            },
+            setTotalPParameter:function(totalP){
+                totalPValue=totalP;
+            },
+            setTotalPagesCountParameter:function(totalPagesCount){
+              totalPagesCountValue=totalPagesCount;
+            }
+        }
+    }).
+    service('flightsGlobalContainers',function(){
+
+        var getParameteresDictionaryValue={};
+        var allFlightsDetailValue=Array();
+        var appendixDictionaryValue={};
+        var filteredArrayAfterAirlineSelectionValue=[];
+        var tempHolderForAllFlightsValue=[];
+        var departureDetailsGlobalValue=[];
+        var arrivalDetailsglobalValue=[];
+        var airportsDeepDetailsGlobalValue={};
+
+        return {
+            getFlightsGlobalContainersParameters:function(){
+                return {
+                getParameteresDictionary:getParameteresDictionaryValue,
+                allFlightsDetail:allFlightsDetailValue,
+                appendixDictionary:appendixDictionaryValue,
+                filteredArrayAfterAirlineSelection:filteredArrayAfterAirlineSelectionValue,
+                tempHolderForAllFlights:tempHolderForAllFlightsValue,
+                departureDetailsGlobal:departureDetailsGlobalValue,
+                arrivalDetailsglobal:arrivalDetailsglobalValue,
+                airportsDeepDetailsGlobal :airportsDeepDetailsGlobalValue
+                }
+            },
+            setGetParameteresDictionaryValueParameter:function(parametersDictionary){
+                getParameteresDictionaryValue=parametersDictionary;
+            },
+            setAllFlightsDetailValueParameter:function(allFlightsDetail){
+                allFlightsDetailValue=allFlightsDetail;
+            },
+            setAppendixDictionaryValueParameter:function(appendixDictionary){
+                appendixDictionaryValue=appendixDictionary;
+            },
+            setFilteredArrayAfterAirlineSelectionValueParameter:function(filteredArrayAfterAirlineSelection){
+                filteredArrayAfterAirlineSelectionValue=filteredArrayAfterAirlineSelection;
+            },
+            setTempHolderForAllFlightsValueParameter:function(tempHolderForAllFlights){
+                tempHolderForAllFlightsValue=tempHolderForAllFlights;
+            },
+            setdepartureDetailsGlobalValueParameter:function(departureDetailsGlobal){
+                departureDetailsGlobalValue=departureDetailsGlobal;
+            },
+            setArrivalDetailsglobalValueParameter:function(arrivalDetailsglobal){
+                arrivalDetailsglobalValue=arrivalDetailsglobal;
+            },
+            setAirportsDeepDetailsGlobalParameter:function(airportsDeepDetailsGlobal){
+                airportsDeepDetailsGlobalValue=airportsDeepDetailsGlobal;
+            }
+
+        }
     });
+
+
+
+
