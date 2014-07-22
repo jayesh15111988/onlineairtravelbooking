@@ -75,3 +75,17 @@ Date.prototype.addMonthsToDate=function(numberOfMonthsToAdd){
     inputDateInJavascriptFormat.setMonth(inputDateInJavascriptFormat.getMonth() + numberOfMonthsToAdd);
     return inputDateInJavascriptFormat;
 }
+
+
+var isTelephoneNumberValid=function(passedTelephoneNumber){
+
+    var telephoneRegex = /^\d{3}-?\d{3}-?\d{4}$/g
+    return telephoneRegex.test(passedTelephoneNumber);
+}
+
+
+var isZipcodeValid=function(passedZipCode){
+
+    var zipCodeRegex=/^\d{5,8}$/g;
+    return (zipCodeRegex.test(passedZipCode));
+}

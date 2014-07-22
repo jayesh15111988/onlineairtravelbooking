@@ -287,15 +287,7 @@ airlinetravelmodule.controller('userupdatecontroller',function($scope){
             'comments':$scope.comments
         }
 
-        console.log("submit pressed -> "+formData );
 
-        console.log($scope.firstname+ " asdas ");
-        console.log($scope.middlename+ " adasd ");
-
-        console.log($scope.accept+" accept");
-        console.log($scope.reject+" reject");
-
-        console.log("this is all data"+formData);
         test(this,formData);
         $scope.sendmessage=function(){
             this.$emit("UPDATE_PARENT", "Updated");
@@ -1052,18 +1044,19 @@ $scope.fieldnames={
             $scope.isEmailsMatchError=false;
             $scope.passwordsnotmatch=false;
             $scope.submitted = true;
-            console.log("Birth date "+ $scope.fieldnames.birthdate);
-
-            var telephoneRegex = /^\d{3}-?\d{3}-?\d{4}$/g
-            var isTelephoneNumber= telephoneRegex.test($scope.fieldnames.telephonenumber);
 
 
-            $scope.telephoneError=!isTelephoneNumber;
+
+
+
+            $scope.telephoneError=!isTelephoneNumberValid($scope.fieldnames.telephonenumber);
 
 
             //Zip code must be all digit and with minimum 5 and maximum 8 digits - that's all
-            var zipCodeRegex=/^\d{5,8}$/g;
-            $scope.fieldnames.isZipcodeInvalid=!(zipCodeRegex.test($scope.fieldnames.zipcode));
+
+
+
+            $scope.fieldnames.isZipcodeInvalid=!isZipcodeValid($scope.fieldnames.zipcode);
 
             $scope.passwordError = $scope.passwordsnotmatch=($scope.fieldnames.password!==$scope.fieldnames.repassword);
 
@@ -1075,9 +1068,9 @@ $scope.fieldnames={
 
 
 
-            console.log("came here before");
+
             // If form is invalid, return and let AngularJS show validation errors.
-            console.log(JSON.stringify(form.$error['date-disabled'])+" Form Error status ");
+
 
             if (form.$invalid || !$scope.fieldnames.didConditionsAccepted ||$scope.fieldnames.isZipcodeInvalid ||$scope.passwordsnotmatch || $scope.telephoneError||$scope.isEmailsMatchError) {
                 return;
@@ -1092,13 +1085,16 @@ $scope.fieldnames={
             }
 
             var fullStreetInfo=$scope.fieldnames.streetname+":"+$scope.fieldnames.streetsubname;
+            //Get timestamp of ours it is then converted to the actual date object
+            //This data is in milliseconds, convert it into seconds
 
+            var birthDateFormatterValue=+($scope.fieldnames.birthdate.valueOf())/1000;
             var formData={
                 'salutation':$scope.fieldnames.salutation,
                 'firstname':$scope.fieldnames.firstname,
                 'middlename':$scope.fieldnames.middlename,
                 'lastname':$scope.fieldnames.lastname,
-                'dateofbirth':$scope.fieldnames.birthdate,
+                'dateofbirth':birthDateFormatterValue,
                 'country':$scope.fieldnames.selcountry,
                 'streetinfo':fullStreetInfo,
                 'zipcode':$scope.fieldnames.zipcode,
@@ -1114,10 +1110,10 @@ $scope.fieldnames={
                 'comments':$scope.fieldnames.comments,
                 'Authorization': authToken
             }
-            console.log(JSON.stringify(formData)+ " *** DEBUG INFO This is data *** ");
 
+console.log("User form data to send "+JSON.stringify(formData));
             var callbackFunctionafterUserCreateupdateOperation=function(responseData){
-
+console.log("Send info to server and close dialogue");
                 $modalInstance.close(isCreatingNewUser);
             }
 
@@ -1217,7 +1213,7 @@ $scope.fieldnames={
 
 
         modalInstance.result.then(function (responseDataAfterUpdate) {
-            console.log("Response data after user operation ->"+ responseDataAfterUserCreateUpdateOperation);
+            console.log("Response data after user operation ->"+ responseDataAfterUpdate);
             //Now we submitted data successful - Show user second page confirming ongoing registration
 
 
@@ -1307,7 +1303,7 @@ function sendUserDataToServer(formData,$scope,isCreatingUser,$http,callBackFunct
 
 
 
-    console.log("this is all we have"+ formData);
+    //xxx
     var updateUrl='http://jayeshkawli.com/airlinetravel/customerdetailsinsert.php';
     if(!isCreatingUser){
         updateUrl='http://jayeshkawli.com/airlinetravel/customerdetailsupdate.php'
@@ -1317,15 +1313,12 @@ function sendUserDataToServer(formData,$scope,isCreatingUser,$http,callBackFunct
 
     var authTokenInfoFromLocalStorage=JSON.parse(localStorage.getItem('authTokenInfo'));
 
-    $http({
-        url: updateUrl,
-        method: "GET",
-        cache:true,
-        params: formData,
-        headers: {'Content-Type': 'application/x-www-form-urlencoded'}
-    }).success(function (data, status, headers, config) {
+    $http.post(updateUrl, formData )
+        .success(function(data) {
 
             var serverResponseData=JSON.stringify(data);
+
+            console.log("Server respnded with data"+serverResponseData);
 
             if(data.success===true){
 
@@ -1335,7 +1328,7 @@ function sendUserDataToServer(formData,$scope,isCreatingUser,$http,callBackFunct
                     localStorage.removeItem('authTokenInfo');
                 }
 
-              //  $scope.$emit('handleEmit', {message: isCreatingUser?1:2});
+
 
                 localStorage.setItem( 'serverloginauthenticationsuccess', serverResponseData);
                 localStorage.setItem('authTokenInfo',JSON.stringify({'authtoken':data.authorization,'emailaddress':data.emailaddress,firstname:data.firstname,tokenexpirytime:addMinutes(new Date(),30)}));
@@ -1343,21 +1336,7 @@ function sendUserDataToServer(formData,$scope,isCreatingUser,$http,callBackFunct
 
 
                 callBackFunctionToExecute(data);
-                /*if(isCreatingUser){
 
-
-
-                    //Not using anymore
-         //           $("#registerview").modal('hide');
-//                    $scope.dismissRegPage();
-
-                }
-                else{
-                    $scope.$broadcast("DISMISS_UPDATE_VIEW","dismissing");
-
-                    //This is not a good practice - To be Fixed But I am getting function undefined Will look into it
-                    $('#userupdateview').modal('hide');
-                }*/
             }
             else if (data.success===false){
 
@@ -1366,8 +1345,8 @@ function sendUserDataToServer(formData,$scope,isCreatingUser,$http,callBackFunct
                 console.log("failture with error "+data.errorinfo);
 
             }
-        }).error(function (data, status, headers, config) {
-
+        }).error(function(errorMessage){
+            console.log(errorMessage+ "this error occurred in the process");
             if(!isCreatingUser){
                 $scope.$broadcast("SET_MESSAGE_HEADER_FAILURE","Failed to update");
             }
@@ -1375,9 +1354,28 @@ function sendUserDataToServer(formData,$scope,isCreatingUser,$http,callBackFunct
                 $scope.messages = 'Your registration information has been unsuccessfully sent! No try again later...';
             }
 
-        });
-}
 
+        });
+
+
+
+    /*
+    $http({
+        url: updateUrl,
+        method: "GET",
+        cache:true,
+        params: formData,
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+    }).success(function (data, status, headers, config) {
+
+
+        }).error(function (data, status, headers, config) {
+
+
+
+        });
+}*/
+}
 
 
 //curl -v  -X GET "https://api.flightstats.com/flex/airports/rest/v1/json/active?appId=9738bcd8&appKey=6c713890a9bf2822f783ab8870332617"
@@ -3301,20 +3299,7 @@ tempAllFlightsData.clear();
         };
 
 
-        /*
-         $.ajax({
-         type: "GET",
-         url: "http://jayeshkawli.com/airlinetravel/flightdetailsinsert.php",
-         cache:true,
-         data: formData,
-         headers: {'Content-Type': 'application/x-www-form-urlencoded'}
-         })
-         .done(function( data) {
-         //console.log( "Data Saved: " + msg );
-         console.log(data);
-         $window.location.href = "#/showavailableflights/0?source="+$scope.searchStringSource+"&destination="+$scope.searchStringDestination+"&direction="+tripDirection+"&leavingdate="+$scope.leavingOut+"&comingindate="+$scope.comingIn+"&numberofdays="+numberOfDaysToRetrieveFlight;
-         });
-         */
+
 
 
         // Commented out for being stubborn
