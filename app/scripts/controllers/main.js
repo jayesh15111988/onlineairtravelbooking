@@ -187,16 +187,16 @@ airlinetravelmodule.controller('userupdatecontroller',function($scope){
 
     $scope.$on("SET_MESSAGE_HEADER_FAILURE", function(event, data){
 
-        console.log("child reset message");
+
         $scope.messages=data;
 
     });
 
-    console.log("Came into update");
 
 
 
-    console.log("Update Controller appeared on the screen");
+
+
 //Pre-populate all fields from Local storage - Here, since user already create an account or logged, in we know that serverloginauthenticationsuccess
     //Will be non-empty! If it is, either user is not logged in or it messed up local stoarge data! In the latter case - What a Douchebag!
 
@@ -445,7 +445,7 @@ currentConfirmationCodeLength-=1;
 
     };
 
-$scope.toRememberSelection=true;
+$scope.toRememberSelection=false;
 
     $scope.toremember=function (){
 
@@ -1088,7 +1088,16 @@ $scope.fieldnames={
             //Get timestamp of ours it is then converted to the actual date object
             //This data is in milliseconds, convert it into seconds
 
-            var birthDateFormatterValue=+($scope.fieldnames.birthdate.valueOf())/1000;
+            var birthDateFormatterValue;
+
+            if($scope.fieldnames.birthdate.indexOf('-')!=-1){
+                birthDateFormatterValue=$scope.fieldnames.birthdate;
+            }
+
+            else{
+            birthDateFormatterValue=+($scope.fieldnames.birthdate.valueOf())/1000;
+            }
+
             var formData={
                 'salutation':$scope.fieldnames.salutation,
                 'firstname':$scope.fieldnames.firstname,
@@ -1237,14 +1246,47 @@ console.log("Send info to server and close dialogue");
 
     var loguserout=function(){
 
+        //It happens only if user is pre logged in
+
         if(localStorage.getItem('authTokenInfo')){
             console.log("User logging out...flush all local storage and empty personal data");
 
             var storedAuthData=JSON.parse(localStorage.getItem('authTokenInfo'));
 
-
+//jjj
 //To add code to send Auth token along with user email address for extra verification
-            $.ajax({
+
+            $http.post("http://www.jayeshkawli.com/airlinetravel/userlogout.php",  { emailaddressofuser: storedAuthData.emailaddress,'Authorization':storedAuthData.authtoken} )
+                .success(function(data) {
+
+                    //Remove all temporary local storage from database and change name to Hello Guest on top nav bar
+
+                    console.log(data + " Message from the server while logging user out ");
+                    localStorage.removeItem('authTokenInfo');
+                    localStorage.removeItem('serverloginauthenticationsuccess');
+
+                    if(localStorage.getItem('serverloginauthenticationerror')){
+                        localStorage.removeItem('serverloginauthenticationerror');
+                    }
+                    $rootScope.$broadcast("userLoginStatusChanged", { loggedIn:false});
+                   // $scope.$apply(function () {
+
+                        $scope.userfirstnamedisplay="Guest"
+                        $scope.loginlogouttext="Login";
+
+
+                   // });
+
+
+                }).error(function(errorMessage){
+
+
+                console.log("Error "+ errorMessage+ " Occurred while logging user out of the account");
+
+                });
+
+
+           /* $.ajax({
                 type: "POST",
                 url: "http://www.jayeshkawli.com/airlinetravel/userlogout.php",
                 cache:true,
@@ -1260,24 +1302,15 @@ console.log("Send info to server and close dialogue");
                     if(localStorage.getItem('serverloginauthenticationerror')){
                         localStorage.removeItem('serverloginauthenticationerror');
                     }
-//Commented out don't know if we are using this function
-
                     $rootScope.$broadcast("userLoginStatusChanged", { loggedIn:false});
                     $scope.$apply(function () {
 
                         $scope.userfirstnamedisplay="Guest"
                         $scope.loginlogouttext="Login";
-                        //$scope.$emit('handleEmit', {message: -1});
+
 
                     });
-
-                    //setUserFirstNameOnDisplay();
-
-
-
-                    console.log( "User successfully logged out: " + msg );
-
-                })
+                })*/
         }
         else{
             console.log("you are not signed in anyways");
@@ -1303,7 +1336,7 @@ function sendUserDataToServer(formData,$scope,isCreatingUser,$http,callBackFunct
 
 
 
-    //xxx
+
     var updateUrl='http://jayeshkawli.com/airlinetravel/customerdetailsinsert.php';
     if(!isCreatingUser){
         updateUrl='http://jayeshkawli.com/airlinetravel/customerdetailsupdate.php'
@@ -1729,6 +1762,9 @@ var  weatherReportController = function ($scope, $modalInstance, airportFullName
             params: {"airportFullName":airportFullNameValue}
         }).success(function (data, status, headers, config) {
 
+
+                console.log(JSON.stringify(data)+ " Weather info received from server ");
+
                 $scope.metar=data['metar'];
                 $scope.tags=data['metar']['tags'];
                 $scope.conditions=data['metar']['conditions'];
@@ -2026,8 +2062,10 @@ if(isBookingNewFlight){
             $scope.flightDetailsSecondPart="One way flight details";
 
             //Storing our details in the local storage
-            if(Object.keys(arrivalDetailsglobal).length>0){
-                localStorage.setItem( 'goingoutdetails', JSON.stringify(arrivalDetailsglobal) );
+            var preStoredArrivalDetails=flightsGlobalContainers.getFlightsGlobalContainersParameters().arrivalDetailsglobal;
+
+            if(Object.keys(preStoredArrivalDetails).length>0){
+                localStorage.setItem( 'goingoutdetails', JSON.stringify(preStoredArrivalDetails) );
             }
 
             $scope.fullTravelDetails.departure=JSON.parse(localStorage.getItem('goingoutdetails'));
@@ -2083,7 +2121,7 @@ if(isBookingNewFlight){
         $http({method: 'GET', url: 'http://www.jayeshkawli.com/airlinetravel/retrievepreviousbookings.php',params:{emailaddress:urlEmailAddress,confirmationcodetoquerywith:urlConfirmationCode}}).
         success(function(data, status, headers, config) {
 
-               //console.log("Failed to get data from server ****  "+JSON.stringify(data));
+               console.log("previous reservation data from server ****  "+JSON.stringify(data));
                if(data.success===false){
                    $window.location.href = "#/";
                    sharedService.setProperty(data.message);
@@ -2826,9 +2864,10 @@ airlinetravelmodule.controller('flightsearchcontroller',function($scope,$http,$w
     //else as a domestic one
     $scope.$watch('destcodenew',function(newCountryCode,oldCountryCode){
 
-
+if($scope.sourcecodenew && newCountryCode){
         var isDomesticFlight = +(!($scope.sourcecodenew.toUpperCase()===newCountryCode.toUpperCase()));
            $scope.setpref(isDomesticFlight);
+}
 
 
     },true);

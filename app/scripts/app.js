@@ -254,6 +254,8 @@ isLoggedInOnConfirmationScreenValue=isLoggedIn;
         }
     });
 
+//Next task - Add all get and post requests as service - Just pass url and post data and get response back instantly
+
 
 
 
