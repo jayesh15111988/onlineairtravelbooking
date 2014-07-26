@@ -3224,7 +3224,8 @@ if($scope.sourcecodenew && newCountryCode){
 
         //This is website to get mappings from ipAddress to approximate location
         $http({
-            url: "https://freegeoip.net/json/",
+            //url: "https://freegeoip.net/json/",
+            url: "http://www.telize.com/geoip",
             method: "GET",
             cache:true,
             params: "",
