@@ -1,3 +1,5 @@
+'use strict';
+
 var countryNames= ["United States of America",
             "Afganistan",
             "Albania",

@@ -1,6 +1,10 @@
+'use strict';
+
+var BASE_URL="http://jayeshkawli.com/airlinetravel/";
+
 function checkNetConnection(){
     var xhr = new XMLHttpRequest();
-    var file = "http://www.jayeshkawli.com/airlinetravel/internet_connection_active_test.php";
+    var file = BASE_URL+"internet_connection_active_test.php";
     var r = Math.round(Math.random() * 10000);
 
     xhr.open('HEAD', file + "?subins=" + r, false);
@@ -88,4 +92,47 @@ var isZipcodeValid=function(passedZipCode){
 
     var zipCodeRegex=/^\d{5,8}$/g;
     return (zipCodeRegex.test(passedZipCode));
+}
+
+
+function invalidServerCommunicationMethod(invalidMethod,message) {
+    this.invalidMethod = invalidMethod;
+    this.message = message;
+}
+
+var sendDataToServer=function(method,remoteURL,dataToSend,$http,successCallBackFunction,errorCallbackFunction){
+
+    if(method==="GET"){
+        $http({
+            url: remoteURL,
+            method: method,
+            cache:true,
+            params: dataToSend?dataToSend:"",
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+        }).success(function (serverResponseDataForGetRequest, status, headers, config) {
+            successCallBackFunction(serverResponseDataForGetRequest);
+
+            }).error(function (data, status, headers, config) {
+                errorCallbackFunction(data,status,headers,config);
+            });
+
+
+
+    }
+    else if(method==="POST"){
+
+        $http.post(remoteURL, dataToSend)
+            .success(function(response) {
+
+             successCallBackFunction(response);
+
+            }).error(function(errorMessage){
+
+                errorCallbackFunction(errorMessage);
+
+            });
+    }
+    else{
+        throw new invalidServerCommunicationMethod(method,"Invalid Method Encountered. Please try request again with valid method");
+    }
 }

@@ -158,7 +158,7 @@ airlinetravelmodule.directive('registerView',function(){
 
 airlinetravelmodule.controller('userupdatecontroller',function($scope){
 
-    console.log("update came");
+
 
     $scope.$on("DISMISS_UPDATE_VIEW", function(event, data){
         $scope.dismissRegPage();
@@ -352,7 +352,7 @@ openRegistrationDialogue(true);
             alert("Session ended requesting new authorization token from server");
             localStorage.removeItem('authTokenInfo');
 
-            $http({
+          /*  $http({
                 url: "http://jayeshkawli.com/airlinetravel/generatenewtoken.php",
                 method: "GET",
                 cache:true,
@@ -360,24 +360,45 @@ openRegistrationDialogue(true);
                 headers: {'Content-Type': 'application/x-www-form-urlencoded'}
             }).success(function (data, status, headers, config) {
 
-                    console.log(data+ "whole data we have");
-
                     if(data.success==true){
 
                         data.tokenexpirytime=addMinutes(new Date(),30);
                         data.firstname=previousFirstName;
-
                         localStorage.setItem('authTokenInfo',JSON.stringify(data));
-setUserFirstNameOnDisplay();
+                        setUserFirstNameOnDisplay();
                     }
                     else if(data.success==false){
                         loguserinwithmodalview();
-                       // $('#loginview').modal('show');
+
                     }
                 }).error(function (data, status, headers, config) {
                     console.log("Token regenration failer with response: "+ data+ "And status code "+status);
 
                 });
+
+*/
+            sendDataToServer("GET",BASE_URL+'generatenewtoken.php',prevAuthData,$http,function(serverResponseData){
+                if(serverResponseData.success==true){
+
+                    serverResponseData.tokenexpirytime=addMinutes(new Date(),30);
+                    serverResponseData.firstname=previousFirstName;
+                    localStorage.setItem('authTokenInfo',JSON.stringify(serverResponseData));
+                    setUserFirstNameOnDisplay();
+                }
+                else if(serverResponseData.success==false){
+                    loguserinwithmodalview();
+
+                }
+
+            },function(failureMessage,status,headers,config){
+                console.log("Token regenration failer with response: "+ failureMessage+ " And status code "+status);
+
+
+            });
+
+
+
+
         }
         else{
             console.log("Sesion in progress");
@@ -520,7 +541,7 @@ $scope.toRememberSelection=false;
                 authTokenInfoFromLocalStorage=JSON.parse(localStorage.getItem('authTokenInfo'));
             }
             $scope.usernametodisplay=authTokenInfoFromLocalStorage.firstname;
-            $http({
+         /*   $http({
                 url: 'http://jayeshkawli.com/airlinetravel/userlogin.php',
                 method: "GET",
                 cache:true,
@@ -533,10 +554,7 @@ $scope.toRememberSelection=false;
                     if(localStorage.getItem('userauthinfo')){
                         localStorage.removeItem('userauthinfo');
                     }
-
                     success=true;
-
-
                     console.log("To save credential on local machine "+toSaveCredentialsOnDevice);
 
                     if(toSaveCredentialsOnDevice===true){
@@ -550,57 +568,86 @@ $scope.toRememberSelection=false;
                             localStorage.removeItem('authTokenInfo');
 
                         }
-                        //Emit the message that user is successfully logged in this is useful on details controller where user
-                        // is ready to finalize his selection
-
                         flightsGlobalParameters.setIsLoggedInParameter(true);// isLoggedInOnConfirmationScreen=true;
                         localStorage.setItem( 'serverloginauthenticationsuccess', serverResponseData);
                         localStorage.setItem('authTokenInfo',JSON.stringify({authtoken:data.authorization,emailaddress:data.emailaddress,firstname:data.firstname,tokenexpirytime:addMinutes(new Date(),30)}));
-
-
                         setUserFirstNameOnDisplay();
 
                         //Now if user is on main flight details page, just update button status in order to allow
                         //change in login status
                         $rootScope.$broadcast("userLoginStatusChanged", { loggedIn:true});
-
-                        //$scope.messages = 'Your login information has been successfully sent! Congratulations...';
-                        //$modalInstance.dismiss('cancel'); - Not using it because user actually logged into the system
-                        //Not actually necessary - User is refreshing the page anyways
                         $modalInstance.close(data);
-
-                        //To do warning
-                        //Send notification through rootscope to set flight details page with changed button attributes if
-                        //Login is successful
-                        //to be Continued
-        //                $window.location.reload();
                     }
                     else if (data.success===false){
                         $scope.errorMessage=data.errorinfo
                         $scope.errorResolutionMessage = "Please select forgot password option if you have forgotten your email address";
-
-
-
                         setUserFirstNameOnDisplay();
-
-
                         localStorage.setItem( 'serverloginauthenticationerror', serverResponseData);
                     }
                 })
                 .error(function (data, status, headers, config) {
-                    //$modalInstance.close(data);
-                    //$('#loginview').modal('hide');
+
                     $scope.errorMessage="Login Failed with an error. Please try again "+angular.toJson(data);
                     localStorage.setItem( 'serverloginerror', JSON.stringify(data));
                     $scope.messages = 'Your registration information has been unsuccessfully sent! No try again later...';
 
-                });
+                });*/
+
+
+            sendDataToServer("GET",BASE_URL+'userlogin.php',userLoginInfo,$http,function(serverResponseDataForLogin){
+
+                $scope.loginemail=userLoginInfo.emailid;
+                $scope.loginpassword=userLoginInfo.password;
+                //User's email addres and password for local stoarge
+                if(localStorage.getItem('userauthinfo')){
+                    localStorage.removeItem('userauthinfo');
+                }
+                success=true;
+                console.log("To save credential on local machine "+toSaveCredentialsOnDevice);
+
+                if(toSaveCredentialsOnDevice===true){
+                    localStorage.setItem('userauthinfo',JSON.stringify(userLoginInfo));
+                }
+                var serverResponseData = JSON.stringify(serverResponseDataForLogin);
+                if(serverResponseDataForLogin.success===true){
+                    if(localStorage.getItem('serverloginauthenticationsuccess')){
+
+                        localStorage.removeItem('serverloginauthenticationsuccess');
+                        localStorage.removeItem('authTokenInfo');
+
+                    }
+                    flightsGlobalParameters.setIsLoggedInParameter(true);// isLoggedInOnConfirmationScreen=true;
+                    localStorage.setItem( 'serverloginauthenticationsuccess', serverResponseData);
+                    localStorage.setItem('authTokenInfo',JSON.stringify({authtoken:serverResponseDataForLogin.authorization,emailaddress:serverResponseDataForLogin.emailaddress,firstname:serverResponseDataForLogin.firstname,tokenexpirytime:addMinutes(new Date(),30)}));
+                    setUserFirstNameOnDisplay();
+
+                    //Now if user is on main flight details page, just update button status in order to allow
+                    //change in login status
+                    $rootScope.$broadcast("userLoginStatusChanged", { loggedIn:true});
+                    $modalInstance.close(serverResponseDataForLogin);
+                }
+
+                else if (serverResponseDataForLogin.success===false){
+                    $scope.errorMessage=serverResponseDataForLogin.errorinfo
+                    $scope.errorResolutionMessage = "Please select forgot password option if you have forgotten your email address";
+                    setUserFirstNameOnDisplay();
+                    localStorage.setItem( 'serverloginauthenticationerror', serverResponseData);
+                }
+
+            },function(failureMessage,status,headers,config){
+                $scope.errorMessage="Login Failed with an error. Please try again "+angular.toJson(failureMessage);
+                localStorage.setItem( 'serverloginerror', JSON.stringify(failureMessage));
+                $scope.messages = 'Your registration information has been unsuccessfully sent! No try again later...';
+
+
+            });
+
+
+
         }
 
 
-        //$scope.ok = function () {
-           // $modalInstance.close($scope.selected.item);
-        //};
+
 
         $scope.cancel = function () {
             $modalInstance.dismiss('cancel');
@@ -761,12 +808,12 @@ $scope.toShowErrorOnForgotPassword=false;
     $scope.sendpasswordtouser=function(form,emailorusername){
 
         $scope.toShowErrorOnForgotPassword=true;
-console.log(form.$invalid + "Is valid or not");
+console.log(form.$invalid + " Form Validation status ");
         if(form.$invalid){
             return;
         }
 //Now make call to remote script to send an email to user with forgotten password information
-
+/*
         $http.post('http://www.jayeshkawli.com/airlinetravel/sendforgotpasswordtoemail.php', { emailorusernametosend: emailorusername })
             .success(function(response) {
 
@@ -776,9 +823,16 @@ console.log(form.$invalid + "Is valid or not");
         }).error(function(errorMessage){
               console.log("Error Occurred "+ errorMessage);
 
+            });*/
+
+        sendDataToServer("POST",BASE_URL+'sendforgotpasswordtoemail.php',
+            { emailorusernametosend: emailorusername }
+            ,$http,function(successfulResponse){
+                console.log(" Successful Response "+successfulResponse);
+                $scope.messageFromServer=successfulResponse.message;
+            },function(failureMessage){
+                console.log("Error Occurred "+ failureMessage);
             });
-
-
 
 
 
@@ -1253,10 +1307,9 @@ console.log("Send info to server and close dialogue");
 
             var storedAuthData=JSON.parse(localStorage.getItem('authTokenInfo'));
 
-//jjj
 //To add code to send Auth token along with user email address for extra verification
 
-            $http.post("http://www.jayeshkawli.com/airlinetravel/userlogout.php",  { emailaddressofuser: storedAuthData.emailaddress,'Authorization':storedAuthData.authtoken} )
+           /* $http.post("http://www.jayeshkawli.com/airlinetravel/userlogout.php",  { emailaddressofuser: storedAuthData.emailaddress,'Authorization':storedAuthData.authtoken} )
                 .success(function(data) {
 
                     //Remove all temporary local storage from database and change name to Hello Guest on top nav bar
@@ -1269,13 +1322,13 @@ console.log("Send info to server and close dialogue");
                         localStorage.removeItem('serverloginauthenticationerror');
                     }
                     $rootScope.$broadcast("userLoginStatusChanged", { loggedIn:false});
-                   // $scope.$apply(function () {
+
 
                         $scope.userfirstnamedisplay="Guest"
                         $scope.loginlogouttext="Login";
 
 
-                   // });
+
 
 
                 }).error(function(errorMessage){
@@ -1283,6 +1336,29 @@ console.log("Send info to server and close dialogue");
 
                 console.log("Error "+ errorMessage+ " Occurred while logging user out of the account");
 
+                });*/
+
+            sendDataToServer("POST",BASE_URL+'userlogout.php',
+                { emailaddressofuser: storedAuthData.emailaddress,'Authorization':storedAuthData.authtoken},$http
+                ,function(successfulResponse){
+                    //Remove all temporary local storage from database and change name to Hello Guest on top nav bar
+
+                    console.log(successfulResponse + " Message from the server while logging user out ");
+                    localStorage.removeItem('authTokenInfo');
+                    localStorage.removeItem('serverloginauthenticationsuccess');
+
+                    if(localStorage.getItem('serverloginauthenticationerror')){
+                        localStorage.removeItem('serverloginauthenticationerror');
+                    }
+                    $rootScope.$broadcast("userLoginStatusChanged", { loggedIn:false});
+
+
+                    $scope.userfirstnamedisplay="Guest"
+                    $scope.loginlogouttext="Login";
+
+
+                },function(failureMessage){
+                    console.log("Error "+ failureMessage+ " Occurred while logging user out of the account");
                 });
 
 
@@ -1337,46 +1413,31 @@ function sendUserDataToServer(formData,$scope,isCreatingUser,$http,callBackFunct
 
 
 
-    var updateUrl='http://jayeshkawli.com/airlinetravel/customerdetailsinsert.php';
+    var updateUrl=BASE_URL+'customerdetailsinsert.php';
     if(!isCreatingUser){
-        updateUrl='http://jayeshkawli.com/airlinetravel/customerdetailsupdate.php'
+        updateUrl=BASE_URL+'customerdetailsupdate.php'
     }
 
 
 
     var authTokenInfoFromLocalStorage=JSON.parse(localStorage.getItem('authTokenInfo'));
 
-    $http.post(updateUrl, formData )
+   /* $http.post(updateUrl, formData )
         .success(function(data) {
 
             var serverResponseData=JSON.stringify(data);
-
-            console.log("Server respnded with data"+serverResponseData);
-
             if(data.success===true){
-
                 if(localStorage.getItem('serverloginauthenticationsuccess')){
-
                     localStorage.removeItem('serverloginauthenticationsuccess');
                     localStorage.removeItem('authTokenInfo');
                 }
-
-
-
                 localStorage.setItem( 'serverloginauthenticationsuccess', serverResponseData);
                 localStorage.setItem('authTokenInfo',JSON.stringify({'authtoken':data.authorization,'emailaddress':data.emailaddress,firstname:data.firstname,tokenexpirytime:addMinutes(new Date(),30)}));
-
-
-
                 callBackFunctionToExecute(data);
-
             }
             else if (data.success===false){
-
                 alert("User Creation failed with an error -> "+data.errorinfo);
                 localStorage.setItem( 'serverregistrationerror', serverResponseData);
-                console.log("failture with error "+data.errorinfo);
-
             }
         }).error(function(errorMessage){
             console.log(errorMessage+ "this error occurred in the process");
@@ -1388,9 +1449,38 @@ function sendUserDataToServer(formData,$scope,isCreatingUser,$http,callBackFunct
             }
 
 
+        });*/
+
+
+
+    sendDataToServer("POST",updateUrl,
+        formData,$http
+        ,function(successfulResponse){
+
+            var serverResponseData=JSON.stringify(successfulResponse);
+            if(successfulResponse.success===true){
+                if(localStorage.getItem('serverloginauthenticationsuccess')){
+                    localStorage.removeItem('serverloginauthenticationsuccess');
+                    localStorage.removeItem('authTokenInfo');
+                }
+                localStorage.setItem( 'serverloginauthenticationsuccess', serverResponseData);
+                localStorage.setItem('authTokenInfo',JSON.stringify({'authtoken':successfulResponse.authorization,'emailaddress':successfulResponse.emailaddress,firstname:successfulResponse.firstname,tokenexpirytime:addMinutes(new Date(),30)}));
+                callBackFunctionToExecute(successfulResponse);
+            }
+            else if (data.success===false){
+                alert("User Creation failed with an error -> "+data.errorinfo);
+                localStorage.setItem( 'serverregistrationerror', serverResponseData);
+            }
+
+        },function(failureMessage){
+            console.log(failureMessage+ "this error occurred in the process");
+            if(!isCreatingUser){
+                $scope.$broadcast("SET_MESSAGE_HEADER_FAILURE","Failed to update");
+            }
+            else{
+                $scope.messages = 'Your registration information has been unsuccessfully sent! No try again later...';
+            }
         });
-
-
 
     /*
     $http({
@@ -1646,7 +1736,7 @@ console.log(typeof items + " type of email address info ");
         $scope.airportFullName=airportFSCodeValue[1];
 
         //Load all data from php script based on the airport FS code in picture
-        $http({
+        /*$http({
             url: 'http://jayeshkawli.com/airlinetravel/getdelayindexbyparameter.php',
             method: "GET",
             cache:true,
@@ -1660,8 +1750,18 @@ console.log(typeof items + " type of email address info ");
 
 
 
-            });
+            });*/
 
+
+
+        sendDataToServer("GET",BASE_URL+'getdelayindexbyparameter.php',{"airportFSCode":airportFSCodeValue[0]},$http,function(serverResponseData){
+            $scope.delayIndexParameters = serverResponseData['delayIndexes'][0];
+
+        },function(failureMessage,status,headers,config){
+            console.log("Server request failed with message "+ failureMessage);
+
+
+        });
 
 
         //Empty implementation - Not needed for now
@@ -1754,7 +1854,7 @@ var  weatherReportController = function ($scope, $modalInstance, airportFullName
     }
 
     //Load all data from php script based on the airport FS code in picture
-        $http({
+  /*      $http({
             url: 'http://jayeshkawli.com/airlinetravel/getweatherbyairportname.php',
             method: "GET",
             cache:true,
@@ -1762,47 +1862,51 @@ var  weatherReportController = function ($scope, $modalInstance, airportFullName
             params: {"airportFullName":airportFullNameValue}
         }).success(function (data, status, headers, config) {
 
-
                 console.log(JSON.stringify(data)+ " Weather info received from server ");
-
                 $scope.metar=data['metar'];
                 $scope.tags=data['metar']['tags'];
                 $scope.conditions=data['metar']['conditions'];
-
-
                 $scope.zoneForecast=data['zoneForecast'];
-
                 $scope.subsequentDaysInfo=data['zoneForecast']['dayForecasts'];
-
-
                 $scope.individualDayForecastValue.airline=$scope.subsequentDaysInfo[0]['day'];
-
                 $scope.areaInformation=$scope.zoneForecast['header'];
-
                 setupWeatherInfoForSpecificDayWithData($scope.subsequentDaysInfo[0]);
 
-
             //Now fill in lookup object with name as key
-
                 for(var individualDayWeatherObject in $scope.subsequentDaysInfo){
-
                     var tempObjectUnderSelection=$scope.subsequentDaysInfo[individualDayWeatherObject];
-
-
                     temporaryLookupMapping[tempObjectUnderSelection['day']]=tempObjectUnderSelection;
                 }
-
-
-
-
-                console.log(data+ "returned by the server");
-
-
             }).error(function (data, status, headers, config) {
 
 
 
             });
+
+*/
+    sendDataToServer("GET",BASE_URL+'getweatherbyairportname.php',{"airportFullName":airportFullNameValue},$http,function(serverResponseData){
+
+        console.log(JSON.stringify(serverResponseData)+ " Weather info received from server ");
+        $scope.metar=serverResponseData['metar'];
+        $scope.tags=serverResponseData['metar']['tags'];
+        $scope.conditions=serverResponseData['metar']['conditions'];
+        $scope.zoneForecast=serverResponseData['zoneForecast'];
+        $scope.subsequentDaysInfo=serverResponseData['zoneForecast']['dayForecasts'];
+        $scope.individualDayForecastValue.airline=$scope.subsequentDaysInfo[0]['day'];
+        $scope.areaInformation=$scope.zoneForecast['header'];
+        setupWeatherInfoForSpecificDayWithData($scope.subsequentDaysInfo[0]);
+
+        //Now fill in lookup object with name as key
+        for(var individualDayWeatherObject in $scope.subsequentDaysInfo){
+            var tempObjectUnderSelection=$scope.subsequentDaysInfo[individualDayWeatherObject];
+            temporaryLookupMapping[tempObjectUnderSelection['day']]=tempObjectUnderSelection;
+        }
+
+    },function(failureMessage,status,headers,config){
+        console.log("Server request failed with message "+ failureMessage);
+
+
+    });
 
 
     $scope.forecastDayChanged=function(){
@@ -1888,31 +1992,48 @@ isInputValid=isInputValidFromUser;
 
                 console.log("Is booking new flight "+dataToSendForBookingConfirmation);
 if(isBookingNewFlight){
+///xxx
 
-            $http.post('http://www.jayeshkawli.com/airlinetravel/finalbookingconfirmation.php', { bookinginformation: dataToSendForBookingConfirmation })
+
+
+    sendDataToServer("POST",BASE_URL+'finalbookingconfirmation.php',
+        { bookinginformation: dataToSendForBookingConfirmation },$http
+        ,function(successfulResponse){
+            console.log(" Successful Response "+successfulResponse);
+    },function(failureMessage){
+            console.log("Error Occurred "+ failureMessage);
+        });
+         /*   $http.post('http://www.jayeshkawli.com/airlinetravel/finalbookingconfirmation.php', { bookinginformation: dataToSendForBookingConfirmation })
                 .success(function(response) {
 
-                console.log(response+ " Successful Response ");
+
 
             }).error(function(errorMessage){
 
-                    console.log("Error Occurred "+ errorMessage);
 
-                });
+
+                });*/
         }
                 else{
 
-//console.log("Code "+urlConfirmationCode+"And email address "+data1[0]);
-    $http.post('http://www.jayeshkawli.com/airlinetravel/sendpdffiletoemail.php', { emailaddresses: data1[0],confirmationcode:urlConfirmationCode })
+    sendDataToServer("POST",BASE_URL+'sendpdffiletoemail.php',
+        { emailaddresses: data1[0],confirmationcode:urlConfirmationCode },$http
+        ,function(successfulResponse){
+
+            console.log(" Successful Sent the pdf file on email addresses "+successfulResponse);
+        },function(failureMessage){
+            console.log("Error Occurred "+ failureMessage);
+        });
+    /*$http.post('http://www.jayeshkawli.com/airlinetravel/sendpdffiletoemail.php', { emailaddresses: data1[0],confirmationcode:urlConfirmationCode })
         .success(function(response) {
 
-        console.log(response+ " Successful Sent the pdf file on email addresses ");
+
 
     }).error(function(errorMessage){
 
            console.log("Error Occurred "+ errorMessage);
 
-        });
+        });*/
 }
 
 
@@ -2118,7 +2239,7 @@ if(isBookingNewFlight){
 
 
         $scope.showreturningflights=true;
-        $http({method: 'GET', url: 'http://www.jayeshkawli.com/airlinetravel/retrievepreviousbookings.php',params:{emailaddress:urlEmailAddress,confirmationcodetoquerywith:urlConfirmationCode}}).
+        $http({method: 'GET', url: BASE_URL+'retrievepreviousbookings.php',params:{emailaddress:urlEmailAddress,confirmationcodetoquerywith:urlConfirmationCode}}).
         success(function(data, status, headers, config) {
 
                console.log("previous reservation data from server ****  "+JSON.stringify(data));
@@ -2732,9 +2853,9 @@ var previouslyStoredAirportDeepDetails=flightsGlobalContainers.getFlightsGlobalC
     }
 
     var getFlightFromGivenParameters=function(source,destination,leavingdate,comingindate,contype,numberofdays){
-        console.log("Another Web Request with URL "+"http://jayeshkawli.com/airlinetravel/flightsearchapi.php?source="+source+"&destination="+destination+"&leavingdate="+leavingdate+"&comingindate="+comingindate+"&numberofdays="+numberofdays+"&connectiontype="+contype+"&airlinepreferred="+flightsGlobalParameters.getFlightSearchParameters().preferredAirlinesName);
+        console.log("Another Web Request with URL "+BASE_URL+"flightsearchapi.php?source="+source+"&destination="+destination+"&leavingdate="+leavingdate+"&comingindate="+comingindate+"&numberofdays="+numberofdays+"&connectiontype="+contype+"&airlinepreferred="+flightsGlobalParameters.getFlightSearchParameters().preferredAirlinesName);
         var start = new Date().getTime();
-        $http({method: 'GET', url: 'http://jayeshkawli.com/airlinetravel/flightsearchapi.php?source='+source+"&destination="+destination+"&leavingdate="+leavingdate+"&comingindate="+comingindate+"&numberofdays="+numberofdays+"&connectiontype="+contype+"&airlinepreferred="+flightsGlobalParameters.getFlightSearchParameters().preferredAirlinesName,
+        $http({method: 'GET', url: BASE_URL+'flightsearchapi.php?source='+source+"&destination="+destination+"&leavingdate="+leavingdate+"&comingindate="+comingindate+"&numberofdays="+numberofdays+"&connectiontype="+contype+"&airlinepreferred="+flightsGlobalParameters.getFlightSearchParameters().preferredAirlinesName,
             params: {}
         }).
             success(function(flightslist, status, headers, config) {
@@ -2873,7 +2994,7 @@ if($scope.sourcecodenew && newCountryCode){
     },true);
 
     //Get list of all active airports and populate it in a $scope array variable
-    $http({
+    /*$http({
         url: 'http://jayeshkawli.com/airlinetravel/getallactiveairports.php',
         method: "GET",
         cache:true,
@@ -2887,7 +3008,20 @@ if($scope.sourcecodenew && newCountryCode){
 
         }).error(function (data, status, headers, config) {
 
-        });
+        });*/
+
+    sendDataToServer("GET",BASE_URL+'getallactiveairports.php',{},$http,function(serverResponseData){
+        console.log(serverResponseData);
+        $scope.preferredairlineslist=serverResponseData;
+        $scope.preferredairlineslist.unshift({'name':"All Airlines","iata":"","icao":""});
+        $scope.preferredairline=$scope.preferredairlineslist[0];
+
+    },function(failureMessage,status,headers,config){
+        console.log("Server request failed with message "+ failureMessage);
+
+
+    });
+
 
     if(localStorage.getItem('recentlyReturnedFlightData')){
         localStorage.removeItem('recentlyReturnedFlightData');
@@ -3207,13 +3341,23 @@ if($scope.sourcecodenew && newCountryCode){
 
 
     function sendIPAddressAndGeographicalInformationToServer(geographicalInformationData){
-        $http.post('http://www.jayeshkawli.com/airlinetravel/iptogeographicalmappings.php', { ipAddressInformation: geographicalInformationData }
+
+
+        /*$http.post('http://www.jayeshkawli.com/airlinetravel/iptogeographicalmappings.php', { ipAddressInformation: geographicalInformationData }
         )
             .success(function(response) {
                 console.log("User Geographical Infromation successfully stored in the database with Response "+ response);
 
             }).error(function(errorMessage){
                 console.log("Error Occurred "+ errorMessage);
+            });*/
+
+        sendDataToServer("POST",BASE_URL+'iptogeographicalmappings.php',
+            { ipAddressInformation: geographicalInformationData },$http
+            ,function(successfulResponse){
+                console.log("User Geographical Infromation successfully stored in the database with Response "+successfulResponse);
+            },function(failureMessage){
+                console.log("Error Occurred "+ failureMessage);
             });
     }
 
@@ -3223,7 +3367,7 @@ if($scope.sourcecodenew && newCountryCode){
 
 
         //This is website to get mappings from ipAddress to approximate location
-        $http({
+       /* $http({
             //url: "https://freegeoip.net/json/",
             url: "http://www.telize.com/geoip",
             method: "GET",
@@ -3244,6 +3388,21 @@ if($scope.sourcecodenew && newCountryCode){
                 console.log("Failed to get data from server with Error "+data+"Status "+status+"And Configuration "+config);
 
             });
+*/
+
+
+        sendDataToServer("GET",'http://www.telize.com/geoip',{},$http,function(geographicalData){
+            geographicalData['userEmailAddress']=storedLocalAuthTokenInfo?storedLocalAuthTokenInfo.emailaddress:"Anonymous";
+
+
+            sendIPAddressAndGeographicalInformationToServer(geographicalData);
+
+        },function(failureMessage,status,headers,config){
+            console.log("Failed to get data from server with Error "+data+"Status "+status+"And Configuration "+config);
+
+
+        });
+
     }
 
 
@@ -3343,7 +3502,7 @@ tempAllFlightsData.clear();
 
 
         // Commented out for being stubborn
-        $http({
+  /*      $http({
             url: 'http://jayeshkawli.com/airlinetravel/flightdetailsinsert.php',
             method: "GET",
             cache:true,
@@ -3356,6 +3515,17 @@ tempAllFlightsData.clear();
             }).error(function (data, status, headers, config) {
                 $scope.status = status;
             });
+*/
+
+        sendDataToServer("GET",BASE_URL+'flightdetailsinsert.php',formData,$http,function(serverResponseData){
+            console.log(serverResponseData);
+            $window.location.href = "#/showavailableflights/0?source="+$scope.searchStringSource+"&destination="+$scope.searchStringDestination+"&direction="+flightsGlobalParameters.getFlightSearchParameters().tripDirection+"&leavingdate="+$scope.leavingOut+"&comingindate="+$scope.comingIn+"&numberofdays="+flightsGlobalParameters.getFlightSearchParameters().numberOfDaysToRetrieveFlight;
+        },function(failureMessage,status,headers,config){
+            console.log("Server request failed with message "+ failureMessage);
+            $scope.status = status;
+
+        });
+
     }
 
     $scope.searchByCriteriaButtonPressed=function(val){
@@ -3445,24 +3615,21 @@ tempAllFlightsData.clear();
         if(typeof countryCode ==="undefined"){
             countryCode="";
         }
-        var baseUrl='http://jayeshkawli.com/airlinetravel/airportsapi.php?';
+        var baseUrl=BASE_URL+'airportsapi.php?';
 
 
 
         baseUrl=baseUrl+'searchString='+searchStringToPass;
 
         var start = new Date().getTime();
-        $http({method: 'GET', url: 'http://jayeshkawli.com/airlinetravel/airportsapi.php?searchstring='+searchStringToPass+"&countryCode="+countryCode,
+
+  /*      $http({method: 'GET', url: 'http://jayeshkawli.com/airlinetravel/airportsapi.php?searchstring='+searchStringToPass+"&countryCode="+countryCode,
             params: {}
         }).
             success(function(airportslist, status, headers, config) {
 
                 $scope.sourcevisible=false;
-
                 $scope.destinationvisible=false;
-
-
-
                 $scope.movies=airportslist;
                 $scope.sam="";
                 var end = new Date().getTime();
@@ -3471,9 +3638,21 @@ tempAllFlightsData.clear();
 
             }).
             error(function(data, status, headers, config) {
-
                 console.log("Error Occurred With response "+data+"And status message"+ status);
-                // called asynchronously if an error occurs
-                // or server returns response with an error status.
             });
+*/
+        sendDataToServer("GET",BASE_URL+'airportsapi.php?searchstring='+searchStringToPass+"&countryCode="+countryCode,{},$http,function(airportslist){
+            $scope.sourcevisible=false;
+            $scope.destinationvisible=false;
+            $scope.movies=airportslist;
+            $scope.sam="";
+            var end = new Date().getTime();
+            var time = end - start;
+            console.log('Execution time: ' + time);
+
+        },function(failureMessage,status,headers,config){
+            console.log("Error Occurred With response "+failureMessage+" And status message "+ status);
+
+
+        });
     }});
