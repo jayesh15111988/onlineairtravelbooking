@@ -3,6 +3,7 @@
     <!-- We are hiding this table when user has requested one way flight. If it's two way flight,we are
     shwoing outbound flight details in this space -->
 
+    <div data-ng-show="showPreviousBookingDetails">
 <div ng-show="showbookingdetails">
 Passenger Details :
 
@@ -277,5 +278,11 @@ Current Prevailing Conditions:{{tags[2]['value']?tags[2]['value']:"N/A"}}<br/>
 
 
 
+</div>
+
+<div data-ng-show="toShowPlaceHolder">
+    seems you dont have valid reservation details. Please try again from top right
+    menu bar by entering valid email id and reservation retrieval code
+    </div>
 
 </div>

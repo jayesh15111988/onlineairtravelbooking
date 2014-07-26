@@ -134,7 +134,7 @@
     background-color: #269abc;
     text-decoration-color: aliceblue;
     width:400px;
-    height:250px;
+    height:270px;
 
 }
 
@@ -233,6 +233,7 @@
 <script src="scripts/controllers/main.js"></script>
 <script src="scripts/controllers/sample.js"></script>
 <script src="scripts/controllers/constants.js"></script>
+<script src="scripts/visibility.js"></script>
 <!-- endbuild -->
 
 <!--For X-Editable plugin for popover and tooltips -->
@@ -715,7 +716,7 @@ Not needed for now
                         <label class='col-sm-2 control-label'>Confirmation Code</label>
 
                         <div class='col-sm-8' ng-class="{ 'has-error' : userForm.recordlocator.$invalid && !userForm.recordlocator.$pristine }">
-                            <input required='true' ng-minlength='7' ng-maxlength='7' class='col-sm-offset-2 form-control' ng-model='recordlocator' ng-keydown="keyPressed($event)" ng-required="true" placeholder='Confirmation Code'>
+                            <input required='true' class='col-sm-offset-2 form-control' ng-model='recordlocator' ng-keydown="keyPressed($event)" ng-required="true" placeholder='Confirmation Code'>
                         </div>
                         <p ng-show="confirmationCodeLengthErrorDisplay">Confirmation Code must be exactly 7 digits long</p>
 
@@ -738,7 +739,7 @@ Not needed for now
                     </div>
 
 
-                                    <button type='submit'  ng-disabled="userForm.$invalid"    class='btn btn-primary retrieve-reservation-subclass'>Retrieve Reservation</button>
+                                    <button type='submit'  ng-disabled="toDisableSubmitButton"    class='btn btn-primary retrieve-reservation-subclass'>Retrieve Reservation</button>
 
 
 

@@ -5,7 +5,7 @@ var BASE_URL="http://jayeshkawli.com/airlinetravel/";
 function checkNetConnection(){
     var xhr = new XMLHttpRequest();
     var file = BASE_URL+"internet_connection_active_test.php";
-    var r = Math.round(Math.random() * 10000);
+    var r = Math.round(Math.random() * 100);
 
     xhr.open('HEAD', file + "?subins=" + r, false);
 
