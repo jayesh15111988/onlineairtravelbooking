@@ -132,6 +132,15 @@ var sendDataToServer=function(method,remoteURL,dataToSend,$http,successCallBackF
 
             });
     }
+    else if(method==="JSONP"){
+        $http({method: method, url: remoteURL, cache: true}).
+            success(function(response, status) {
+                successCallBackFunction(response);
+            }).
+            error(function(failureMessage, status) {
+                errorCallbackFunction(failureMessage);
+            });
+    }
     else{
         throw new invalidServerCommunicationMethod(method,"Invalid Method Encountered. Please try request again with valid method");
     }

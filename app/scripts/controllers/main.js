@@ -5,9 +5,6 @@
 
 
 
-
-
-
 var airlinetravelmodule=angular.module('airtravelbookingappApp');
 
 airlinetravelmodule.controller('MainCtrl', function ($scope) {
@@ -1560,6 +1557,7 @@ airlinetravelmodule.controller('DetailController',function($scope,$routeParams,$
 
     $scope.showPreviousBookingDetails=false;
     $scope.toShowPlaceHolder=false;
+
     var isBookingNewFlight=false;
     isBookingNewFlight = $routeParams.id;
     $scope.showbookingdetails=!isBookingNewFlight;
@@ -1906,7 +1904,7 @@ var  weatherReportController = function ($scope, $modalInstance, airportFullName
 */
     sendDataToServer("GET",BASE_URL+'getweatherbyairportname.php',{"airportFullName":airportFullNameValue},$http,function(serverResponseData){
 
-        //console.log(JSON.stringify(serverResponseData)+ " Weather info received from server ");
+
         $scope.metar=serverResponseData['metar'];
         $scope.tags=serverResponseData['metar']['tags'];
         $scope.conditions=serverResponseData['metar']['conditions'];
@@ -2257,13 +2255,14 @@ if(isBookingNewFlight){
     //We have user with appropriate code and we will user it to retrieve stored reservation
 
     function retrieveTripDetailsFromBackEnd(){
-//xxx
+
 
 
         $scope.showreturningflights=true;
 
         $http({method: 'GET', url: BASE_URL+'retrievepreviousbookings.php',params:{emailaddress:urlEmailAddress,confirmationcodetoquerywith:urlConfirmationCode}}).
         success(function(data, status, headers, config) {
+                $scope.loadingToDisplay=false;
 
                //console.log("previous reservation data from server ****  "+JSON.stringify(data));
                if(data.success===false){
@@ -2346,6 +2345,7 @@ if(isBookingNewFlight){
             // when the response is available
         }).
         error(function(data, status, headers, config) {
+                $scope.loadingToDisplay=false;
             console.log("Error Occurred as following "+ data+ "With status "+status);
             // called asynchronously if an error occurs
             // or server returns response with an error status.
@@ -2357,7 +2357,7 @@ if(isBookingNewFlight){
    setupTripDetailsForOneWayFlight();
     }
     else{
-
+        $scope.loadingToDisplay=true;
         //Retrieve backend booking details from database using confirmation code and user's email address
         retrieveTripDetailsFromBackEnd();
     }
@@ -2845,10 +2845,10 @@ var previouslyStoredFlightSearchParameters=flightsGlobalContainers.getFlightsGlo
 //sdfsd
         for(var i =0;i<airportsArrayLength;i++){
             var airportCode=airportsArray[i].iata;
-            console.log(airportCode);
+            //console.log(airportCode);
             $scope.airportsDeepDetails[airportCode]=airportsArray[i];
 
-            console.log($scope.airportsDeepDetails[airportCode]);
+            //console.log($scope.airportsDeepDetails[airportCode]);
         }
          //airportsDeepDetailsGlobal=$scope.airportsDeepDetails;
         flightsGlobalContainers.setAirportsDeepDetailsGlobalParameter($scope.airportsDeepDetails);
@@ -3035,7 +3035,7 @@ if($scope.sourcecodenew && newCountryCode){
         });*/
 
     sendDataToServer("GET",BASE_URL+'getallactiveairports.php',{},$http,function(serverResponseData){
-        console.log(serverResponseData);
+//        console.log(serverResponseData);
         $scope.preferredairlineslist=serverResponseData;
         $scope.preferredairlineslist.unshift({'name':"All Airlines","iata":"","icao":""});
         $scope.preferredairline=$scope.preferredairlineslist[0];
@@ -3206,7 +3206,7 @@ if($scope.sourcecodenew && newCountryCode){
     if(localStorage.getItem('historySearchData')){
         userHistorydata=JSON.parse(localStorage.getItem('historySearchData'));
 
-        console.log(userHistorydata +" this is previously stored user data");
+        //console.log(userHistorydata +" this is previously stored user data");
         $scope.sourcecodenew=userHistorydata.sourceCountry;
         $scope.destcodenew=userHistorydata.destinationCountry;
         $scope.searchStringSource=userHistorydata.sourceCity;
@@ -3364,7 +3364,7 @@ if($scope.sourcecodenew && newCountryCode){
     //We will use this method to store given user's ip address and geolocation infromation in our database
 
 
-    function sendIPAddressAndGeographicalInformationToServer(geographicalInformationData){
+    function IPAddressAndGeographicalInformationProcessingToServer(){
 
 
         /*$http.post('http://www.jayeshkawli.com/airlinetravel/iptogeographicalmappings.php', { ipAddressInformation: geographicalInformationData }
@@ -3376,13 +3376,67 @@ if($scope.sourcecodenew && newCountryCode){
                 console.log("Error Occurred "+ errorMessage);
             });*/
 
-        sendDataToServer("POST",BASE_URL+'iptogeographicalmappings.php',
-            { ipAddressInformation: geographicalInformationData },$http
-            ,function(successfulResponse){
-                console.log("User Geographical Infromation successfully stored in the database with Response "+successfulResponse);
-            },function(failureMessage){
-                console.log("Error Occurred "+ failureMessage);
+
+
+
+       /* $.get("http://ifconfig.me/ip.json",function(data,status){
+            alert("Data: " + data + "\nStatus: " + status);
+        });*/
+
+        //Alternative CORS Solution
+        //DO NOT FUCKIN ERASE THIS
+       /* $.ajax({
+            type: "GET",
+            dataType: 'jsonp',
+            url: "http://www.telize.com/jsonip",
+            crossDomain : true,
+            xhrFields: {
+
+            }
+        })
+            .done(function( data ) {
+                console.log(JSON.stringify(data));
+            })
+            .fail( function(xhr, textStatus, errorThrown) {
+                alert(xhr.responseText);
+                alert(textStatus);
             });
+*/
+  /*
+
+  first time CORS successfull
+
+        sendDataToServer("JSONP",IPAddressInfoURL,{},$http,function(serverResponseData){
+alert(JSON.stringify(serverResponseData));
+
+        },function(failureMessage,status,headers,config){
+            console.log("IP Address request failed with message "+ failureMessage+status+headers+config);
+
+
+        });
+
+*/
+        sendDataToServer("JSONP",IPAddressInfoURL,{},$http,function(geoLocationInfo){
+            var storedUserEmailAddress=storedLocalAuthTokenInfo?storedLocalAuthTokenInfo.emailaddress:"Anonymous";
+
+            geoLocationInfo['userEmailAddress']=storedUserEmailAddress;
+
+            sendDataToServer("POST",BASE_URL+'iptogeographicalmappings.php',
+                {userGeoLocationInfo:geoLocationInfo},$http
+                ,function(successfulResponse){
+                    console.log("User Geographical Infromation successfully stored in the database with Response "+successfulResponse);
+                },function(failureMessage){
+                    console.log("Error Occurred in saving geolocaiton to database "+ failureMessage);
+                });
+        },function(failureMessage,status,headers,config){
+            console.log("IP Address geolocation request failed with message "+ failureMessage);
+
+
+        });
+
+
+
+
     }
 
 
@@ -3415,17 +3469,19 @@ if($scope.sourcecodenew && newCountryCode){
 */
 
 
-        sendDataToServer("GET",'http://www.telize.com/geoip',{},$http,function(geographicalData){
-            geographicalData['userEmailAddress']=storedLocalAuthTokenInfo?storedLocalAuthTokenInfo.emailaddress:"Anonymous";
+        /*sendDataToServer("GET",'http://www.telize.com/geoip?callback=?',{},$http,function(geographicalData){
 
 
-            sendIPAddressAndGeographicalInformationToServer(geographicalData);
+
+
 
         },function(failureMessage,status,headers,config){
-            console.log("Failed to get data from server with Error "+data+"Status "+status+"And Configuration "+config);
+            console.log("Failed to get data from server with Error "+failureMessage+"Status "+status+"And Configuration "+config);
 
 
-        });
+        });*/
+
+        IPAddressAndGeographicalInformationProcessingToServer();
 
     }
 
@@ -3542,7 +3598,7 @@ tempAllFlightsData.clear();
 */
 
         sendDataToServer("GET",BASE_URL+'flightdetailsinsert.php',formData,$http,function(serverResponseData){
-            console.log(serverResponseData);
+           // console.log(serverResponseData);
             $window.location.href = "#/showavailableflights/0?source="+$scope.searchStringSource+"&destination="+$scope.searchStringDestination+"&direction="+flightsGlobalParameters.getFlightSearchParameters().tripDirection+"&leavingdate="+$scope.leavingOut+"&comingindate="+$scope.comingIn+"&numberofdays="+flightsGlobalParameters.getFlightSearchParameters().numberOfDaysToRetrieveFlight;
         },function(failureMessage,status,headers,config){
             console.log("Server request failed with message "+ failureMessage);
