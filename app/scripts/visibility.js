@@ -37,7 +37,7 @@ function handleVisibilityChange() {
 
 if (typeof document.addEventListener === "undefined" || typeof hidden === "undefined") {
     console.log("This demo requires a browser, such as Google Chrome or Firefox, that supports the " +
-        "Page Visibility API. Not able to demonstarte Visibility API capability of this application");
+        "Page Visibility API. Not able to Demonstrate Visibility API capability of this application");
 
 }
 else{

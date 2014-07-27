@@ -43,6 +43,9 @@ airlinetravelmodule.controller('showflightscontroller',function($scope,$http,$ro
     console.log(originalDepartureDate+ "ooo riginal");
     var tempStorageForFlightDetailsAfterFilteringOnAirlines=[];
 
+$scope.getAirlineImageFromAirlineCode=function(airlineFSCode){
+    return airlineImageSourceBaseURL+airlineFSCode+".gif";
+}
 
 
     $scope.hideConnectionDetails=function(divIdentifier){
@@ -591,6 +594,7 @@ airlinetravelmodule.controller('showflightscontroller',function($scope,$http,$ro
         //console.log(JSON.stringify($scope.airlines)+" all airline details ");
     }
     else{
+
         var previouslyStoredAllFlightDetails=flightsGlobalContainers.getFlightsGlobalContainersParameters().allFlightsDetail;
 
         if(previouslyStoredAllFlightDetails.length==0){

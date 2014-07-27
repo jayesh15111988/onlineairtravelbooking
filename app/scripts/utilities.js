@@ -1,5 +1,6 @@
 'use strict';
 
+//Base URL - change any time we make deployment changes on server
 var BASE_URL="http://jayeshkawli.com/airlinetravel/";
 
 function checkNetConnection(){
@@ -45,13 +46,11 @@ function addMinutes(date, minutes) {
 }
 
 Date.prototype.addDays = function(days){
+
     var dat = new Date(this.valueOf());
-
     dat.setDate(dat.getDate() + (+days));
-
-
-
     return dat;
+
 }
 
 
@@ -65,8 +64,6 @@ var getStandardDate=function(originalDate,numberOfDaysOffset){
 
 
 var getFormattedDateForDisplay=function(dateObject,dateFormat){
-
-
 
 
     var datePassed=new Date(dateObject)

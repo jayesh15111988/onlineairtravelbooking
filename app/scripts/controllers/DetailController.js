@@ -525,21 +525,6 @@ airlinetravelmodule.controller('DetailController',function($scope,$routeParams,$
     };
 
 
-    var successfullRegistrationController = function ($scope, $modalInstance, items) {
-
-        //$scope.items = items;
-        //$scope.selected = {
-          //  item: $scope.items[0]
-        //};
-
-        $scope.ok = function () {
-            $modalInstance.close(items);
-        };
-
-        $scope.cancel = function () {
-            $modalInstance.dismiss('cancel');
-        };
-    };
 
     var showModalViewWithSuccessfullConfirmation=function(){
         var modalInstance = $modal.open({
@@ -560,6 +545,19 @@ airlinetravelmodule.controller('DetailController',function($scope,$routeParams,$
             console.log('Modal dismissed at: ' + new Date());
         });
     };
+
+
+    var successfullRegistrationController = function ($scope, $modalInstance, items) {
+
+        $scope.ok = function () {
+            $modalInstance.close(items);
+        };
+
+        $scope.cancel = function () {
+            $modalInstance.dismiss('cancel');
+        };
+    };
+
 
 
 
@@ -613,7 +611,9 @@ airlinetravelmodule.controller('DetailController',function($scope,$routeParams,$
     }
 
 
-
+    $scope.getAirlineImageFromAirlineCode=function(airlineFSCode){
+        return airlineImageSourceBaseURL+airlineFSCode+".gif";
+    }
 
 
     $scope.checkoutguest=function(){

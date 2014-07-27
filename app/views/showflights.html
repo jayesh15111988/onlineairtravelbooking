@@ -92,7 +92,7 @@ function changetogglebuttontext(buttonObject){
 }
 
         </script>
-
+///
 <div class="container" ng-controller="showflightscontroller">
     <div>
         <img src="../images/loading.gif" ng-show="loadingToDisplay" class="loadinganimation">
@@ -294,8 +294,8 @@ Filter By Airline
 
                             <!--<div>Deparing On: {{flightDetail.departureDaysOfWeek[0]}}</div>-->
                             <div>Distance in Miles: {{flightDetail.distanceMiles}}</div>
-                            <div>Flight Duration: {{flightDetail.flightDurationMinutes}}</div>
-                            <div>Layover Duration: {{flightDetail.layoverDurationMinutes}}</div>
+                            <div>Flight Duration: {{flightDetail.flightDurationMinutes}} Minutes</div>
+                            <div>Layover Duration: {{flightDetail.layoverDurationMinutes}} Minutes</div>
                             <div>Flight Type: {{flightDetail.flightType}}</div>
 
                             <button>Connection Details</button> <button onclick="changetogglebuttontext(this)" data-ng-click="hideConnectionDetails($index+1)">Show</button><br/>
@@ -305,11 +305,12 @@ Filter By Airline
                                 <div>Terminal {{connectionDetail.departureTerminal?connectionDetail.departureTerminal:"N/A"}}</div>
                                 <div>Arriving To:<span tooltip-html-unsafe="{{getairportsindi(connectionDetail.arrivalAirportFsCode,0)}}" popover-trigger="mouseenter" popover-placement="right"> {{connectionDetail.arrivalAirportFsCode}}</span> At {{connectionDetail.arrivalTime}}</div>
                                 <div>Terminal {{connectionDetail.arrivalTerminal?connectionDetail.arrivalTerminal:"N/A"}}</div>
-                                <div>Carrier Airline {{connectionDetail.carrierFsCode}} <img ng-src="http://www.mediawego.com/images/flights/airlines/120x40t/{{connectionDetail.carrierFsCode}}.gif"></div>
+                                <div>Carrier Airline {{connectionDetail.carrierFsCode}}
+                                    <img ng-src="{{getAirlineImageFromAirlineCode(connectionDetail.carrierFsCode)}}"></div>
                                 <div>Flight Number {{connectionDetail.flightNumber}}</div>
                                 <div>Day difference between source and destination {{connectionDetail.arrivalDateAdjustment}}</div>
                                 <div>Distance in Miles {{connectionDetail.distanceMiles}}</div>
-                                <div>Flight Duration {{connectionDetail.flightDurationMinutes}}</div>
+                                <div>Flight Duration {{connectionDetail.flightDurationMinutes}} Minutes</div>
                                 <div>Leasing Info: {{connectionDetail.wetleaseInfo?connectionDetail.wetleaseInfo:"N/A"}} </div>
                     <br/>
                             </div>

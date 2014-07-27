@@ -38,7 +38,7 @@ Passenger Details :
         <tr><td>Reaching On </td> <td>{{updateDeparture1}}</td></tr>
         <tr><td>Departing At time </td> <td>{{fullTravelDetails.departure.departureTime}}</td></tr>
         <tr><td>Arriving At time </td> <td>{{fullTravelDetails.departure.arrivalTime}}</td></tr>
-        <tr><td>Flight duration (In minutes) </td> <td>{{fullTravelDetails.departure.flightDurationMinutes}}</td></tr>
+        <tr><td>Flight duration (In minutes) </td> <td>{{fullTravelDetails.departure.flightDurationMinutes}} Minutes</td></tr>
 
         <tr><td> Connection Details</td> </tr><td>
         <div ng-repeat="connectionDetail in fullTravelDetails.departure.flightLegs">
@@ -49,12 +49,12 @@ Passenger Details :
             <div>Arriving at:  {{connectionDetail.arrivalTime}}</div>
             <div>Terminal {{connectionDetail.arrivalTerminal}}</div>
             <div>Carrier Airline {{getAirlineFullInfoFromCode(connectionDetail.carrierFsCode)}} ({{connectionDetail.carrierFsCode}})
-                <img ng-src="http://www.mediawego.com/images/flights/airlines/120x40t/{{connectionDetail.carrierFsCode}}.gif">
+                <img ng-src="{{getAirlineImageFromAirlineCode(connectionDetail.carrierFsCode)}}">
             </div>
             <div>Flight Number {{connectionDetail.flightNumber}}</div> <button ng-click="getDelayRatingsForAirport(connectionDetail.departureAirportFsCode,getairportsindi(connectionDetail.departureAirportFsCode))"> Delay Rating </button>
             <div>Day difference between source and destination {{connectionDetail.arrivalDateAdjustment}}</div>
             <div>Distance in Miles {{connectionDetail.distanceMiles}}</div>
-            <div>Flight Duration {{connectionDetail.flightDurationMinutes}}</div>
+            <div>Flight Duration {{connectionDetail.flightDurationMinutes}} Minutes</div>
             <br/>
         </div>
     </td>
@@ -85,12 +85,12 @@ Passenger Details :
             <div>Terminal {{connectionDetail.arrivalTerminal}}</div>
             <div>Carrier Airline {{getAirlineFullInfoFromCode(connectionDetail.carrierFsCode)}}({{connectionDetail.carrierFsCode}})
               <!-- this is temporary source to import airline images -->
-                <img ng-src="http://www.mediawego.com/images/flights/airlines/120x40t/{{connectionDetail.carrierFsCode}}.gif">
+                <img ng-src="{{getAirlineImageFromAirlineCode(connectionDetail.carrierFsCode)}}">
             </div>
             <div>Flight Number {{connectionDetail.flightNumber}}</div> <button ng-click="getDelayRatingsForAirport(connectionDetail.departureAirportFsCode,getairportsindi(connectionDetail.departureAirportFsCode))"> Delay Ratings </button>
             <div>Day difference between source and destination {{connectionDetail.arrivalDateAdjustment}}</div>
             <div>Distance in Miles {{connectionDetail.distanceMiles}}</div>
-            <div>Flight Duration {{connectionDetail.flightDurationMinutes}}</div>
+            <div>Flight Duration {{connectionDetail.flightDurationMinutes}} Minutes</div>
             <br/>
         </div>
 </td>
@@ -289,25 +289,33 @@ Current Prevailing Conditions:{{tags[2]['value']?tags[2]['value']:"N/A"}}<br/>
     menu bar by entering valid email id and reservation retrieval code
     </div>
 
-<div ng-controller="successfullRegistrationController">
+
+
+<div>
+
+
     <script type="text/ng-template" id="successfullDialogue.html">
+
+
         <div class="modal-header">
+
             <h3 class="modal-title">I'm a modal!</h3>
         </div>
-        <div class="modal-body">
-            <ul>
 
-            </ul>
+        <div class="modal-body">
+
             Selected: <b></b>
         </div>
+
         <div class="modal-footer">
             <button class="btn btn-primary" ng-click="ok()">OK</button>
             <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
         </div>
+
+
     </script>
 
 
     <div ng-show="selected">Selection from a modal: </div>
 </div>
-
 </div>
