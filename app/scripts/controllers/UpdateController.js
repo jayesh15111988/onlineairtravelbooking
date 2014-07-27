@@ -22,7 +22,7 @@ airlinetravelmodule.controller('userupdatecontroller',function($scope){
 
     $scope.$on("SET_MESSAGE_HEADER_SUCCESS", function(event, data){
 
-        console.log("child reset message");
+        //console.log("child reset message");
         $scope.messages=data;
         //var prestoredUserData=JSON.parse(localStorage.getItem('serverloginauthenticationsuccess'));
         //$scope.country=prestoredUserData.country;
@@ -70,7 +70,7 @@ airlinetravelmodule.controller('userupdatecontroller',function($scope){
         $scope.languagechoice=prestoredUserData.languagechoice;
         $scope.travelpurpose=prestoredUserData.travelpurpose;
         $scope.comments=prestoredUserData.comments;
-        console.log("Came into update hahah"+ prestoredUserData.country);
+        //console.log("Came into update hahah"+ prestoredUserData.country);
     }
 
     $scope.$on("SET_MESSAGE_HEADER", function(event, data){
@@ -88,7 +88,7 @@ airlinetravelmodule.controller('userupdatecontroller',function($scope){
 
     var test=function(moduleObject,formData){
 
-        console.log("This is form data -> " + formData.issubscribed);
+        //console.log("This is form data -> " + formData.issubscribed);
         moduleObject.$emit("UPDATE_PARENT", formData);
     }
 

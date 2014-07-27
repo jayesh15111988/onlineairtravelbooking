@@ -176,7 +176,7 @@ airlinetravelmodule.controller('flightsearchcontroller',function($scope,$http,$w
 
     var to = new Date();
     to.setDate(to.getDate() + 30);
-    console.log("date  "+to);
+//    console.log("date  "+to);
 
     var dd = to.getDate();
     var mm = to.getMonth()+1; //January is 0!
@@ -259,7 +259,7 @@ airlinetravelmodule.controller('flightsearchcontroller',function($scope,$http,$w
             $scope.isFlightButtonClicked=false;
         }
         else{
-            console.log("naaahhhh");
+            //console.log("naaahhhh");
         }
     }
 
@@ -550,7 +550,7 @@ airlinetravelmodule.controller('flightsearchcontroller',function($scope,$http,$w
         userHistorydata.sourceCity=$scope.searchStringSource;
         userHistorydata.destinationCity=$scope.searchStringDestination;
         userHistorydata.travelDirection= flightsGlobalParameters.getFlightSearchParameters().tripDirection;//tripDirection;
-        console.log("Expected travel direction"+flightsGlobalParameters.getFlightSearchParameters().tripDirection);
+        //console.log("Expected travel direction"+flightsGlobalParameters.getFlightSearchParameters().tripDirection);
         userHistorydata.travelType=(userHistorydata.sourceCountry===userHistorydata.destinationCountry)?"Domestic":"International";
 
         //var modelDate = $filter('date')($scope.leavingOut, "YYYY-MM-DD");
@@ -675,7 +675,7 @@ airlinetravelmodule.controller('flightsearchcontroller',function($scope,$http,$w
 //console.log($scope.sourcecode);
 
         if($scope.isDomestic==true){
-            console.log("indeed");
+ //           console.log("indeed");
             $scope.destcodenew=document.getElementById('autocomplete1').value;
 
         }
@@ -704,7 +704,7 @@ airlinetravelmodule.controller('flightsearchcontroller',function($scope,$http,$w
 
         var countryCode="";
         if( typeof $scope.searchStringSource !== "undefined" && isSource==true){
-            console.log("source");
+//            console.log("source");
             $scope.sourcevisible=true;
             searchStringToPass=$scope.searchStringSource;
             countryCode=document.getElementById('autocomplete1').value;

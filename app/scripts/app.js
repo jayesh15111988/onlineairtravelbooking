@@ -147,6 +147,8 @@ service('getStoredAuthTokenService',function(){
         var isEditingUserRegistrationInfoValue=false;
         var totalPValue;
         var totalPagesCountValue=10;
+        var regionNameValue="Select Region";
+
         //These parameters to maintain serach state while filtering flight search data
         //To do keep all of them in separate service - Intention is to separate out containers and simple variables
         //into respective services to avoid the possible confusion
@@ -164,7 +166,8 @@ service('getStoredAuthTokenService',function(){
             connectionType:connectionTypeValue,
             isEditingUserRegistrationInfo:isEditingUserRegistrationInfoValue,
             totalP:totalPValue,
-            totalPagesCount:totalPagesCountValue
+            totalPagesCount:totalPagesCountValue,
+            regionName:regionNameValue
         }
             },
             setIsLoggedInParameter:function(isLoggedIn){
@@ -199,6 +202,9 @@ isLoggedInOnConfirmationScreenValue=isLoggedIn;
             },
             setTotalPagesCountParameter:function(totalPagesCount){
               totalPagesCountValue=totalPagesCount;
+            },
+            setRegionNameParameter:function(regionName){
+                regionNameValue=regionName;
             }
         }
     }).
@@ -253,6 +259,18 @@ isLoggedInOnConfirmationScreenValue=isLoggedIn;
 
         }
     });
+
+/*.service('userRegionName',function(){
+    var regionName;
+    return {
+        getRegionName:function(){
+            return regionName;
+        },
+        setRegionName:function(inputRegionName){
+            regionName=inputRegionName;
+        }
+    }
+});*/
 
 //Next task - Add all get and post requests as service - Just pass url and post data and get response back instantly
 

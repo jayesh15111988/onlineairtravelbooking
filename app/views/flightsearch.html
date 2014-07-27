@@ -269,8 +269,8 @@ Type of travel:<br/>
                         </p>
                 </div>
                     <!--<input id="dpd1" type="text" ng-model="leavingOut" class="form-control" data-start-date="+d"  id="leavingon" placeholder="Leaving On (mm/dd/yyyy)" data-provide="datepicker"></div>-->
-                <div class="col-md-6" ng-show="isVisibleReturningDate">Reaching On:
-                    <label class="sr-only" for="reachingon">Reaching On</label>
+                <div class="col-md-6" ng-show="isVisibleReturningDate">Returning On:
+                    <label class="sr-only" for="reachingon">Returning On:</label>
                     <p class="input-group">
                     <input  id="reachingon" ng-model="comingIn" ng-keypress="seconddatechanged();" ng-blur="checkifvaliddate();" class="form-control" datepicker-popup="{{format}}"  is-open="opened1" min="{{mindate2}}" max="{{maxdate2}}" datepicker-options="dateOptions" date-disabled="disabled(date, mode)" ng-required="true" close-text="Close" >
 

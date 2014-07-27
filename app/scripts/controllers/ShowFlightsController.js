@@ -303,10 +303,8 @@ airlinetravelmodule.controller('showflightscontroller',function($scope,$http,$ro
 
 
 
-
-
         $scope.loadingToDisplay=false;
-        console.log(previouslyStoredFilteredArrayAfterAirlineSelection.length);
+
 
     }
 
@@ -353,7 +351,7 @@ airlinetravelmodule.controller('showflightscontroller',function($scope,$http,$ro
             $scope.day=$scope.daysRange[2];
             //bookbuttontitletext="Book Now";
             flightsGlobalParameters.setBookButtonTitleParameter("Book Now");
-            console.log(index +"departure");
+            //console.log(index +"departure");
 
 
             //departureDetailsGlobal=allFlightsDetail[index];
@@ -505,7 +503,7 @@ airlinetravelmodule.controller('showflightscontroller',function($scope,$http,$ro
     }
 
     var getFlightFromGivenParameters=function(source,destination,leavingdate,comingindate,contype,numberofdays){
-        console.log("Another Web Request with URL "+BASE_URL+"flightsearchapi.php?source="+source+"&destination="+destination+"&leavingdate="+leavingdate+"&comingindate="+comingindate+"&numberofdays="+numberofdays+"&connectiontype="+contype+"&airlinepreferred="+flightsGlobalParameters.getFlightSearchParameters().preferredAirlinesName);
+       // console.log("Another Web Request with URL "+BASE_URL+"flightsearchapi.php?source="+source+"&destination="+destination+"&leavingdate="+leavingdate+"&comingindate="+comingindate+"&numberofdays="+numberofdays+"&connectiontype="+contype+"&airlinepreferred="+flightsGlobalParameters.getFlightSearchParameters().preferredAirlinesName);
         var start = new Date().getTime();
         $http({method: 'GET', url: BASE_URL+'flightsearchapi.php?source='+source+"&destination="+destination+"&leavingdate="+leavingdate+"&comingindate="+comingindate+"&numberofdays="+numberofdays+"&connectiontype="+contype+"&airlinepreferred="+flightsGlobalParameters.getFlightSearchParameters().preferredAirlinesName,
             params: {}
@@ -565,7 +563,7 @@ airlinetravelmodule.controller('showflightscontroller',function($scope,$http,$ro
                 }
             }).
             error(function(data, status, headers, config) {
-                console.log(status+ "  &&&hahahahaha");
+                console.log(" Failed to Search for flights with an Error"+ data+" And status "+status);
             });
     }
 

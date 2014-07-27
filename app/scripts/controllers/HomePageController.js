@@ -107,12 +107,12 @@ airlinetravelmodule.controller('samcontroller',function($scope, $http, $log, pro
 
         }
         else{
-            console.log("Sesion in progress");
+            //console.log("Sesion in progress");
         }
 
     }
     else{
-        console.log("no session exists");
+        //console.log("no session exists");
     }
 
 //For Reservation button and validation upon clicking a link
@@ -595,7 +595,7 @@ airlinetravelmodule.controller('samcontroller',function($scope, $http, $log, pro
         flightsGlobalParameters.setIsEditingUserRegistrationInfoParameter(isEditing);// isEditingUserRegistrationInfo=isEditing;
 
         if(isEditing===true){
-            console.log("Came here with variable is editing value is "+isEditing);
+            //console.log("Came here with variable is editing value is "+isEditing);
 
 
             openRegistrationDialogue(!isEditing);
@@ -1013,9 +1013,14 @@ airlinetravelmodule.controller('samcontroller',function($scope, $http, $log, pro
     }
     openRegistrationDialogueService.setProperty(openRegistrationDialogue);
 
-    $scope.regionName="Select Region";
-    $scope.setRegion=function(regionname){
-        $scope.regionName=regionname;
+
+
+    $scope.regionName=flightsGlobalParameters.getFlightSearchParameters().regionName;
+
+    $scope.setRegion=function(regionName){
+
+        flightsGlobalParameters.setRegionNameParameter(regionName);
+        $scope.regionName=regionName;
 
     }
 

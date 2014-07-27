@@ -44,7 +44,7 @@ airlinetravelmodule.controller('DetailController',function($scope,$routeParams,$
 
     var setupButtons=function(isLoggedInAlready){
 
-        console.log(isLoggedInAlready + " should say true or false");
+        //console.log(isLoggedInAlready + " should say true or false");
         $scope.bookingbuttontitle=isLoggedInAlready?"Update Booking Info and Book":"Login";
         $scope.toshowsecond=!isLoggedInAlready;
     }
