@@ -404,13 +404,7 @@
     <label class="control-label">Title</label>
     <div class="controls">
 
-       <!-- <select id="select03" ng-model="salutation">
 
-            <option>Mr.</option>
-            <option>Mrs.</option>
-            <option>Ms.</option>
-            <option>Dear</option>
-        </select>-->
         <select ng-model="salutation" ng-options="salutation for salutation in salutations">
 
         </select>
@@ -1088,14 +1082,7 @@ Not needed for now
     <label class="control-label">Please enlist your choice of languages</label>
     <div class="controls">
         <span class="label label-danger" data-ng-show="submitted && helpForm.languagechoice.$error.required">Required!</span>
-        <!--<select id="" name="languagechoice" ng-model="languagechoice" required>
 
-            <option>English</option>
-            <option>Hindi</option>
-            <option>Spanish</option>
-            <option>French</option>
-            <option>Other</option>
-        </select>-->
 
         <select ng-model="fieldnames.languagechoice" ng-options="language for language in languages">
             </select>
@@ -1108,13 +1095,7 @@ Not needed for now
     <div class="controls">
         <select ng-model="fieldnames.travelpurpose" ng-options="travelreason for travelreason in travelreasons">
         </select>
-        <!--<select multiple="multiple" id="multiSelect">
-            <option>Personal</option>
-            <option>Family</option>
-            <option>Meet Friends</option>
-            <option>Travel</option>
-            <option>Business</option>
-        </select>-->
+
     </div>
 </div>
 <div data-ng-hide="toHideTCSection">

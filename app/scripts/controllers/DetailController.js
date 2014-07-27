@@ -474,10 +474,11 @@ airlinetravelmodule.controller('DetailController',function($scope,$routeParams,$
                             //Show something fancy as we successfully booked the flight now
 
 
-                            showModalViewWithSuccessfullConfirmation();
+                            showModalViewWithSuccessfullConfirmation(true);
 
                             console.log(" Successful Response "+successfulResponse);
                         },function(failureMessage){
+                            showModalViewWithSuccessfullConfirmation(false);
                             console.log("Error Occurred "+ failureMessage);
                         });
                     /*   $http.post('http://www.jayeshkawli.com/airlinetravel/finalbookingconfirmation.php', { bookinginformation: dataToSendForBookingConfirmation })
@@ -525,29 +526,33 @@ airlinetravelmodule.controller('DetailController',function($scope,$routeParams,$
     };
 
 
-
-    var showModalViewWithSuccessfullConfirmation=function(){
+//xxx
+    var showModalViewWithSuccessfullConfirmation=function(isSuccessfullBooking){
         var modalInstance = $modal.open({
             templateUrl: 'successfullDialogue.html',
             controller: successfullRegistrationController,
             size: 'sm',
             resolve: {
                 items: function () {
-                    return "Kawli";
+                    return isSuccessfullBooking;
                 }
             }
         });
 
 
-        modalInstance.result.then(function (selectedItem) {
-            console.log('Modal dismissed with message ' + selectedItem);
+        modalInstance.result.then(function (isSuccessfullBooking) {
+            console.log('Fligh confirmation dismissed by pressing ok button with message ' + isSuccessfullBooking);
         }, function () {
-            console.log('Modal dismissed at: ' + new Date());
+            console.log('Modal dismissed pressing cancel button on date ' + new Date());
         });
     };
 
 
-    var successfullRegistrationController = function ($scope, $modalInstance, items) {
+    var successfullRegistrationController = function ($scope, $modalInstance, isBookingSuccssfull) {
+
+        $scope.isBookingDone=isBookingSuccssfull?"YES":"NO";
+
+        //Write some customized message for both successfull and failed flight ticket bookings
 
         $scope.ok = function () {
             $modalInstance.close(items);

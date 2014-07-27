@@ -594,7 +594,6 @@ airlinetravelmodule.controller('flightsearchcontroller',function($scope,$http,$w
         console.log(travelClass);
         console.log(whichAirline);
         console.log(searchCriteria);
-
         console.log($scope.sourcecodenew);
         console.log($scope.destcodenew);
 
@@ -650,19 +649,18 @@ airlinetravelmodule.controller('flightsearchcontroller',function($scope,$http,$w
 
     $scope.searchByCriteriaButtonPressed=function(val){
         $scope.searchByPrice =$scope.searchByVariableDates =$scope.searchBySpecificDates =false;
+       //For Future not currently used in code at all
         if(val==1){
             searchCriteria="Price";
             $scope.searchByPrice=true;
         }
         else if(val==2){
             searchCriteria="Variable Dates";
-            //numberOfDaysToRetrieveFlight=3;
             flightsGlobalParameters.setNumberOfDaysToRetrieveFlightParameter(3);
             $scope.searchByVariableDates=true;
         }
         else if (val==3){
             searchCriteria="Specific Dates";
-            //numberOfDaysToRetrieveFlight=1;
             flightsGlobalParameters.setNumberOfDaysToRetrieveFlightParameter(1);
             $scope.searchBySpecificDates=true;
 

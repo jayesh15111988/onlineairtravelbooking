@@ -472,7 +472,6 @@ $scope.getAirlineImageFromAirlineCode=function(airlineFSCode){
     function addToAirportDetails(airportsArray){
 
         var airportsArrayLength=airportsArray.length;
-//sdfsd
         for(var i =0;i<airportsArrayLength;i++){
             var airportCode=airportsArray[i].iata;
             //console.log(airportCode);
@@ -507,7 +506,7 @@ $scope.getAirlineImageFromAirlineCode=function(airlineFSCode){
     }
 
     var getFlightFromGivenParameters=function(source,destination,leavingdate,comingindate,contype,numberofdays){
-       // console.log("Another Web Request with URL "+BASE_URL+"flightsearchapi.php?source="+source+"&destination="+destination+"&leavingdate="+leavingdate+"&comingindate="+comingindate+"&numberofdays="+numberofdays+"&connectiontype="+contype+"&airlinepreferred="+flightsGlobalParameters.getFlightSearchParameters().preferredAirlinesName);
+
         var start = new Date().getTime();
         $http({method: 'GET', url: BASE_URL+'flightsearchapi.php?source='+source+"&destination="+destination+"&leavingdate="+leavingdate+"&comingindate="+comingindate+"&numberofdays="+numberofdays+"&connectiontype="+contype+"&airlinepreferred="+flightsGlobalParameters.getFlightSearchParameters().preferredAirlinesName,
             params: {}

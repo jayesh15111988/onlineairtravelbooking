@@ -92,7 +92,7 @@ function changetogglebuttontext(buttonObject){
 }
 
         </script>
-///
+
 <div class="container" ng-controller="showflightscontroller">
     <div>
         <img src="../images/loading.gif" ng-show="loadingToDisplay" class="loadinganimation">
@@ -104,12 +104,7 @@ function changetogglebuttontext(buttonObject){
 
                 <tr><th><button id="sortparameter"><h6>Sort By</h6></button></th><th>Order
 
-                    <!--<select ng-model="orderTypeForOptions" ng-change="ascendingDescendingOptionChose()">
-                        <option ng-repeat="orderParameter in orderParametersArray"
-                                value="{{orderParameter.backGroundName}}">
-                            {{orderParameter.displayName}}
-                        </option>
-                    </select>-->
+
 
        <select data-ng-change="ascendingDescendingOptionChose();" ng-model="orderTypeForOptions" ng-options="orderParameter as orderParameter.displayName for orderParameter in orderParametersArray">
                   </select>
@@ -158,19 +153,6 @@ Filter By Airline
                         ng-options="airline as airline.name for airline in airlines" ></select>
 </td>
                     </tr>
-
-
-                <!--<tr  ng-repeat="airline in airlines" >
-
-    <td class="airlinesDetails"><div id='{{airline.iata}}'><a ng-click="filterWithAirline(airline.iata,2,'airlineName');">{{airline.name}}</a><br/>{{airline.phoneNumber?airline.phoneNumber:""}}</div><br/></td>
-
-
-                </tr>-->
-
-
-
-
-
 
                 <tr><th><button id="othersearchparameters"><h6>Other Parameters</h6></button></th></tr>
 
@@ -224,7 +206,7 @@ Filter By Airline
                 <tr><td>
                 <select style="width:250px;">
 
-
+///xxx
 
                     <option ng-repeat="airport in airports"  value="{{airport.name}}" title="{{airport.name}} {{airport.city}} {{airport.countryName}} {{airport.regionName}}">
                         {{airport.name}}  -  {{airport.city}} &nbsp;&nbsp;

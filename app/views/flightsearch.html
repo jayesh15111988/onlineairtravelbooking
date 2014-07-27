@@ -129,7 +129,6 @@ ul>li{
 
 <script src="../bower_components/jquery/autocomplete.js"></script>
 <script src="../bower_components/jquery/jquery.autocomplete.min.js"></script>
-      <!--  <script src="../bower_components/jquery/currency-autocomplete.js"></script>-->
 
 <script>
     $('.datepicker').datepicker({
@@ -166,10 +165,7 @@ ul>li{
         startDate:'+d',
         endDate:'+90d',
         dateFormat:'YYYY//MM/DD',
-        onRender: function(date) {
 
-            // return date.valueOf() <= checkin.date.valueOf() ? 'disabled' : '';
-        }
     }).on('changeDate', function(ev) {
                 checkout.hide();
             }).data('datepicker');
@@ -331,7 +327,12 @@ Type of travel:<br/>
  <div>
      <span>How do you want to Search Flights?</span></br>
      <div class="btn-group btn-group-md">
+         <!--
+
+         Not using for being inconsistent and being deperecated in next api version
          <button type="button" ng-click="searchByCriteriaButtonPressed(2)" ng-class="{'searchByCriteria':searchByVariableDates}" class="btn btn-default">Search by variable dates (+/-3 Days)</button>
+
+         -->
          <button type="button" ng-click="searchByCriteriaButtonPressed(3)" ng-class="{'searchByCriteria':searchBySpecificDates}" class="btn btn-default">Search by Specific dates</button>
      </div>
  </div>
