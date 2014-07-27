@@ -236,11 +236,24 @@
 <!-- build:js({.tmp,app}) scripts/scripts.js -->
 <script src="bower_components/jquery/autocomplete.js"></script>
 <script src="scripts/app.js"></script>
-<script src="scripts/utilities.js"></script>
-<script src="scripts/controllers/main.js"></script>
-<script src="scripts/controllers/sample.js"></script>
-<script src="scripts/controllers/constants.js"></script>
+
 <script src="scripts/visibility.js"></script>
+<script src="scripts/controllers/main.js"></script>
+<script src="scripts/constants.js"></script>
+<script src="scripts/utilities.js"></script>
+
+<!-- Add all sub controllers in the given application so that not to clutter main.js class afterall -->
+<script src="scripts/controllers/UpdateController.js"></script>
+<script src="scripts/controllers/HomePageController.js"></script>
+<script src="scripts/controllers/ShowFlightsController.js"></script>
+<script src="scripts/controllers/FlightSearchController.js"></script>
+<script src="scripts/controllers/HomePageController.js"></script>
+
+
+
+
+
+
 <!-- endbuild -->
 
 <!--For X-Editable plugin for popover and tooltips -->
@@ -600,7 +613,7 @@ Not needed for now
 </div>-->
 
 <div class="control-group">
-    <label class="control-label" for="textarea">Comments and Suggestions</label>
+    <label class="control-label" for="textarea">Comments and Suggestions (Maximum 1500 alphabets)</label>
     <div class="controls">
         <textarea class="input-xlarge" id="textarea" rows="3" ng-model="comments" value="Please put any suggestions and/or comments you may have in this box"></textarea>
     </div>

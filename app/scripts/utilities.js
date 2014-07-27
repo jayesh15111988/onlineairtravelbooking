@@ -21,6 +21,25 @@ function checkNetConnection(){
     }
 }
 
+function clone(obj){
+    if(obj == null || typeof(obj) != 'object')
+        return obj;
+
+    var temp = obj.constructor(); // changed
+
+    for(var key in obj)
+        temp[key] = clone(obj[key]);
+    return temp;
+}
+
+Array.prototype.clear = function() {
+    while (this.length > 0) {
+        this.pop();
+    }
+};
+
+
+
 function addMinutes(date, minutes) {
     return new Date(date.getTime() + minutes*60000);
 }
