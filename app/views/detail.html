@@ -289,4 +289,25 @@ Current Prevailing Conditions:{{tags[2]['value']?tags[2]['value']:"N/A"}}<br/>
     menu bar by entering valid email id and reservation retrieval code
     </div>
 
+<div ng-controller="successfullRegistrationController">
+    <script type="text/ng-template" id="successfullDialogue.html">
+        <div class="modal-header">
+            <h3 class="modal-title">I'm a modal!</h3>
+        </div>
+        <div class="modal-body">
+            <ul>
+
+            </ul>
+            Selected: <b></b>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" ng-click="ok()">OK</button>
+            <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+        </div>
+    </script>
+
+
+    <div ng-show="selected">Selection from a modal: </div>
+</div>
+
 </div>

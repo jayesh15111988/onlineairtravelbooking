@@ -162,7 +162,7 @@ airlinetravelmodule.controller('showflightscontroller',function($scope,$http,$ro
 
 
 
-//To remove as no longer necessary?
+//not sure to remove as no longer necessary?
     var getSampleAllAirlinesObject=function(){
         return {iata:"clearall", name:'All Airlines',fs:""};
     }
@@ -347,6 +347,7 @@ airlinetravelmodule.controller('showflightscontroller',function($scope,$http,$ro
 
         }
         else if($scope.bookbuttontitle=="Select Returning Flight"){
+            console.log("Selecting returning flight");
             isBookingReturnFlight=1;
             $scope.day=$scope.daysRange[2];
             //bookbuttontitletext="Book Now";
@@ -519,7 +520,7 @@ airlinetravelmodule.controller('showflightscontroller',function($scope,$http,$ro
 
                     if(typeof prestoredAppendixInformation !='undefined' && prestoredAppendixInformation!=null){
                         if(prestoredAppendixInformation.airlines.length>0){
-                            //prestoredAppendixInformation.airlines.unshift(getSampleAllAirlinesObject());
+                            prestoredAppendixInformation.airlines.unshift(getSampleAllAirlinesObject());
                             $scope.airlines=prestoredAppendixInformation.airlines;
 
 
@@ -580,7 +581,7 @@ airlinetravelmodule.controller('showflightscontroller',function($scope,$http,$ro
         $scope.airlines=JSON.parse(localStorage.getItem('airlines'));
 
         //to remove - We are adding all airlines twice just to be safe because we already have cached data in we didnt propogate changes to it
-        //$scope.airlines.unshift(getSampleAllAirlinesObject());
+        $scope.airlines.unshift(getSampleAllAirlinesObject());
         $scope.airline=$scope.airlines[0];
         $scope.airports	=JSON.parse(localStorage.getItem('airports'));
         addToAirportDetails($scope.airports);
@@ -597,7 +598,6 @@ airlinetravelmodule.controller('showflightscontroller',function($scope,$http,$ro
             getFlightFromGivenParameters(flightsGlobalContainers.getFlightsGlobalContainersParameters().getParameteresDictionary.source,flightsGlobalContainers.getFlightsGlobalContainersParameters().getParameteresDictionary.destination,flightsGlobalContainers.getFlightsGlobalContainersParameters().getParameteresDictionary.leavingdate,flightsGlobalContainers.getFlightsGlobalContainersParameters().getParameteresDictionary.comingindate,flightsGlobalParameters.getFlightSearchParameters().connectionType,flightsGlobalParameters.getFlightSearchParameters().numberOfDaysToRetrieveFlight);
         }
     }
-
 
     $timeout(function () {
 

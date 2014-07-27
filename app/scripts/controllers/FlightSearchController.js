@@ -31,15 +31,31 @@ airlinetravelmodule.controller('flightsearchcontroller',function($scope,$http,$w
 
     //We keep watch on destination airport - When it's different from source we set it as an international flight,
     //else as a domestic one
-    $scope.$watch('destcodenew',function(newCountryCode,oldCountryCode){
 
-        if($scope.sourcecodenew && newCountryCode){
+    $scope.$watch('sourcecodenew',function(newCountryCode,oldCountryCode){
+        //console.log(newCountryCode);
+        if(($scope.sourcecodenew && newCountryCode)&& (oldCountryCode != newCountryCode)){
             var isDomesticFlight = +(!($scope.sourcecodenew.toUpperCase()===newCountryCode.toUpperCase()));
             $scope.setpref(isDomesticFlight);
         }
-
-
+        if(!newCountryCode || newCountryCode.length<2){
+            $scope.searchStringSource="";
+        }
     },true);
+
+
+    $scope.$watch('destcodenew',function(newCountryCode,oldCountryCode){
+//console.log(newCountryCode);
+  //When user changes country, make sure we blank out airport field as it may not be same as before
+        if(($scope.sourcecodenew && newCountryCode)&& (oldCountryCode != newCountryCode)){
+            var isDomesticFlight = +(!($scope.sourcecodenew.toUpperCase()===newCountryCode.toUpperCase()));
+            $scope.setpref(isDomesticFlight);
+        }
+        if(!newCountryCode || newCountryCode.length<2){
+            $scope.searchStringDestination="";
+        }
+    },true);
+
 
     //Get list of all active airports and populate it in a $scope array variable
     /*$http({

@@ -75,6 +75,8 @@ airlinetravelmodule.controller('DetailController',function($scope,$routeParams,$
         registrationFunction(true);
     }
 
+
+
     $scope.showRegisterNewUserModalView=function(){
 
         //Send notifications for showing login view
@@ -102,6 +104,8 @@ airlinetravelmodule.controller('DetailController',function($scope,$routeParams,$
 
         //It mean we came on this page while making booking - AND NOT while retrieving it from database from previous activity
         if(isBookingNewFlight){
+
+
             for (var i in arrayForAllAirlinesInfo) {
                 if(arrayForAllAirlinesInfo[i].fs===airlineFSCode){
                     dataWithFullNameForAirportsAndAirlines[airlineFSCode]=arrayForAllAirlinesInfo[i].name;
@@ -467,6 +471,11 @@ airlinetravelmodule.controller('DetailController',function($scope,$routeParams,$
                     sendDataToServer("POST",BASE_URL+'finalbookingconfirmation.php',
                         { bookinginformation: dataToSendForBookingConfirmation },$http
                         ,function(successfulResponse){
+                            //Show something fancy as we successfully booked the flight now
+
+
+                            showModalViewWithSuccessfullConfirmation();
+
                             console.log(" Successful Response "+successfulResponse);
                         },function(failureMessage){
                             console.log("Error Occurred "+ failureMessage);
@@ -514,6 +523,44 @@ airlinetravelmodule.controller('DetailController',function($scope,$routeParams,$
         );
 
     };
+
+
+    var successfullRegistrationController = function ($scope, $modalInstance, items) {
+
+        //$scope.items = items;
+        //$scope.selected = {
+          //  item: $scope.items[0]
+        //};
+
+        $scope.ok = function () {
+            $modalInstance.close(items);
+        };
+
+        $scope.cancel = function () {
+            $modalInstance.dismiss('cancel');
+        };
+    };
+
+    var showModalViewWithSuccessfullConfirmation=function(){
+        var modalInstance = $modal.open({
+            templateUrl: 'successfullDialogue.html',
+            controller: successfullRegistrationController,
+            size: 'sm',
+            resolve: {
+                items: function () {
+                    return "Kawli";
+                }
+            }
+        });
+
+
+        modalInstance.result.then(function (selectedItem) {
+            console.log('Modal dismissed with message ' + selectedItem);
+        }, function () {
+            console.log('Modal dismissed at: ' + new Date());
+        });
+    };
+
 
 
 
@@ -572,7 +619,8 @@ airlinetravelmodule.controller('DetailController',function($scope,$routeParams,$
     $scope.checkoutguest=function(){
 
         //Not sure if it will wotk or now - But will see it
-        openRegistrationDialogue(true);
+        var registrationFunction=openRegistrationDialogueService.getProperty();
+        registrationFunction(true);
 
     }
 
@@ -667,6 +715,9 @@ airlinetravelmodule.controller('DetailController',function($scope,$routeParams,$
         }
 
         else if(flightsGlobalParameters.getFlightSearchParameters().tripDirection=="Round Trip"){
+
+
+
             $scope.arrivalstatus="Arrival Flight Details";
             $scope.showsecondpartofflightbooking=true;
             $scope.showreturningflights=true;
@@ -679,10 +730,11 @@ airlinetravelmodule.controller('DetailController',function($scope,$routeParams,$
             //We are removing any stale entries that might be lingering in local storage
 
             var preStoredDepartureDetails=flightsGlobalContainers.getFlightsGlobalContainersParameters().departureDetailsGlobal;
+            var preStoredArrivalDetails=flightsGlobalContainers.getFlightsGlobalContainersParameters().arrivalDetailsglobal;
 
-            if(Object.keys(preStoredDepartureDetails).length>0 || Object.keys(arrivalDetailsglobal).length>0){
+            if(Object.keys(preStoredDepartureDetails).length>0 || Object.keys(preStoredArrivalDetails).length>0){
                 localStorage.setItem( 'goingoutdetails', JSON.stringify(preStoredDepartureDetails) );
-                localStorage.setItem( 'comingindetails', JSON.stringify(arrivalDetailsglobal) );
+                localStorage.setItem( 'comingindetails', JSON.stringify(preStoredArrivalDetails) );
             }
 
             //Departure section comes first and then arrives arrival - I mean name of identifier which displays airline booking info
@@ -804,6 +856,7 @@ airlinetravelmodule.controller('DetailController',function($scope,$routeParams,$
 
 
     if(isBookingNewFlight){
+        $scope.showPreviousBookingDetails=true;
         setupTripDetailsForOneWayFlight();
     }
     else{

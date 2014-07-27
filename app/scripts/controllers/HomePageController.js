@@ -1013,8 +1013,6 @@ airlinetravelmodule.controller('samcontroller',function($scope, $http, $log, pro
     }
     openRegistrationDialogueService.setProperty(openRegistrationDialogue);
 
-
-
     $scope.regionName=flightsGlobalParameters.getFlightSearchParameters().regionName;
 
     $scope.setRegion=function(regionName){
