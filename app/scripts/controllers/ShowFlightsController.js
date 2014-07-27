@@ -162,24 +162,26 @@ airlinetravelmodule.controller('showflightscontroller',function($scope,$http,$ro
 
 
 
-
+//To remove as no longer necessary?
     var getSampleAllAirlinesObject=function(){
         return {iata:"clearall", name:'All Airlines',fs:""};
     }
 
 
     $scope.filterWithAirline=function(airlineName,searchType,isFilterParameter){
-        console.log(airlineName+ "actual name");
+
+
 
 
         flightsGlobalParameters.setIsFilteringBasedOnAirlineParameter(!(airlineName==='clearall'));
         //airlineName==='clearall'?(isFilteringBasedOnAirline=false):(isFilteringBasedOnAirline=true);
 
-        //console.log(allFlightsDetail.length+ "this was the orifginal length");
+//xxx
         var preStoredTempFolderForAllFlights=flightsGlobalContainers.getFlightsGlobalContainersParameters().tempHolderForAllFlights;
         var previouslyStoredFilteredArrayAfterAirlineSelection=flightsGlobalContainers.getFlightsGlobalContainersParameters().filteredArrayAfterAirlineSelection;
         var previouslyStoredAllFlightsDetails=flightsGlobalContainers.getFlightsGlobalContainersParameters().allFlightsDetail;
 
+        console.log(JSON.stringify(previouslyStoredFilteredArrayAfterAirlineSelection)+ " Input array to process ");
         if(flightsGlobalParameters.getFlightSearchParameters().isFilteringBasedOnAirline){
 
 
@@ -187,6 +189,7 @@ airlinetravelmodule.controller('showflightscontroller',function($scope,$http,$ro
 
                 //tempHolderForAllFlights=allFlightsDetail;
                 flightsGlobalContainers.setTempHolderForAllFlightsValueParameter(previouslyStoredAllFlightsDetails);
+                preStoredTempFolderForAllFlights=previouslyStoredAllFlightsDetails;
             }
 
             //Filter all connections based on a airline name
@@ -249,11 +252,18 @@ airlinetravelmodule.controller('showflightscontroller',function($scope,$http,$ro
                 localStorage.setItem('lastUsedSortParameter',airlineName);
                 //Sort by specific parameter check if filetred array contains any data first
                 //var preStoredFilteredArray=flightsGlobalContainers.getFlightsGlobalContainersParameters().filteredArrayAfterAirlineSelection;
+               // preStoredTempFolderForAllFlights=flightsGlobalContainers.getFlightsGlobalContainersParameters().tempHolderForAllFlights;
 
                 var arrayToOperateOn=previouslyStoredFilteredArrayAfterAirlineSelection.length?previouslyStoredFilteredArrayAfterAirlineSelection.slice(0):preStoredTempFolderForAllFlights.slice(0);
 
-                //filteredArrayAfterAirlineSelection=arrayToOperateOn.sort(dynamicSort(airlineName,$scope.orderTypeForOptions.backGroundName));
+
+
+
                 flightsGlobalContainers.setFilteredArrayAfterAirlineSelectionValueParameter(arrayToOperateOn.sort(dynamicSort(airlineName,$scope.orderTypeForOptions.backGroundName)));
+
+
+                previouslyStoredFilteredArrayAfterAirlineSelection=flightsGlobalContainers.getFlightsGlobalContainersParameters().filteredArrayAfterAirlineSelection;
+                //console.log(JSON.stringify(preStoredTempFolderForAllFlights)+ "Fresh data we have");
             }
 
         }
@@ -274,6 +284,7 @@ airlinetravelmodule.controller('showflightscontroller',function($scope,$http,$ro
                 previouslyStoredFilteredArrayAfterAirlineSelection.push.apply(previouslyStoredFilteredArrayAfterAirlineSelection, preStoredTempFolderForAllFlights);
 
 
+                console.log("Abandoned regios should never come here");
                 //tempHolderForAllFlights.clear();
                 flightsGlobalContainers.setTempHolderForAllFlightsValueParameter([]);
 
@@ -510,8 +521,10 @@ airlinetravelmodule.controller('showflightscontroller',function($scope,$http,$ro
 
                     if(typeof prestoredAppendixInformation !='undefined' && prestoredAppendixInformation!=null){
                         if(prestoredAppendixInformation.airlines.length>0){
-                            prestoredAppendixInformation.airlines.unshift(getSampleAllAirlinesObject());
+                            //prestoredAppendixInformation.airlines.unshift(getSampleAllAirlinesObject());
                             $scope.airlines=prestoredAppendixInformation.airlines;
+
+
                             $scope.airline=$scope.airlines[0];
                         }
                         if(prestoredAppendixInformation.airports.length>0){
@@ -522,6 +535,7 @@ airlinetravelmodule.controller('showflightscontroller',function($scope,$http,$ro
                             $scope.equipments=prestoredAppendixInformation.equipments;
                         }
                     }
+                    //console.log(JSON.stringify($scope.airlines)+" all airline details ");
                     setupPageWithAllFlightDetails(flightslist.flights);
 
                     $timeout(function () {
@@ -568,13 +582,14 @@ airlinetravelmodule.controller('showflightscontroller',function($scope,$http,$ro
         $scope.airlines=JSON.parse(localStorage.getItem('airlines'));
 
         //to remove - We are adding all airlines twice just to be safe because we already have cached data in we didnt propogate changes to it
-        $scope.airlines.unshift(getSampleAllAirlinesObject());
+        //$scope.airlines.unshift(getSampleAllAirlinesObject());
         $scope.airline=$scope.airlines[0];
         $scope.airports	=JSON.parse(localStorage.getItem('airports'));
         addToAirportDetails($scope.airports);
         $scope.equipments=JSON.parse(localStorage.getItem('equipments'));
 
         setupPageWithAllFlightDetails(flightsGlobalContainers.getFlightsGlobalContainersParameters().allFlightsDetail);
+        //console.log(JSON.stringify($scope.airlines)+" all airline details ");
     }
     else{
         var previouslyStoredAllFlightDetails=flightsGlobalContainers.getFlightsGlobalContainersParameters().allFlightsDetail;
