@@ -64,8 +64,8 @@
         margin: 20px 0 20px 0;
     }
     .customtooltip:hover:after{
-        background: #333;
-        background: rgba(0,0,0,.8);
+
+        background: rgba(0,1,0,.8);
         border-radius: 5px;
         bottom: 26px;
         color: #fff;
@@ -73,6 +73,7 @@
         padding: 5px 15px;
         position: absolute;
         z-index: 98;
+
         width: 220px;
     }
 
@@ -232,6 +233,8 @@
 <script src="bower_components/angular-sanitize/angular-sanitize.js"></script>
 <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.0rc1/angular-sanitize.js"></script>
 <script src="bower_components/angular-route/angular-route.js"></script>
+
+<!-- Responsible for tooltip make changes in this class -->
 <script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.js"></script>
 
 <script src="bower_components/angular/promise-tracker.js"></script>
@@ -244,8 +247,8 @@
 <script src="bower_components/jquery/autocomplete.js"></script>
 <script src="scripts/app.js"></script>
 
-<script src="scripts/visibility.js"></script>
 <script src="scripts/controllers/main.js"></script>
+<script src="scripts/visibility.js"></script>
 <script src="scripts/constants.js"></script>
 <script src="scripts/utilities.js"></script>
 

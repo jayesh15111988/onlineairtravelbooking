@@ -483,7 +483,62 @@ $scope.getAirlineImageFromAirlineCode=function(airlineFSCode){
         flightsGlobalContainers.setAirportsDeepDetailsGlobalParameter($scope.airportsDeepDetails);
 
     }
+//we are using it in kinda two methods - that's why
 
+    var styleForPopupElement="<div style='margin-left: 80px;width: 300px;height: 280px;overflow:scroll;overflow: auto;padding: 30px'>";
+
+    $scope.getAirportsList=function(){
+
+        //console.log(airportsList);
+
+        var availableAirportsList=styleForPopupElement;
+
+        /*<option ng-repeat="airport in airports"  value="{{airport.name}}" title="{{airport.name}} {{airport.city}} {{airport.countryName}} {{airport.regionName}}">
+                        {{airport.name}}  -  {{airport.city}} &nbsp;&nbsp;
+
+        </option>*/
+
+
+        var allAirportNamesPopulated=$scope.airports;
+
+        for(var individualAirport in allAirportNamesPopulated){
+
+
+            if( allAirportNamesPopulated[individualAirport].name!==""){
+            availableAirportsList+= allAirportNamesPopulated[individualAirport].name+"  -  "+ allAirportNamesPopulated[individualAirport].city+"<hr/>";
+            }
+        }
+
+        availableAirportsList+="</div>";
+return availableAirportsList;
+        //return "<br/>jayesh kawli <br/>";
+    }
+
+    $scope.getAirplanesList=function(){
+
+        var availableAirPlanesList=styleForPopupElement;
+
+        /*<option ng-repeat="airport in airports"  value="{{airport.name}}" title="{{airport.name}} {{airport.city}} {{airport.countryName}} {{airport.regionName}}">
+         {{airport.name}}  -  {{airport.city}} &nbsp;&nbsp;
+
+         </option>*/
+
+
+        var allAirplanesNamesPopulated=$scope.equipments;
+
+        for(var individualAirport in allAirplanesNamesPopulated){
+
+
+            if( allAirplanesNamesPopulated[individualAirport].name!==""){
+                availableAirPlanesList+= allAirplanesNamesPopulated[individualAirport].iata+"  -  "+ allAirplanesNamesPopulated[individualAirport].name+"<hr/>";
+            }
+        }
+
+        availableAirPlanesList+="</div>";
+        return availableAirPlanesList;
+
+
+    }
 
     $scope.getairportsindi=function(iatacode,isTitle){
         $scope.airportTitle=iatacode;
